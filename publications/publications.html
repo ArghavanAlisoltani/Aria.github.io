@@ -115,7 +115,6 @@
       user-select:none;
     }
     .btn:hover{background: rgba(255,255,255,.10)}
-    .btn.small{padding:8px 10px; font-size:12px; flex:0}
     .hint{color:var(--muted); font-size:13px; line-height:1.55; margin-top:10px}
 
     .content{display:flex; flex-direction:column; gap:12px;}
@@ -198,7 +197,6 @@
     }
     .pill:hover{background: rgba(255,255,255,.10); text-decoration:none}
     .muted{color:var(--muted)}
-
     details{
       border:1px solid var(--border);
       background: rgba(255,255,255,.03);
@@ -216,7 +214,6 @@
     summary::-webkit-details-marker{display:none}
     summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
     details[open] summary:before{content:"▾"}
-
     .mono{font-family:var(--mono)}
     code.inline{font-family:var(--mono); font-size: 0.95em; background: rgba(0,0,0,.25); border:1px solid var(--border); padding:2px 6px; border-radius:10px;}
 
@@ -231,16 +228,15 @@
 <header>
   <div class="hero">
     <h1>Publications</h1>
-    <p class="subtitle"><a href="../index.html">← Back to Home</a></p>
     <p class="subtitle">
-      Numbered and categorized by topic (auto-generated from the publication list below).
-      To add more papers later, append to the <code class="inline">publications</code> array (near the bottom) — everything re-renders automatically.
+      Numbered and categorized by topic (auto-generated). Add new papers by appending to the
+      <code class="inline">publications</code> array — the page re-numbers automatically.
     </p>
 
-    <div class="kicker">Recommended folder structure (GitHub Pages)</div>
+    <div class="kicker">PDF folder for GitHub Pages</div>
     <p class="subtitle">
-      Put PDFs in <code class="inline">/papers/</code> and link them with <code class="inline">papers/your_file.pdf</code>.
-      External links (DOI, journal page, PubMed, arXiv) can be used too.
+      Put PDFs in <code class="inline">/papers/</code> and link as <code class="inline">papers/&lt;filename&gt;.pdf</code>.
+      (All entries below already use your uploaded PDF filenames.)
     </p>
   </div>
 </header>
@@ -281,18 +277,8 @@
       </div>
 
       <div class="hint">
-        <b>Tip:</b> If you change category names, keep them consistent across entries (this drives the topic sections).
+        Topics are standardized and automatically deduplicated (no duplicate categories).
       </div>
-
-      <details>
-        <summary>How to add a new paper (2 minutes)</summary>
-        <ol class="muted">
-          <li>Add the PDF to <code class="inline">/papers/</code> (optional).</li>
-          <li>Append a new object to the <code class="inline">publications</code> array.</li>
-          <li>Set <code class="inline">topics</code> to 1–3 categories (e.g., “Viral Genomics”).</li>
-          <li>Refresh the page — numbering and sections update automatically.</li>
-        </ol>
-      </details>
     </div>
 
     <h2>Quick links</h2>
@@ -332,14 +318,6 @@
             <a class="pill" target="_blank" rel="noopener" href="https://bacterialvar.org">Website</a>
           </div>
         </div>
-
-        <details>
-          <summary>Add more “under development” items</summary>
-          <p class="muted">
-            You can either (1) keep adding cards here manually, or (2) create a separate <code class="inline">projects</code> array
-            like the publications list and render it the same way.
-          </p>
-        </details>
       </div>
     </article>
 
@@ -361,242 +339,359 @@
  * ===========================
  * 1) EDIT YOUR LIST HERE
  * ===========================
- * - Put PDFs in /papers/ and link via: "papers/your_file.pdf"
- * - If you don’t have a PDF locally, use DOI/journal/PubMed links.
- * - topics controls category sections.
+ * Canonical topic set used across all entries:
+ * - Viral Genomics & Surveillance
+ * - Public Health & Molecular Epidemiology
+ * - Structural Bioinformatics & Drug Discovery
+ * - Computational Genomics & Software
+ * - Microbial Genomics & Metagenomics
+ * - Human Microbiome, HIV & Mucosal Immunology
+ * - Bacterial Pathogenesis & AMR
+ * - Plant Genomics & Stress Biology
+ * - Cancer Genomics & Transcriptomics
  */
 const publications = [
-  // --- Cancer / immunology / transcriptomics ---
+  /* ===========================
+   * NEWLY ADDED (from your latest uploads)
+   * =========================== */
+
   {
+    id: "jciinsight-2025-remdesivir",
+    year: 2025,
+    title: "The impact of remdesivir on SARS-CoV-2 evolution in vivo",
+    authors: "Ted Ling-Hu; Lacy M. Simons; Estefany Rios-Guzman; Alexandre M. Carvalho; Maria Francesca R. Agnes; Arghavan Alisoltanidehkordi; Egon A. Ozer; Ramon Lorenzo-Redondo; Judd F. Hultquist",
+    venue: "JCI Insight",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance", "Public Health & Molecular Epidemiology"],
+    keywords: ["remdesivir", "within-host evolution", "minority variants", "nsp12", "antiviral selection"],
+    links: [
+      { label: "PDF (local)", href: "papers/jciinsight-10-182376.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1172/jci.insight.182376" }
+    ]
+  },
+  {
+    id: "jvi-2025-plwh-intrahost",
+    year: 2025,
+    title: "Intra-host SARS-CoV-2 diversity in immunocompromised people living with HIV provides insight into the evolutionary trajectory of SARS-CoV-2",
+    authors: "R. Joseph; G. Marais; I. Iranzadeh; A. Alisoltani; D. Hardie; M.-A. Davies; ...; N.-Y. Hsiao; C. Williamson",
+    venue: "Journal of Virology",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance", "Public Health & Molecular Epidemiology"],
+    keywords: ["PLWH", "persistent infection", "intra-host diversity", "immune escape", "Spike"],
+    links: [
+      { label: "PDF (local)", href: "papers/joseph-et-al-2025-intra-host-sars-cov-2-diversity-in-immunocompromised-people-living-with-hiv-provides-insight-into-the.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1128/jvi.00780-25" }
+    ]
+  },
+  {
+    id: "ploscompbiol-2021-structural-constraints",
+    year: 2021,
+    title: "The interplay of SARS-CoV-2 evolution and constraints imposed by the structure and functionality of its proteins",
+    authors: "Lukasz Jaroszewski; Mallika Iyer; Arghavan Alisoltani; Mayya Sedova; Adam Godzik",
+    venue: "PLOS Computational Biology",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance", "Structural Bioinformatics & Drug Discovery"],
+    keywords: ["protein structure", "mutation landscape", "functional constraint", "GISAID"],
+    links: [
+      { label: "PDF (local)", href: "papers/journal.pcbi.1009147.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1371/journal.pcbi.1009147" }
+    ]
+  },
+  {
+    id: "mgen-2025-spn-malawi-pangenome",
+    year: 2025,
+    title: "Comparative pangenomics of Streptococcus pneumoniae from Malawi: uncovering genetic variability and pathogenicity",
+    authors: "Arash Iranzadeh; Arghavan Alisoltani; Anmol M. Kiran; Robert F. Breiman; Chrispin Chaguza; ...; Nicola Mulder; Dean B. Everett",
+    venue: "Microbial Genomics",
+    type: "Journal Article",
+    topics: ["Microbial Genomics & Metagenomics", "Bacterial Pathogenesis & AMR"],
+    keywords: ["pangenome", "serotypes", "invasiveness", "Malawi", "S. pneumoniae"],
+    links: [
+      { label: "PDF (local)", href: "papers/mgen001370.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1099/mgen.0.001370" }
+    ]
+  },
+  {
+    id: "cellrepmed-2024-covid-outcomes-model",
+    year: 2024,
+    title: "Integration of individualized and population-level molecular epidemiology data to model COVID-19 outcomes",
+    authors: "Ted Ling-Hu; Lacy M. Simons; Taylor J. Dean; Estefany Rios-Guzman; ...; Arghavan Alisoltani; Ramon Lorenzo-Redondo; Egon A. Ozer; Judd F. Hultquist",
+    venue: "Cell Reports Medicine",
+    type: "Journal Article",
+    topics: ["Public Health & Molecular Epidemiology", "Viral Genomics & Surveillance"],
+    keywords: ["severity modeling", "confounders", "surveillance", "Chicago", "SARS-CoV-2"],
+    links: [
+      { label: "PDF (local)", href: "papers/PIIS2666379123005785.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1016/j.xcrm.2023.101361" }
+    ]
+  },
+  {
+    id: "proteinsci-2023-mpro-docking",
     year: 2023,
-    title: "Gender differences in smoking-induced changes in the tumor immune microenvironment",
-    authors: "Arghavan Alisoltani; Xinru Qiu; Lukasz Jaroszewski; Mayya Sedova; Mallika Iyer; Adam Godzik",
-    venue: "Archives of Biochemistry and Biophysics",
+    title: "Large library docking for novel SARS-CoV-2 main protease non-covalent and covalent inhibitors",
+    authors: "Elissa A. Fink; Conner Bardine; Stefan Gahbauer; ...; Arghavan Alisoltani; ...; Brian K. Shoichet; Charles S. Craik",
+    venue: "Protein Science",
     type: "Journal Article",
-    topics: ["Cancer Genomics & Immunology"],
-    keywords: ["TCGA", "immune subtypes", "bulk RNA-seq", "single-cell RNA-seq", "smoking"],
+    topics: ["Structural Bioinformatics & Drug Discovery"],
+    keywords: ["MPro", "docking", "Enamine REAL", "inhibitors", "crystallography"],
     links: [
-      { label: "PDF (local)", href: "papers/Archives_Biochem_Biophys_2023_smoking_gender_TME.pdf" }
+      { label: "PDF (local)", href: "papers/PRO-32-e4712.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1002/pro.4712" }
     ]
   },
   {
-    year: 2014,
-    title: "Prediction of Potential Cancer-Risk Regions Based on Transcriptome Data: Towards a Comprehensive View",
-    authors: "Arghavan Alisoltani; Hossein Fallahi; Mahdi Ebrahimi; Mansour Ebrahimi; Esmaeil Ebrahimie",
-    venue: "PLOS ONE",
+    id: "archmicrobiol-2018-cochliobolus",
+    year: 2018,
+    title: "Global invasive Cochliobolus species: cohort of destroyers with implications in food losses and insecurity in the twenty-first century",
+    authors: "Louis Bengyella; Elsie Laban Yekwa; Kiran Nawaz; Sehrish Iftikhar; Ernest Tambo; Arghavan Alisoltani; Naser Aliye Feto; Pranab Roy",
+    venue: "Archives of Microbiology",
     type: "Journal Article",
-    topics: ["Cancer Genomics & Immunology", "Computational Genomics / Methods"],
-    keywords: ["microarray", "risk regions", "mRNA", "miRNA", "networks"],
+    topics: ["Plant Genomics & Stress Biology"],
+    keywords: ["Cochliobolus", "plant pathology", "food security", "epidemics", "phylogeny"],
     links: [
-      { label: "PDF (local)", href: "papers/PLOS_ONE_2014_cancer_risk_regions.pdf" }
+      { label: "PDF (local)", href: "papers/s00203-017-1426-6.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1007/s00203-017-1426-6" }
     ]
   },
   {
+    id: "tgg-2015-almond-grn-frost",
     year: 2015,
-    title: "RNA-Seq SSRs and small RNA-Seq SSRs: New approaches in cancer biomarker discovery",
-    authors: "Arghavan Alisoltani; Hossein Fallahi; Behrouz Shiran; Anousheh Alisoltani; Esmaeil Ebrahimie",
-    venue: "Gene",
+    title: "Gene regulatory network in almond (Prunus dulcis Mill.) in response to frost stress",
+    authors: "Arghavan Alisoltani; Behrouz Shiran; Hossein Fallahi; Esmaeil Ebrahimie",
+    venue: "Tree Genetics & Genomes",
     type: "Journal Article",
-    topics: ["Cancer Genomics & Immunology", "Computational Genomics / Methods"],
-    keywords: ["RNA-seq", "small RNA-seq", "SSRs", "biomarkers", "pancreatic cancer"],
+    topics: ["Plant Genomics & Stress Biology", "Computational Genomics & Software"],
+    keywords: ["gene regulatory network", "frost stress", "CBF/DREB", "miRNA"],
     links: [
-      { label: "PDF (local)", href: "papers/Gene_2015_RNAseq_SSR_biomarkers.pdf" }
+      { label: "PDF (local)", href: "papers/s11295-015-0929-z.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1007/s11295-015-0929-z" }
     ]
   },
   {
-    year: 2023,
-    title: "Systems analysis reveals differential expression of endocervical genes in African women randomized to DMPA-IM, LNG implant or cu-IUD",
-    authors: "Prachi Mehrotra Gupta; Christina Balle; ...; Arghavan Alisoltani; ...; Steven E. Bosinger",
-    venue: "Clinical Immunology",
+    id: "foliamicrobiol-2021-berg-river",
+    year: 2021,
+    title: "Investigation into the bacterial diversity of sediment samples obtained from Berg River, Western Cape, South Africa",
+    authors: "Oluwadara Alegbeleye; Arghavan Alisoltani; Akebe Luther King Abia; Adetunji Ajibola Awe; Adewole Tomiwa Adetunji; Saidat Rabiu; Beatrice Olutoyin Opeolu",
+    venue: "Folia Microbiologica",
     type: "Journal Article",
-    topics: ["Cancer Genomics & Immunology", "Human Immunology & Transcriptomics"],
-    keywords: ["FGT", "RNA-seq", "contraception", "mucosa", "ECHO trial"],
+    topics: ["Microbial Genomics & Metagenomics", "Public Health & Molecular Epidemiology"],
+    keywords: ["16S", "sediment", "Berg River", "pathogens", "functional profiling"],
     links: [
-      { label: "PDF (local)", href: "papers/Clinical_Immunology_2023_ECHO_endocervix_transcriptome.pdf" }
+      { label: "PDF (local)", href: "papers/s12223-021-00893-x.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1007/s12223-021-00893-x" }
+    ]
+  },
+  {
+    id: "virolj-2023-delta-omicron-superinfection",
+    year: 2023,
+    title: "Resurgence of SARS-CoV-2 Delta after Omicron variant superinfection in an immunocompromised pediatric patient",
+    authors: "Arghavan Alisoltani; Lacy M. Simons; Maria Francesca Reyes Agnes; Taylor A. Heald-Sargent; William J. Muller; Larry K. Kociolek; Judd F. Hultquist; Ramon Lorenzo-Redondo; Egon A. Ozer",
+    venue: "Virology Journal",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance"],
+    keywords: ["superinfection", "Delta", "Omicron", "pediatric", "longitudinal WGS"],
+    links: [
+      { label: "PDF (local)", href: "papers/s12985-023-02186-w.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1186/s12985-023-02186-w" }
+    ]
+  },
+  {
+    id: "microbiome-2020-fgt-function-inflammation",
+    year: 2020,
+    title: "Microbial function and genital inflammation in young South African women at high risk of HIV infection",
+    authors: "Arghavan Alisoltani; Monalisa T. Manhanzva; Matthys Potgieter; Christina Balle; ...; Jo-Ann S. Passmore; Lindi Masson",
+    venue: "Microbiome",
+    type: "Journal Article",
+    topics: ["Human Microbiome, HIV & Mucosal Immunology", "Microbial Genomics & Metagenomics"],
+    keywords: ["metaproteomics", "FGT", "inflammation", "HIV risk", "FGT-DB"],
+    links: [
+      { label: "PDF (local)", href: "papers/s40168-020-00932-8.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1186/s40168-020-00932-8" },
+      { label: "Tool: FGT-DB", href: "http://fgtdb.org/" }
+    ]
+  },
+  {
+    id: "microbiome-2022-lactic-acid-barrier",
+    year: 2022,
+    title: "Lactic acid from vaginal microbiota enhances cervicovaginal epithelial barrier integrity by promoting tight junction protein expression",
+    authors: "David Jose Delgado-Diaz; Brianna Jesaveluk; Joshua A. Hayward; ...; Arghavan Alisoltani; ...; Gilda Tachedjian",
+    venue: "Microbiome",
+    type: "Journal Article",
+    topics: ["Human Microbiome, HIV & Mucosal Immunology"],
+    keywords: ["lactic acid", "tight junctions", "metaproteomics", "epithelial barrier"],
+    links: [
+      { label: "PDF (local)", href: "papers/s40168-022-01337-5.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1186/s40168-022-01337-5" }
+    ]
+  },
+  {
+    id: "microbiome-2025-fgt-mycobiome-metaproteomics",
+    year: 2025,
+    title: "Exploring the female genital tract mycobiome in young South African women using metaproteomics",
+    authors: "Tamlyn K. Gangiah; Arghavan Alisoltani; Matthys Potgieter; ...; Nicola Mulder; Lindi Masson",
+    venue: "Microbiome",
+    type: "Journal Article",
+    topics: ["Human Microbiome, HIV & Mucosal Immunology", "Microbial Genomics & Metagenomics"],
+    keywords: ["mycobiome", "fungi", "metaproteomics", "BV", "Candida"],
+    links: [
+      { label: "PDF (local)", href: "papers/s40168-025-02066-1.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1186/s40168-025-02066-1" }
+    ]
+  },
+  {
+    id: "natcomms-2024-rsv-epidemiology",
+    year: 2024,
+    title: "Deviations in RSV epidemiological patterns and population structures in the United States following the COVID-19 pandemic",
+    authors: "Estefany Rios-Guzman; Lacy M. Simons; Taylor J. Dean; Francesca Agnes; ...; Arghavan Alisoltanidehkordi; ...; Judd F. Hultquist",
+    venue: "Nature Communications",
+    type: "Journal Article",
+    topics: ["Public Health & Molecular Epidemiology", "Viral Genomics & Surveillance"],
+    keywords: ["RSV", "seasonality", "genetic diversity", "Chicago", "surveillance"],
+    links: [
+      { label: "PDF (local)", href: "papers/s41467-024-47757-9.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1038/s41467-024-47757-9" }
+    ]
+  },
+  {
+    id: "nature-2021-b1351-detection",
+    year: 2021,
+    title: "Detection of a SARS-CoV-2 variant of concern in South Africa",
+    authors: "Houriiyah Tegally; Eduan Wilkinson; Marta Giovanetti; Arash Iranzadeh; ...; Arghavan Alisoltani-Dehkordi; ...; Tulio de Oliveira",
+    venue: "Nature",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance", "Public Health & Molecular Epidemiology"],
+    keywords: ["B.1.351", "501Y.V2", "South Africa", "genomic surveillance"],
+    links: [
+      { label: "PDF (local)", href: "papers/s41586-021-03402-9.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1038/s41586-021-03402-9" }
+    ]
+  },
+  {
+    id: "nature-2022-save-risk-assessment",
+    year: 2022,
+    title: "Defining the risk of SARS-CoV-2 variants on immune protection",
+    authors: "Marciela M. DeGrace; Elodie Ghedin; Matthew B. Frieman; Florian Krammer; Alba Grifoni; Arghavan Alisoltani; ... (SAVE Consortium)",
+    venue: "Nature",
+    type: "Perspective",
+    topics: ["Public Health & Molecular Epidemiology", "Viral Genomics & Surveillance"],
+    keywords: ["SAVE", "risk assessment", "variants", "neutralization", "T cells"],
+    links: [
+      { label: "PDF (local)", href: "papers/s41586-022-04690-5.pdf" },
+      { label: "DOI", href: "https://doi.org/10.1038/s41586-022-04690-5" }
+    ]
+  },
+  {
+    id: "viruses-2022-viralvar",
+    year: 2022,
+    title: "ViralVar: A Web Tool for Multilevel Visualization of SARS-CoV-2 Genomes",
+    authors: "Arghavan Alisoltani; Lukasz Jaroszewski; Adam Godzik; Arash Iranzadeh; Lacy M. Simons; Taylor J. Dean; Ramon Lorenzo-Redondo; Judd F. Hultquist; Egon A. Ozer",
+    venue: "Viruses",
+    type: "Journal Article",
+    topics: ["Computational Genomics & Software", "Viral Genomics & Surveillance"],
+    keywords: ["web tool", "visualization", "GISAID", "lineage dynamics", "mutation analysis"],
+    links: [
+      { label: "PDF (local)", href: "papers/viruses-14-02714-v2.pdf" },
+      { label: "DOI", href: "https://doi.org/10.3390/v14122714" },
+      { label: "Tool: ViralVar", href: "http://viralvar.org/" }
+    ]
+  },
+  {
+    id: "viruses-2025-pediatric-persistent",
+    year: 2025,
+    title: "Intra-Host Evolution of SARS-CoV-2 During Persistent Infection of Pediatric COVID-19 Patients",
+    authors: "Charlie R. Boyle; Tien Doan; Estefany Rios-Guzman; Jessica Maciuch; Lacy M. Simons; Dulce S. Garcia; David B. Williams; Arghavan Alisoltani; Egon A. Ozer; Ramon Lorenzo-Redondo; Judd F. Hultquist",
+    venue: "Viruses",
+    type: "Journal Article",
+    topics: ["Viral Genomics & Surveillance"],
+    keywords: ["persistent infection", "pediatric", "intra-host evolution", "longitudinal sequencing"],
+    links: [
+      { label: "PDF (local)", href: "papers/viruses-17-01313.pdf" },
+      { label: "DOI", href: "https://doi.org/10.3390/v17101313" }
     ]
   },
 
-  // --- Viral genomics / structural bioinformatics ---
+  /* ===========================
+   * EXISTING ENTRIES (kept from your prior page; topics standardized)
+   * =========================== */
+
   {
-    year: 2020,
-    title: "Coronavirus3D: 3D structural visualization of COVID-19 genomic divergence",
-    authors: "Mayya Sedova; Lukasz Jaroszewski; Arghavan Alisoltani; Adam Godzik",
-    venue: "Bioinformatics",
-    type: "Application Note",
-    topics: ["Viral Genomics & Structural Bioinformatics", "Software / Web Tools"],
-    keywords: ["SARS-CoV-2", "3D structures", "mutations", "visualization"],
-    links: [
-      { label: "PDF (local)", href: "papers/Bioinformatics_2020_Coronavirus3D.pdf" },
-      { label: "Website", href: "https://coronavirus3d.org" }
-    ]
-  },
-  {
+    id: "frontgenet-2022-indels-hvr",
     year: 2022,
     title: "Increased Frequency of Indels in Hypervariable Regions of SARS-CoV-2 Proteins—A Possible Signature of Adaptive Selection",
     authors: "Arghavan Alisoltani; Lukasz Jaroszewski; Mallika Iyer; Arash Iranzadeh; Adam Godzik",
     venue: "Frontiers in Genetics",
     type: "Journal Article",
-    topics: ["Viral Genomics & Structural Bioinformatics", "Computational Genomics / Methods"],
-    keywords: ["indels", "variants of concern", "hypervariable regions", "immune escape"],
+    topics: ["Viral Genomics & Surveillance", "Structural Bioinformatics & Drug Discovery"],
+    keywords: ["indels", "hypervariable regions", "adaptive selection", "SARS-CoV-2"],
     links: [
-      { label: "PDF (local)", href: "papers/Frontiers_Genetics_2022_SARSCoV2_indels_HVR.pdf" }
-    ]
-  },
-  {
-    year: 2023,
-    title: "US National Institutes of Health Prioritization of SARS-CoV-2 Variants",
-    authors: "Sam Turner; Arghavan Alisoltani; ...; Derek J. Smith",
-    venue: "Emerging Infectious Diseases (CDC)",
-    type: "Online Report",
-    topics: ["Viral Genomics & Structural Bioinformatics", "Public Health Genomics"],
-    keywords: ["variant prioritization", "surveillance", "phenotypic testing", "NIH SAVE"],
-    links: [
-      { label: "PDF (local)", href: "papers/EID_2023_NIH_prioritization_variants.pdf" }
+      { label: "PDF (local)", href: "papers/fgene-13-875406.pdf" },
+      { label: "DOI", href: "https://doi.org/10.3389/fgene.2022.875406" }
     ]
   },
 
-  // --- Microbial metagenomics / environment ---
+  // Example older publication already on your page (you can keep adding more)
   {
-    year: 2018,
-    title: "Metagenomic analysis of the bacterial communities and their functional profiles in water and sediments of the Apies River, South Africa, as a function of land use",
-    authors: "Akebe Luther King Abia; Arghavan Alisoltani; Jitendra Keshri; Eunice Ubomba-Jaswa",
-    venue: "Science of the Total Environment",
-    type: "Journal Article",
-    topics: ["Microbial Genomics & Metagenomics"],
-    keywords: ["16S", "river", "sediment", "land use", "PICRUSt"],
-    links: [
-      { label: "PDF (local)", href: "papers/STOTEN_2018_Apies_River_metagenomics.pdf" }
-    ]
-  },
-  {
-    year: 2019,
-    title: "Microbial life beyond the grave: 16S rRNA gene-based metagenomic analysis of bacteria diversity and their functional profiles in cemetery environments",
-    authors: "Akebe Luther King Abia; Arghavan Alisoltani; Eunice Ubomba-Jaswa; Matthys Alois Dippenaar",
-    venue: "Science of the Total Environment",
-    type: "Journal Article",
-    topics: ["Microbial Genomics & Metagenomics"],
-    keywords: ["16S", "cemetery soil", "functional profiles", "groundwater"],
-    links: [
-      { label: "PDF (local)", href: "papers/STOTEN_2019_cemetery_metagenomics.pdf" }
-    ]
-  },
-  {
-    year: 2020,
-    title: "Bacterial diversity and functional profile of microbial populations on surfaces in public hospital environments in South Africa: A high throughput metagenomic analysis",
-    authors: "Christiana Omowunmi Shobo; Arghavan Alisoltani; Akebe Luther King Abia; ...; Linda Antoinette Bester",
-    venue: "Science of the Total Environment",
-    type: "Journal Article",
-    topics: ["Microbial Genomics & Metagenomics", "Hospital & One Health Microbiology"],
-    keywords: ["hospital surfaces", "16S", "OTUs", "functional profiling", "antibiotic resistance"],
-    links: [
-      { label: "PDF (local)", href: "papers/STOTEN_2020_hospital_surfaces_metagenomics.pdf" }
-    ]
-  },
-  {
-    year: 2019,
-    title: "Shared Microbiome in Different Ecosystems: A Meta-Omics Perspective",
-    authors: "Arghavan Alisoltani; Akebe Luther King Abia; Linda Bester",
-    venue: "Book Chapter (Microbial Genomics in Sustainable Agroecosystems)",
-    type: "Book Chapter",
-    topics: ["Microbial Genomics & Metagenomics", "Review / Perspective"],
-    keywords: ["meta-omics", "MGnify", "core microbiome", "ecosystems"],
-    links: [
-      { label: "PDF (local)", href: "papers/Springer_2019_Shared_microbiome_metaomics_chapter.pdf" }
-    ]
-  },
-
-  // --- Bacterial pathogenesis / AMR ---
-  {
-    year: 2023,
-    title: "Genomics of Aminoglycoside Resistance in Pseudomonas aeruginosa Bloodstream Infections at a United States Academic Hospital",
-    authors: "Giancarlo Atassi; Rachel Medernach; ...; Arghavan Alisoltani; ...; Alan R. Hauser",
-    venue: "Microbiology Spectrum",
-    type: "Journal Article",
-    topics: ["Bacterial Pathogenesis & AMR"],
-    keywords: ["Pseudomonas aeruginosa", "aminoglycosides", "AME genes", "mexZ", "armZ"],
-    links: [
-      { label: "PDF (local)", href: "papers/Spectrum_2023_Pa_aminoglycoside_resistance.pdf" }
-    ]
-  },
-  {
-    year: 2023,
-    title: "Genome-wide screens reveal shared and strain-specific genes that facilitate enteric colonization by Klebsiella pneumoniae",
-    authors: "Bettina H. Cheung; Arghavan Alisoltani; ...; Alan R. Hauser",
-    venue: "mBio",
-    type: "Journal Article",
-    topics: ["Bacterial Pathogenesis & AMR"],
-    keywords: ["Klebsiella pneumoniae", "Tn-Seq", "colonization", "acrA", "bile tolerance"],
-    links: [
-      { label: "PDF (local)", href: "papers/mBio_2023_Kp_GI_colonization_TnSeq.pdf" }
-    ]
-  },
-  {
-    year: 2025,
-    title: "Cytotoxicity and Virulence Attributes of Pseudomonas Aeruginosa Isolates From Patients With Necrotizing Pneumonia (Abstract)",
-    authors: "T. C. Bolig; ...; A. Alisoltanidehkordi; ...; A. R. Hauser",
-    venue: "American Journal of Respiratory and Critical Care Medicine (Abstracts Supplement)",
-    type: "Conference Abstract",
-    topics: ["Bacterial Pathogenesis & AMR", "Conference / Abstracts"],
-    keywords: ["necrotizing pneumonia", "exoU", "cytotoxicity", "virulence"],
-    links: [
-      { label: "PDF (local)", href: "papers/AJRCCM_2025_Abstract_A4515_PA_necrotizing_pneumonia.pdf" }
-    ]
-  },
-
-  // --- Plant genomics / abiotic stress ---
-  {
+    id: "plosone-2014-cancer-risk-regions",
     year: 2014,
-    title: "De Novo Transcriptome Assembly and Comparative Analysis of Differentially Expressed Genes in Prunus dulcis Mill. in Response to Freezing Stress",
-    authors: "Sadegh Mousavi; Arghavan Alisoltani; Behrouz Shiran; Hossein Fallahi; Esmaeil Ebrahimie; Ali Imani; Saadollah Houshmand",
+    title: "Prediction of Potential Cancer-Risk Regions Based on Transcriptome Data: Towards a Comprehensive View",
+    authors: "Arghavan Alisoltani; Hossein Fallahi; Mahdi Ebrahimi; Mansour Ebrahimi; Esmaeil Ebrahimie",
     venue: "PLOS ONE",
     type: "Journal Article",
-    topics: ["Plant Genomics & Abiotic Stress"],
-    keywords: ["almond", "RNA-seq", "freezing stress", "DE genes", "Rosaceae"],
+    topics: ["Cancer Genomics & Transcriptomics", "Computational Genomics & Software"],
+    keywords: ["transcriptome", "risk regions", "mRNA", "miRNA", "networks"],
     links: [
-      { label: "PDF (local)", href: "papers/PLOS_ONE_2014_almond_freezing_transcriptome.pdf" }
-    ]
-  },
-  {
-    year: 2016,
-    title: "Parallel consideration of SSRs and differentially expressed genes under abiotic stress for targeted development of functional markers in almond and related Prunus species",
-    authors: "Arghavan Alisoltani; Shekoufeh Ebrahimi; Sahar Azarian; Mahsa Hematyar; Behrouz Shiran; ...",
-    venue: "Scientia Horticulturae",
-    type: "Journal Article",
-    topics: ["Plant Genomics & Abiotic Stress", "Computational Genomics / Methods"],
-    keywords: ["RNA-Seq SSR", "functional markers", "frost stress", "Prunus"],
-    links: [
-      { label: "PDF (local)", href: "papers/ScientiaHort_2016_RNASeqSSR_almond_markers.pdf" }
-    ]
-  },
-  {
-    year: 2013,
-    title: "Genetic diversity among and within Iranian and non-Iranian barley genotypes using SSR and storage proteins markers",
-    authors: "Shahab Hajmansoor; Mohamad Reza Bihamta; Arghavan Alisoltani",
-    venue: "Biochemical Systematics and Ecology",
-    type: "Journal Article",
-    topics: ["Plant Genomics & Abiotic Stress"],
-    keywords: ["barley", "SSR", "hordeins", "drought", "MAS"],
-    links: [
-      { label: "PDF (local)", href: "papers/BiochemSysEcol_2013_barley_SSR_hordeins.pdf" }
-    ]
-  },
-  {
-    year: 2019,
-    title: "Molecular Responses to Cold Stress in Temperate Fruit Crops with Focus on Rosaceae Family (Chapter 7)",
-    authors: "Arghavan Alisoltani; Marziyeh Karimi; Rudabeh Ravash; Hossein Fallahi; Behrouz Shiran",
-    venue: "Book Chapter (Genomics Assisted Breeding of Crops for Abiotic Stress Tolerance, Vol. II)",
-    type: "Book Chapter",
-    topics: ["Plant Genomics & Abiotic Stress", "Review / Perspective"],
-    keywords: ["cold stress", "Rosaceae", "NGS", "signal transduction"],
-    links: [
-      { label: "PDF (local)", href: "papers/Springer_2019_Rosaceae_cold_stress_chapter.pdf" }
+      { label: "PDF (local)", href: "papers/1-s2.0-S1521661623005132-main.pdf" }
     ]
   }
 ];
 
 /**
  * ===========================
- * 2) RENDERING LOGIC
+ * 2) SANITIZE + DEDUP (topics/publications)
+ * ===========================
+ */
+function uniq(arr){ return Array.from(new Set(arr)); }
+function norm(s){ return (s || "").toString().toLowerCase(); }
+
+function slug(s){
+  return (s || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function canonicalId(p){
+  if(p && p.id) return String(p.id).trim();
+  return `${p.year || "na"}-${slug(p.title || "untitled")}`;
+}
+
+function sanitizePubs(list){
+  // dedup by canonical id
+  const byId = new Map();
+  for(const p of list){
+    const id = canonicalId(p);
+    if(!byId.has(id)) byId.set(id, p);
+  }
+  const deduped = Array.from(byId.values());
+
+  // sanitize fields
+  for(const p of deduped){
+    p.id = canonicalId(p);
+    p.topics = uniq((p.topics || []).map(t => (t||"").trim()).filter(Boolean));
+    p.keywords = uniq((p.keywords || []).map(k => (k||"").trim()).filter(Boolean));
+    p.links = (p.links || []).filter(L => L && L.href);
+  }
+  return deduped;
+}
+
+const PUBS = sanitizePubs(publications);
+
+/**
+ * ===========================
+ * 3) RENDERING LOGIC
  * ===========================
  */
 const els = {
@@ -611,14 +706,11 @@ const els = {
   navTopics: document.getElementById("navTopics"),
 };
 
-function uniq(arr){ return Array.from(new Set(arr)); }
-function norm(s){ return (s || "").toString().toLowerCase(); }
-
 function buildFilters(){
-  const allTopics = uniq(publications.flatMap(p => p.topics || [])).sort((a,b)=>a.localeCompare(b));
-  const allYears = uniq(publications.map(p => p.year).filter(Boolean)).sort((a,b)=>b-a);
+  const allTopics = uniq(PUBS.flatMap(p => p.topics || [])).sort((a,b)=>a.localeCompare(b));
+  const allYears = uniq(PUBS.map(p => p.year).filter(Boolean)).sort((a,b)=>b-a);
 
-  // Category options
+  // Category
   els.category.innerHTML = "";
   const optAll = document.createElement("option");
   optAll.value = "__all__";
@@ -631,7 +723,7 @@ function buildFilters(){
     els.category.appendChild(o);
   });
 
-  // Year options
+  // Year
   els.year.innerHTML = "";
   const yAll = document.createElement("option");
   yAll.value = "__all__";
@@ -644,7 +736,7 @@ function buildFilters(){
     els.year.appendChild(o);
   });
 
-  // Topic quick links
+  // Quick links
   els.navTopics.innerHTML = "";
   allTopics.forEach(t => {
     const a = document.createElement("a");
@@ -653,16 +745,6 @@ function buildFilters(){
     a.textContent = t;
     els.navTopics.appendChild(a);
   });
-}
-
-function slug(s){
-  return (s || "")
-    .toString()
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
 
 function applySort(list, mode){
@@ -688,36 +770,53 @@ function matchPub(p, q, topic, year){
   return hay.includes(qn);
 }
 
+function escapeHtml(s){
+  return (s||"")
+    .toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function formatCitation(p){
+  const authors = (p.authors || "").replaceAll(";", ",");
+  const year = p.year ? `(${p.year}). ` : "";
+  const title = p.title ? `${p.title}. ` : "";
+  const venue = p.venue ? `${p.venue}.` : "";
+  return `${authors}. ${year}${title}${venue}`.replace(/\s+/g," ").trim();
+}
+
 function render(){
   const q = els.q.value;
   const topic = els.category.value;
   const year = els.year.value;
   const sortMode = els.sort.value;
 
-  const filtered = publications.filter(p => matchPub(p, q, topic, year));
+  const filtered = PUBS.filter(p => matchPub(p, q, topic, year));
   const sorted = applySort(filtered, sortMode);
 
-  // Numbering is global across the filtered list
   els.countTag.textContent = `${sorted.length} item${sorted.length===1?"":"s"}`;
 
-  // Group by topic (each paper may appear in multiple topics)
+  // Group by topic (multi-topic papers appear in each relevant section)
   const topicMap = new Map();
   for(const p of sorted){
     const topics = (p.topics && p.topics.length) ? p.topics : ["Uncategorized"];
     for(const t of topics){
-      if(topic !== "__all__" && t !== topic) continue; // if a topic filter is selected
+      if(topic !== "__all__" && t !== topic) continue;
       if(!topicMap.has(t)) topicMap.set(t, []);
       topicMap.get(t).push(p);
     }
   }
 
-  // Render sections
+  // Render
   els.root.innerHTML = "";
   const topicsOrdered = Array.from(topicMap.keys()).sort((a,b)=>a.localeCompare(b));
 
-  // A running global index for numbering (P01, P02...)
-  const indexByObject = new Map();
-  sorted.forEach((p,i)=>indexByObject.set(p, i+1));
+  // Global numbering
+  const indexById = new Map();
+  sorted.forEach((p,i)=>indexById.set(p.id, i+1));
 
   topicsOrdered.forEach(t => {
     const sec = document.createElement("div");
@@ -741,11 +840,11 @@ function render(){
     const body = document.createElement("div");
     body.className = "section-body";
 
-    // Within each topic, sort papers by the selected mode too
     const papersHere = applySort(topicMap.get(t), sortMode);
 
     papersHere.forEach(p => {
-      const n = indexByObject.get(p);
+      const n = indexById.get(p.id);
+
       const card = document.createElement("div");
       card.className = "paper";
 
@@ -791,7 +890,6 @@ function render(){
         pills.appendChild(k);
       }
 
-      // Copy citation
       const citeBtn = document.createElement("a");
       citeBtn.className = "pill";
       citeBtn.href = "#";
@@ -830,25 +928,6 @@ function render(){
   }
 }
 
-function escapeHtml(s){
-  return (s||"")
-    .toString()
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function formatCitation(p){
-  // Simple APA-like stub (you can refine later)
-  const authors = (p.authors || "").replaceAll(";", ",");
-  const year = p.year ? `(${p.year}). ` : "";
-  const title = p.title ? `${p.title}. ` : "";
-  const venue = p.venue ? `${p.venue}.` : "";
-  return `${authors}. ${year}${title}${venue}`.replace(/\s+/g," ").trim();
-}
-
 function resetFilters(){
   els.q.value = "";
   els.category.value = "__all__";
@@ -859,12 +938,13 @@ function resetFilters(){
 
 function templateEntry(){
   return `{
+  id: "unique-short-id",
   year: 2026,
   title: "Your paper title here",
   authors: "First Author; Second Author; Arghavan Alisoltani; ...",
   venue: "Journal / Conference / Book",
   type: "Journal Article",
-  topics: ["Viral Genomics & Structural Bioinformatics"],
+  topics: ["Viral Genomics & Surveillance"],
   keywords: ["keyword1", "keyword2"],
   links: [
     { label: "PDF (local)", href: "papers/your_pdf_name.pdf" },
