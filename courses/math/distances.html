@@ -1056,34 +1056,6 @@ def plot_dist_matrix(D: np.ndarray, labels: list[str], title: str):
 import numpy as np
 import matplotlib.pyplot as plt
 
-x = np.array([1.0,2.0,3.0])
-y = np.array([2.0,0.0,4.0])
-
-d = np.linalg.norm(x-y)
-print("Euclidean distance:", d)
-
-X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
-labels2 = ["A","B","C","D"]
-
-D = np.zeros((len(X2), len(X2)))
-for i in range(len(X2)):
-    for j in range(len(X2)):
-        D[i,j] = np.linalg.norm(X2[i]-X2[j])
-
-plt.figure()
-plt.imshow(D, interpolation="nearest")
-plt.xticks(range(len(labels2)), labels2)
-plt.yticks(range(len(labels2)), labels2)
-plt.colorbar(label="distance")
-plt.title("Euclidean distance matrix")
-plt.tight_layout()
-plt.show()
-</script>
-
-<script type="text/plain" id="code-manhattan">
-import numpy as np
-import matplotlib.pyplot as plt
-
 # Create a 1D NumPy array called x
 # This represents one point (or vector) in 3-dimensional space
 x = np.array([1.0, 2.0, 3.0])
@@ -1161,6 +1133,34 @@ plt.title("Euclidean distance matrix")
 plt.tight_layout()
 
 # Display the figure
+plt.show()
+</script>
+
+<script type="text/plain" id="code-manhattan">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = np.sum(np.abs(x-y))
+print("Manhattan distance:", d)
+
+X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
+labels2 = ["A","B","C","D"]
+
+D = np.zeros((len(X2), len(X2)))
+for i in range(len(X2)):
+    for j in range(len(X2)):
+        D[i,j] = np.sum(np.abs(X2[i]-X2[j]))
+
+plt.figure()
+plt.imshow(D, interpolation="nearest")
+plt.xticks(range(len(labels2)), labels2)
+plt.yticks(range(len(labels2)), labels2)
+plt.colorbar(label="distance")
+plt.title("Manhattan distance matrix")
+plt.tight_layout()
 plt.show()
 </script>
 
