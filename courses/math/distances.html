@@ -1084,27 +1084,83 @@ plt.show()
 import numpy as np
 import matplotlib.pyplot as plt
 
-x = np.array([1.0,2.0,3.0])
-y = np.array([2.0,0.0,4.0])
+# Create a 1D NumPy array called x
+# This represents one point (or vector) in 3-dimensional space
+x = np.array([1.0, 2.0, 3.0])
 
-d = np.sum(np.abs(x-y))
-print("Manhattan distance:", d)
+# Create another 1D NumPy array called y
+# This is another point in the same 3-dimensional space
+y = np.array([2.0, 0.0, 4.0])
 
-X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
-labels2 = ["A","B","C","D"]
+# Compute the Euclidean distance between x and y
+# Step inside:
+#   x - y = [1-2, 2-0, 3-4] = [-1, 2, -1]
+#   Euclidean norm = sqrt((-1)^2 + 2^2 + (-1)^2)
+#                  = sqrt(1 + 4 + 1)
+#                  = sqrt(6)
+# np.linalg.norm(...) by default computes the L2 norm
+d = np.linalg.norm(x - y)
 
+# Print the computed distance
+print("Euclidean distance:", d)
+
+# Create a small dataset with 4 points in 2D space
+# Each row is one sample / point
+# A = (0,0)
+# B = (1,0)
+# C = (3,4)
+# D = (3,3)
+X2 = np.array([
+    [0., 0.],
+    [1., 0.],
+    [3., 4.],
+    [3., 3.]
+])
+
+# Labels for the four points
+# These will be used on the heatmap axes
+labels2 = ["A", "B", "C", "D"]
+
+# Create an empty 4x4 matrix filled with zeros
+# This will store pairwise distances between all points
+# D[i, j] means distance from point i to point j
 D = np.zeros((len(X2), len(X2)))
-for i in range(len(X2)):
-    for j in range(len(X2)):
-        D[i,j] = np.sum(np.abs(X2[i]-X2[j]))
 
+# Loop over each point i
+for i in range(len(X2)):
+    # Loop over each point j
+    for j in range(len(X2)):
+        # Compute Euclidean distance between point i and point j
+        # X2[i] is the i-th row (point)
+        # X2[j] is the j-th row (point)
+        # Their difference is a vector, and norm gives its length
+        D[i, j] = np.linalg.norm(X2[i] - X2[j])
+
+# Create a new figure for plotting
 plt.figure()
+
+# Display the distance matrix as an image (heatmap-style)
+# Each cell color represents the numeric distance value
+# interpolation="nearest" avoids smoothing between cells
 plt.imshow(D, interpolation="nearest")
+
+# Set x-axis tick positions and labels
+# range(len(labels2)) gives positions [0,1,2,3]
 plt.xticks(range(len(labels2)), labels2)
+
+# Set y-axis tick positions and labels
 plt.yticks(range(len(labels2)), labels2)
+
+# Add a color bar so we can map colors to distance values
 plt.colorbar(label="distance")
-plt.title("Manhattan distance matrix")
+
+# Add a title to the plot
+plt.title("Euclidean distance matrix")
+
+# Automatically adjust spacing so labels and title fit well
 plt.tight_layout()
+
+# Display the figure
 plt.show()
 </script>
 
