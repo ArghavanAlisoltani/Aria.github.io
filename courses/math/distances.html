@@ -1,0 +1,1694 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>20 Distance Methods — Math + Numerical Examples + Python + Plots</title>
+  <meta name="description" content="A GitHub Pages-ready mini course explaining 20 distance methods with mathematical definitions, numerical examples, Python code, and matplotlib plots for each method." />
+
+  <!-- MathJax for formulas -->
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111a33;
+      --panel2:#0f1730;
+      --text:#e9eefc;
+      --muted:#aab6e8;
+      --accent:#7aa2ff;
+      --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1280px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1150px;}
+    .kicker{
+      color:var(--accent2);
+      font-weight:900;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-top:12px;
+    }
+    .top-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .search-wrap{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex:1;
+      min-width:260px;
+    }
+    input[type="search"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1280px;
+      margin:0 auto;
+      padding: 0 18px 48px;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+    }
+    nav{
+      position:sticky;
+      top:14px;
+      align-self:start;
+      height: calc(100vh - 28px);
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: rgba(17,26,51,.55);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    nav h2{
+      font-size:13px;
+      margin:6px 8px 10px;
+      color:var(--muted);
+      letter-spacing:.4px;
+      text-transform:uppercase;
+    }
+    .toc a{
+      display:block;
+      padding:8px 10px;
+      border-radius:12px;
+      color:var(--text);
+      border:1px solid transparent;
+      font-size: 14px;
+      line-height:1.35;
+    }
+    .toc a:hover{
+      background: rgba(255,255,255,.06);
+      border-color: var(--border);
+      text-decoration:none;
+    }
+
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: rgba(17,26,51,.45);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background: rgba(15,23,48,.55);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:4px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{
+      padding:14px 16px 16px;
+      color:var(--text);
+      line-height:1.65;
+      font-size:14.5px;
+    }
+    .muted{color:var(--muted)}
+    .small{font-size:13px}
+
+    details{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:10px 12px;
+      margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      color:var(--text);
+      list-style:none;
+      user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+
+    .eq{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .codeblock pre{
+      margin:10px 0 0;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.32);
+      overflow:auto;
+      padding: 14px 12px 12px;
+      position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono);
+      font-size: 12.6px;
+      line-height: 1.55;
+      white-space: pre;
+      display:block;
+    }
+    .copy-btn{
+      position:absolute;
+      top:10px;
+      right:10px;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+      user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+
+    .warn{
+      border-left: 4px solid rgba(255, 180, 90, .9);
+      padding: 10px 12px;
+      background: rgba(255, 180, 90, .08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid rgba(112,255,209,.9);
+      padding: 10px 12px;
+      background: rgba(112,255,209,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.18);
+      margin-top:10px;
+    }
+    th, td{
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--border);
+      vertical-align:top;
+      font-size:13.5px;
+      line-height:1.45;
+    }
+    th{
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    tr:last-child td{border-bottom:none}
+
+    @media (max-width: 1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>20 Distance Methods</h1>
+    <p class="subtitle">
+      A compact course explaining <b>20 different distance (and distance-like) methods</b> with:
+      (1) mathematical definition, (2) a small numerical example, (3) Python code, and (4) a Matplotlib plot snippet.
+      Designed for GitHub Pages as a single <code>index.html</code>.
+    </p>
+
+    <div class="kicker">Important notes</div>
+    <p class="subtitle">
+      Some measures are true <b>metrics</b> (satisfy triangle inequality), others are <b>distance-like divergences</b>
+      (useful but not metrics). Each section states what it is used for.
+    </p>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter (e.g., 'Mahalanobis', 'Jaccard', 'DTW', 'Wasserstein', 'Jensen-Shannon')…" />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#dataset">0) Shared example datasets</a>
+      <a href="#d01">1) Euclidean (L2)</a>
+      <a href="#d02">2) Manhattan (L1)</a>
+      <a href="#d03">3) Chebyshev (L∞)</a>
+      <a href="#d04">4) Minkowski (p=3)</a>
+      <a href="#d05">5) Mahalanobis</a>
+      <a href="#d06">6) Cosine distance</a>
+      <a href="#d07">7) Pearson correlation distance</a>
+      <a href="#d08">8) Spearman correlation distance</a>
+      <a href="#d09">9) Hamming (binary/strings)</a>
+      <a href="#d10">10) Jaccard (binary sets)</a>
+      <a href="#d11">11) Dice/Sørensen</a>
+      <a href="#d12">12) Bray–Curtis</a>
+      <a href="#d13">13) Canberra</a>
+      <a href="#d14">14) Chi-square distance</a>
+      <a href="#d15">15) Hellinger distance</a>
+      <a href="#d16">16) Jensen–Shannon distance</a>
+      <a href="#d17">17) Bhattacharyya distance</a>
+      <a href="#d18">18) Wasserstein (Earth Mover, 1D)</a>
+      <a href="#d19">19) Dynamic Time Warping (DTW)</a>
+      <a href="#d20">20) Levenshtein edit distance</a>
+      <a href="#appendix">Appendix: one shared plotting helper</a>
+    </div>
+  </nav>
+
+  <section class="content">
+
+    <article class="card topic" id="dataset" data-keywords="dataset examples vectors distributions binary time series strings">
+      <div class="card-header">
+        <h2 class="card-title">0) Shared example datasets</h2>
+        <span class="tag">Re-used across methods</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          To keep examples consistent, most vector distances reuse the same two vectors:
+          \(\mathbf{x}=(1,2,3)\) and \(\mathbf{y}=(2,0,4)\).
+          Some methods require special inputs (binary vectors, probability distributions, time series, strings).
+        </p>
+
+        <details open>
+          <summary>Python: define shared inputs</summary>
+          <div class="codeblock" data-src="code-shared" data-lang="python"></div>
+        </details>
+
+        <div class="ok">
+          You can paste any method section into a notebook. Each code block is self-contained (imports included).
+        </div>
+      </div>
+    </article>
+
+    <!-- 1 Euclidean -->
+    <article class="card topic" id="d01" data-keywords="euclidean l2 norm metric">
+      <div class="card-header">
+        <h2 class="card-title">1) Euclidean distance (L2)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_2(\mathbf{x},\mathbf{y})=\|\mathbf{x}-\mathbf{y}\|_2=\sqrt{\sum_{i=1}^n (x_i-y_i)^2}
+          \]
+        </div>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="eq">
+            \[
+              \mathbf{x}-\mathbf{y}=(1-2,\ 2-0,\ 3-4)=(-1,2,-1)
+            \]
+            \[
+              d_2=\sqrt{(-1)^2+2^2+(-1)^2}=\sqrt{1+4+1}=\sqrt{6}\approx 2.449
+            \]
+          </div>
+        </details>
+
+        <details open>
+          <summary>Python + plot (distance matrix heatmap)</summary>
+          <div class="codeblock" data-src="code-euclidean" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 2 Manhattan -->
+    <article class="card topic" id="d02" data-keywords="manhattan l1 metric taxicab">
+      <div class="card-header">
+        <h2 class="card-title">2) Manhattan distance (L1)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_1(\mathbf{x},\mathbf{y})=\|\mathbf{x}-\mathbf{y}\|_1=\sum_{i=1}^n |x_i-y_i|
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="eq">
+            \[
+              d_1=|1-2|+|2-0|+|3-4|=1+2+1=4
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-manhattan" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 3 Chebyshev -->
+    <article class="card topic" id="d03" data-keywords="chebyshev linf metric maximum">
+      <div class="card-header">
+        <h2 class="card-title">3) Chebyshev distance (L∞)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_\infty(\mathbf{x},\mathbf{y})=\max_i |x_i-y_i|
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="eq">
+            \[
+              |x-y|=(1,2,1)\Rightarrow d_\infty=\max(1,2,1)=2
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-chebyshev" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 4 Minkowski p=3 -->
+    <article class="card topic" id="d04" data-keywords="minkowski p norm metric">
+      <div class="card-header">
+        <h2 class="card-title">4) Minkowski distance (p = 3)</h2>
+        <span class="tag">Metric (p ≥ 1)</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_p(\mathbf{x},\mathbf{y})=\left(\sum_i |x_i-y_i|^p\right)^{1/p}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (p=3)</summary>
+          <div class="eq">
+            \[
+              d_3=\left(|-1|^3+|2|^3+|-1|^3\right)^{1/3}
+              =(1+8+1)^{1/3}=10^{1/3}\approx 2.154
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-minkowski3" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 5 Mahalanobis -->
+    <article class="card topic" id="d05" data-keywords="mahalanobis covariance metric multivariate">
+      <div class="card-header">
+        <h2 class="card-title">5) Mahalanobis distance</h2>
+        <span class="tag">Metric (if Σ is PD)</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Mahalanobis accounts for feature scale and correlations using a covariance matrix \(\Sigma\).
+          Common in multivariate outlier detection and Gaussian models.
+        </p>
+        <div class="eq">
+          \[
+            d_M(\mathbf{x},\mathbf{y})=\sqrt{(\mathbf{x}-\mathbf{y})^T \Sigma^{-1} (\mathbf{x}-\mathbf{y})}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (simple diagonal Σ)</summary>
+          <p class="muted">
+            Let \(\Sigma=\mathrm{diag}(1,4,1)\Rightarrow \Sigma^{-1}=\mathrm{diag}(1,1/4,1)\).
+            For \(\Delta=(-1,2,-1)\):
+          </p>
+          <div class="eq">
+            \[
+              \Delta^T\Sigma^{-1}\Delta = (-1)^2\cdot 1 + 2^2\cdot\frac{1}{4} + (-1)^2\cdot 1
+              =1+1+1=3
+            \]
+            \[
+              d_M=\sqrt{3}\approx 1.732
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-mahalanobis" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 6 Cosine -->
+    <article class="card topic" id="d06" data-keywords="cosine distance angular similarity">
+      <div class="card-header">
+        <h2 class="card-title">6) Cosine distance</h2>
+        <span class="tag">Distance-like (metric variant exists)</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Cosine measures orientation difference rather than magnitude. Often used for TF-IDF vectors, embeddings,
+          gene expression signatures (after normalization).
+        </p>
+        <div class="eq">
+          \[
+            \mathrm{cos\_sim}(\mathbf{x},\mathbf{y})=\frac{\mathbf{x}^T\mathbf{y}}{\|\mathbf{x}\|\|\mathbf{y}\|},
+            \quad
+            d_{\cos}=1-\mathrm{cos\_sim}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="eq">
+            \[
+              \mathbf{x}^T\mathbf{y}=1\cdot2+2\cdot0+3\cdot4=14
+            \]
+            \[
+              \|\mathbf{x}\|=\sqrt{14},\ \|\mathbf{y}\|=\sqrt{20}
+              \Rightarrow \mathrm{cos\_sim}=\frac{14}{\sqrt{14}\sqrt{20}}=\frac{14}{\sqrt{280}}\approx 0.837
+            \]
+            \[
+              d_{\cos}\approx 1-0.837=0.163
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-cosine" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 7 Pearson correlation -->
+    <article class="card topic" id="d07" data-keywords="pearson correlation distance 1-corr">
+      <div class="card-header">
+        <h2 class="card-title">7) Pearson correlation distance</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            \rho(\mathbf{x},\mathbf{y})=\frac{\sum_i (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum_i(x_i-\bar{x})^2}\sqrt{\sum_i(y_i-\bar{y})^2}},
+            \quad d=1-\rho
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (brief)</summary>
+          <p class="muted">
+            Compute centered vectors \(\tilde{\mathbf{x}}=\mathbf{x}-\bar{x}\), \(\tilde{\mathbf{y}}=\mathbf{y}-\bar{y}\),
+            then cosine similarity of centered vectors equals Pearson correlation.
+          </p>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-pearson" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 8 Spearman -->
+    <article class="card topic" id="d08" data-keywords="spearman rank correlation distance">
+      <div class="card-header">
+        <h2 class="card-title">8) Spearman correlation distance (rank-based)</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Spearman is Pearson correlation applied to ranks. Robust to monotonic but nonlinear relationships.
+        </p>
+        <div class="eq">
+          \[
+            d = 1 - \rho(\mathrm{rank}(\mathbf{x}),\ \mathrm{rank}(\mathbf{y}))
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">Rank the entries of x and y, then compute Pearson correlation on ranks.</p>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-spearman" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 9 Hamming -->
+    <article class="card topic" id="d09" data-keywords="hamming distance binary strings mismatch">
+      <div class="card-header">
+        <h2 class="card-title">9) Hamming distance (binary vectors or equal-length strings)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_H(\mathbf{a},\mathbf{b})=\sum_i \mathbb{1}[a_i\ne b_i]
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (binary)</summary>
+          <div class="eq">
+            \[
+              \mathbf{a}=(1,0,1,1),\ \mathbf{b}=(1,1,0,1)
+              \Rightarrow d_H = 2
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-hamming" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 10 Jaccard -->
+    <article class="card topic" id="d10" data-keywords="jaccard distance binary sets intersection union">
+      <div class="card-header">
+        <h2 class="card-title">10) Jaccard distance (binary sets)</h2>
+        <span class="tag">Metric (for sets)</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            J(A,B)=\frac{|A\cap B|}{|A\cup B|},\quad d_J=1-J(A,B)
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">
+            Let \(A=\{1,3,4\}\), \(B=\{1,2,4\}\). Then \(|A\cap B|=2\), \(|A\cup B|=4\).
+          </p>
+          <div class="eq">
+            \[
+              J=2/4=0.5,\quad d_J=0.5
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-jaccard" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 11 Dice -->
+    <article class="card topic" id="d11" data-keywords="dice sorensen distance binary similarity">
+      <div class="card-header">
+        <h2 class="card-title">11) Dice / Sørensen distance</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            S(A,B)=\frac{2|A\cap B|}{|A|+|B|},\quad d=1-S(A,B)
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">With \(A=\{1,3,4\}\), \(B=\{1,2,4\}\): \(|A|=3,|B|=3,|A\cap B|=2\).</p>
+          <div class="eq">
+            \[
+              S=\frac{2\cdot 2}{3+3}=\frac{4}{6}=\frac{2}{3}\approx 0.667,\quad d\approx 0.333
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-dice" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 12 Bray-Curtis -->
+    <article class="card topic" id="d12" data-keywords="bray curtis distance ecology microbiome counts">
+      <div class="card-header">
+        <h2 class="card-title">12) Bray–Curtis distance (counts/composition)</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Common in ecology/microbiome for abundance vectors (nonnegative).
+        </p>
+        <div class="eq">
+          \[
+            d_{BC}(\mathbf{x},\mathbf{y})=
+            \frac{\sum_i |x_i-y_i|}{\sum_i (x_i+y_i)}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (nonnegative counts)</summary>
+          <p class="muted">Let \(\mathbf{x}=(1,2,3)\), \(\mathbf{y}=(2,0,4)\).</p>
+          <div class="eq">
+            \[
+              \sum|x_i-y_i|=4,\quad \sum(x_i+y_i)= (1+2)+(2+0)+(3+4)=12
+              \Rightarrow d_{BC}=4/12=0.333
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-braycurtis" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 13 Canberra -->
+    <article class="card topic" id="d13" data-keywords="canberra distance">
+      <div class="card-header">
+        <h2 class="card-title">13) Canberra distance</h2>
+        <span class="tag">Metric (for nonnegative with care)</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            d_{Can}(\mathbf{x},\mathbf{y})=\sum_i \frac{|x_i-y_i|}{|x_i|+|y_i|}
+          \]
+          (treat 0/0 terms as 0)
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="eq">
+            \[
+              \frac{|1-2|}{|1|+|2|}=\frac{1}{3},\quad
+              \frac{|2-0|}{|2|+|0|}=\frac{2}{2}=1,\quad
+              \frac{|3-4|}{|3|+|4|}=\frac{1}{7}
+            \]
+            \[
+              d_{Can}=\frac{1}{3}+1+\frac{1}{7}\approx 1.476
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-canberra" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 14 Chi-square -->
+    <article class="card topic" id="d14" data-keywords="chi-square distance histogram">
+      <div class="card-header">
+        <h2 class="card-title">14) Chi-square distance (histograms)</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Often used for comparing histograms (nonnegative). A common symmetric form:
+        </p>
+        <div class="eq">
+          \[
+            d_{\chi^2}(\mathbf{x},\mathbf{y})=
+            \frac{1}{2}\sum_i \frac{(x_i-y_i)^2}{x_i+y_i}
+          \]
+          (treat 0/0 as 0)
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">Using \(\mathbf{x}=(1,2,3)\), \(\mathbf{y}=(2,0,4)\):</p>
+          <div class="eq">
+            \[
+              \frac{1}{2}\left(
+              \frac{(-1)^2}{3}+\frac{(2)^2}{2}+\frac{(-1)^2}{7}
+              \right)
+              =\frac{1}{2}\left(\frac{1}{3}+2+\frac{1}{7}\right)\approx 1.238
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-chisq" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 15 Hellinger -->
+    <article class="card topic" id="d15" data-keywords="hellinger distance probability distributions">
+      <div class="card-header">
+        <h2 class="card-title">15) Hellinger distance (probability distributions)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            H(\mathbf{p},\mathbf{q})=\frac{1}{\sqrt{2}}\left\|\sqrt{\mathbf{p}}-\sqrt{\mathbf{q}}\right\|_2
+            =\sqrt{1-\sum_i \sqrt{p_i q_i}}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">Let \(p=(0.5,0.5)\), \(q=(0.9,0.1)\):</p>
+          <div class="eq">
+            \[
+              \sum \sqrt{p_i q_i}=\sqrt{0.45}+\sqrt{0.05}\approx 0.671+0.224=0.895
+            \]
+            \[
+              H=\sqrt{1-0.895}\approx 0.324
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot (bar charts for p and q)</summary>
+          <div class="codeblock" data-src="code-hellinger" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 16 Jensen-Shannon -->
+    <article class="card topic" id="d16" data-keywords="jensen shannon distance divergence probability">
+      <div class="card-header">
+        <h2 class="card-title">16) Jensen–Shannon distance (JS)</h2>
+        <span class="tag">Metric (sqrt(JS))</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          JS divergence is symmetric and finite (unlike KL). The <b>square root</b> of JS divergence is a metric.
+        </p>
+        <div class="eq">
+          \[
+            m=\frac{1}{2}(p+q),\quad
+            JS(p,q)=\frac{1}{2}KL(p\|m)+\frac{1}{2}KL(q\|m)
+          \]
+          \[
+            d_{JS}(p,q)=\sqrt{JS(p,q)}
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (concept)</summary>
+          <p class="muted">Use the same \(p=(0.5,0.5)\), \(q=(0.9,0.1)\); compute \(m=(0.7,0.3)\); then KL terms.</p>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-js" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 17 Bhattacharyya -->
+    <article class="card topic" id="d17" data-keywords="bhattacharyya distance coefficient probability">
+      <div class="card-header">
+        <h2 class="card-title">17) Bhattacharyya distance</h2>
+        <span class="tag">Distance-like</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            BC(p,q)=\sum_i \sqrt{p_i q_i},\quad
+            D_B(p,q)=-\ln(BC(p,q))
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">Using the previous coefficient \(BC\approx 0.895\):</p>
+          <div class="eq">
+            \[
+              D_B=-\ln(0.895)\approx 0.111
+            \]
+          </div>
+        </details>
+        <details open>
+          <summary>Python + plot</summary>
+          <div class="codeblock" data-src="code-bhatt" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 18 Wasserstein -->
+    <article class="card topic" id="d18" data-keywords="wasserstein earth mover distance emd 1d">
+      <div class="card-header">
+        <h2 class="card-title">18) Wasserstein-1 distance (Earth Mover, 1D)</h2>
+        <span class="tag">Metric (for distributions)</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          For 1D distributions, Wasserstein-1 equals the area between CDFs (intuitive “work” to move mass).
+        </p>
+        <div class="eq">
+          \[
+            W_1(P,Q)=\int_{-\infty}^{\infty} |F_P(t)-F_Q(t)|\,dt
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (discrete samples)</summary>
+          <p class="muted">Example: samples A=[0,1,2], B=[0,2,4] (same size). Compute with SciPy if available.</p>
+        </details>
+        <details open>
+          <summary>Python + plot (CDFs)</summary>
+          <div class="codeblock" data-src="code-wasserstein" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 19 DTW -->
+    <article class="card topic" id="d19" data-keywords="dtw dynamic time warping time series distance">
+      <div class="card-header">
+        <h2 class="card-title">19) Dynamic Time Warping (DTW)</h2>
+        <span class="tag">Distance-like (not a metric in general)</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          DTW aligns two sequences allowing “warping” in time. Very useful for signals with phase shifts.
+        </p>
+        <div class="eq">
+          \[
+            DTW(A,B)=\min_{\pi}\sum_{(i,j)\in \pi} |A_i-B_j|
+          \]
+          where \(\pi\) is a valid warping path.
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">A=[1,2,3,4], B=[1,1,2,3,4] → DTW can align repeated 1 in B with 1 in A.</p>
+        </details>
+        <details open>
+          <summary>Python + plot (cost matrix)</summary>
+          <div class="codeblock" data-src="code-dtw" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 20 Levenshtein -->
+    <article class="card topic" id="d20" data-keywords="levenshtein edit distance strings sequences">
+      <div class="card-header">
+        <h2 class="card-title">20) Levenshtein edit distance (strings)</h2>
+        <span class="tag">Metric</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Minimum number of single-character insertions, deletions, substitutions to transform one string into another.
+          Common for sequence strings (toy-scale), barcodes, and approximate matching.
+        </p>
+        <div class="eq">
+          \[
+            d_{Lev}(s,t)=\min \#(\text{ins, del, sub})
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">
+            s="GATTACA", t="GCATGCU" → distance can be computed by DP (classic example).
+          </p>
+        </details>
+        <details open>
+          <summary>Python + plot (DP table heatmap)</summary>
+          <div class="codeblock" data-src="code-lev" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- Appendix -->
+    <article class="card topic" id="appendix" data-keywords="appendix plotting helper heatmap">
+      <div class="card-header">
+        <h2 class="card-title">Appendix: a shared helper to plot distance matrices</h2>
+        <span class="tag">Reusable</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Matplotlib helper</summary>
+          <div class="codeblock" data-src="code-plot-helper" data-lang="python"></div>
+        </details>
+        <div class="ok">
+          Many sections reuse this helper: compute a distance matrix, then call <code>plot_dist_matrix(D, labels, title)</code>.
+        </div>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<!-- =========================
+     CODE SNIPPETS (RAW TEXT)
+========================= -->
+
+<script type="text/plain" id="code-shared">
+import numpy as np
+
+# Shared vectors for most vector distances
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([2.0, 0.0, 4.0])
+
+# Small dataset of 2D points for distance-matrix plots
+X2 = np.array([
+    [0.0, 0.0],
+    [1.0, 0.0],
+    [1.0, 1.0],
+    [2.0, 1.0],
+])
+
+labels2 = ["A","B","C","D"]
+
+# Binary example for set distances
+a_bin = np.array([1,0,1,1])
+b_bin = np.array([1,1,0,1])
+
+# Set example
+A_set = {1,3,4}
+B_set = {1,2,4}
+
+# Probability distributions (must sum to 1)
+p = np.array([0.5, 0.5])
+q = np.array([0.9, 0.1])
+
+# 1D samples for Wasserstein
+A = np.array([0.0, 1.0, 2.0])
+B = np.array([0.0, 2.0, 4.0])
+
+# Time series for DTW
+ts1 = np.array([1,2,3,4], dtype=float)
+ts2 = np.array([1,1,2,3,4], dtype=float)
+
+# Strings for Levenshtein
+s1 = "GATTACA"
+s2 = "GCATGCU"
+</script>
+
+<script type="text/plain" id="code-plot-helper">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_dist_matrix(D: np.ndarray, labels: list[str], title: str):
+    """Plot a distance matrix as a heatmap (no seaborn)."""
+    plt.figure()
+    plt.imshow(D, interpolation="nearest")
+    plt.xticks(range(len(labels)), labels)
+    plt.yticks(range(len(labels)), labels)
+    plt.colorbar(label="distance")
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
+</script>
+
+<script type="text/plain" id="code-euclidean">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = np.linalg.norm(x-y)
+print("Euclidean distance:", d)
+
+X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
+labels2 = ["A","B","C","D"]
+
+D = np.zeros((len(X2), len(X2)))
+for i in range(len(X2)):
+    for j in range(len(X2)):
+        D[i,j] = np.linalg.norm(X2[i]-X2[j])
+
+plt.figure()
+plt.imshow(D, interpolation="nearest")
+plt.xticks(range(len(labels2)), labels2)
+plt.yticks(range(len(labels2)), labels2)
+plt.colorbar(label="distance")
+plt.title("Euclidean distance matrix")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-manhattan">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = np.sum(np.abs(x-y))
+print("Manhattan distance:", d)
+
+X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
+labels2 = ["A","B","C","D"]
+
+D = np.zeros((len(X2), len(X2)))
+for i in range(len(X2)):
+    for j in range(len(X2)):
+        D[i,j] = np.sum(np.abs(X2[i]-X2[j]))
+
+plt.figure()
+plt.imshow(D, interpolation="nearest")
+plt.xticks(range(len(labels2)), labels2)
+plt.yticks(range(len(labels2)), labels2)
+plt.colorbar(label="distance")
+plt.title("Manhattan distance matrix")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-chebyshev">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = np.max(np.abs(x-y))
+print("Chebyshev distance:", d)
+
+X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
+labels2 = ["A","B","C","D"]
+
+D = np.zeros((len(X2), len(X2)))
+for i in range(len(X2)):
+    for j in range(len(X2)):
+        D[i,j] = np.max(np.abs(X2[i]-X2[j]))
+
+plt.figure()
+plt.imshow(D, interpolation="nearest")
+plt.xticks(range(len(labels2)), labels2)
+plt.yticks(range(len(labels2)), labels2)
+plt.colorbar(label="distance")
+plt.title("Chebyshev distance matrix")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-minkowski3">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def minkowski(x, y, p=3):
+    return np.sum(np.abs(x-y)**p)**(1/p)
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = minkowski(x,y,p=3)
+print("Minkowski(p=3) distance:", d)
+
+X2 = np.array([[0.,0.],[1.,0.],[1.,1.],[2.,1.]])
+labels2 = ["A","B","C","D"]
+
+D = np.zeros((len(X2), len(X2)))
+for i in range(len(X2)):
+    for j in range(len(X2)):
+        D[i,j] = minkowski(X2[i], X2[j], p=3)
+
+plt.figure()
+plt.imshow(D, interpolation="nearest")
+plt.xticks(range(len(labels2)), labels2)
+plt.yticks(range(len(labels2)), labels2)
+plt.colorbar(label="distance")
+plt.title("Minkowski(p=3) distance matrix")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-mahalanobis">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+Sigma = np.diag([1.0, 4.0, 1.0])        # example covariance
+Sinv = np.linalg.inv(Sigma)
+
+d = np.sqrt((x-y).T @ Sinv @ (x-y))
+print("Mahalanobis distance (diag Sigma):", d)
+
+# Plot: show scaling effect along axis 2 (variance=4 => less penalty)
+delta = x-y
+weights = np.diag(Sinv)
+contrib = (delta**2) * weights
+
+plt.figure()
+plt.bar(["dim1","dim2","dim3"], contrib)
+plt.ylabel("Contribution to squared Mahalanobis")
+plt.title("Mahalanobis contribution by dimension")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-cosine">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def cosine_distance(x,y):
+    x = np.asarray(x, float); y = np.asarray(y, float)
+    denom = (np.linalg.norm(x)*np.linalg.norm(y))
+    if denom == 0:
+        return 0.0
+    cos_sim = (x @ y) / denom
+    return 1.0 - cos_sim
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = cosine_distance(x,y)
+print("Cosine distance:", d)
+
+# Plot: visualize angle by plotting normalized vectors in 2D (first two dims)
+x2 = x[:2] / np.linalg.norm(x[:2])
+y2 = y[:2] / np.linalg.norm(y[:2])
+
+plt.figure()
+plt.quiver(0,0,x2[0],x2[1],angles="xy",scale_units="xy",scale=1,label="x")
+plt.quiver(0,0,y2[0],y2[1],angles="xy",scale_units="xy",scale=1,label="y")
+plt.xlim(-1,1); plt.ylim(-1,1)
+plt.axhline(0); plt.axvline(0)
+plt.title("Cosine relates to angle (2D projection)")
+plt.legend()
+plt.gca().set_aspect("equal", adjustable="box")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-pearson">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def pearson_corr(x,y):
+    x = np.asarray(x,float); y=np.asarray(y,float)
+    xc = x - x.mean()
+    yc = y - y.mean()
+    denom = np.linalg.norm(xc)*np.linalg.norm(yc)
+    if denom == 0:
+        return 0.0
+    return (xc @ yc) / denom
+
+def pearson_distance(x,y):
+    return 1.0 - pearson_corr(x,y)
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+rho = pearson_corr(x,y)
+d = pearson_distance(x,y)
+print("Pearson rho:", rho, "distance:", d)
+
+plt.figure()
+plt.scatter(x, y)
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Scatter: Pearson correlation")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-spearman">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def rankdata(v):
+    # simple ranking without tie handling (ok for toy example)
+    order = np.argsort(v)
+    ranks = np.empty_like(order, dtype=float)
+    ranks[order] = np.arange(1, len(v)+1)
+    return ranks
+
+def spearman_distance(x,y):
+    rx = rankdata(np.asarray(x,float))
+    ry = rankdata(np.asarray(y,float))
+    # Pearson on ranks
+    rx = rx - rx.mean()
+    ry = ry - ry.mean()
+    rho = (rx @ ry) / (np.linalg.norm(rx)*np.linalg.norm(ry))
+    return 1.0 - rho
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = spearman_distance(x,y)
+print("Spearman distance:", d)
+
+plt.figure()
+plt.scatter(rankdata(x), rankdata(y))
+plt.xlabel("rank(x)"); plt.ylabel("rank(y)")
+plt.title("Ranks for Spearman correlation")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-hamming">
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = np.array([1,0,1,1])
+b = np.array([1,1,0,1])
+
+d = int(np.sum(a != b))
+print("Hamming distance:", d)
+
+# Plot: mismatch positions
+mismatch = (a != b).astype(int)
+plt.figure()
+plt.stem(range(len(a)), mismatch, use_line_collection=True)
+plt.xlabel("position"); plt.ylabel("mismatch (1=yes)")
+plt.title("Hamming mismatches by position")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-jaccard">
+import numpy as np
+import matplotlib.pyplot as plt
+
+A = {1,3,4}
+B = {1,2,4}
+
+inter = len(A & B)
+union = len(A | B)
+j = inter / union
+d = 1 - j
+print("Jaccard similarity:", j, "distance:", d)
+
+# Plot: Venn-style counts (as bars)
+plt.figure()
+plt.bar(["|A∩B|","|A\\B|","|B\\A|"], [inter, len(A-B), len(B-A)])
+plt.title("Set overlap components")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-dice">
+import numpy as np
+import matplotlib.pyplot as plt
+
+A = {1,3,4}
+B = {1,2,4}
+
+inter = len(A & B)
+dice = (2*inter) / (len(A) + len(B))
+d = 1 - dice
+print("Dice similarity:", dice, "distance:", d)
+
+plt.figure()
+plt.bar(["Dice similarity","Dice distance"], [dice, d])
+plt.ylim(0,1)
+plt.title("Dice similarity vs distance")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-braycurtis">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+d = np.sum(np.abs(x-y)) / np.sum(x+y)
+print("Bray-Curtis distance:", d)
+
+plt.figure()
+plt.bar(["x1","x2","x3"], x, alpha=0.8, label="x")
+plt.bar(["x1","x2","x3"], y, alpha=0.8, label="y")
+plt.title("Bray-Curtis compares compositions")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-canberra">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+terms = []
+for xi, yi in zip(x,y):
+    denom = abs(xi) + abs(yi)
+    terms.append(0.0 if denom == 0 else abs(xi-yi)/denom)
+
+d = float(np.sum(terms))
+print("Canberra distance:", d, "terms:", terms)
+
+plt.figure()
+plt.bar(["dim1","dim2","dim3"], terms)
+plt.ylabel("term contribution")
+plt.title("Canberra: per-dimension contributions")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-chisq">
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([1.0,2.0,3.0])
+y = np.array([2.0,0.0,4.0])
+
+terms = []
+for xi, yi in zip(x,y):
+    denom = xi + yi
+    terms.append(0.0 if denom == 0 else (xi-yi)**2 / denom)
+
+d = 0.5 * float(np.sum(terms))
+print("Chi-square distance:", d, "terms:", terms)
+
+plt.figure()
+plt.bar(["dim1","dim2","dim3"], terms)
+plt.ylabel("(x-y)^2/(x+y)")
+plt.title("Chi-square: per-dimension terms (before 1/2)")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-hellinger">
+import numpy as np
+import matplotlib.pyplot as plt
+
+p = np.array([0.5, 0.5])
+q = np.array([0.9, 0.1])
+
+H = (1/np.sqrt(2)) * np.linalg.norm(np.sqrt(p) - np.sqrt(q))
+print("Hellinger distance:", H)
+
+plt.figure()
+plt.bar(["bin1","bin2"], p, alpha=0.8, label="p")
+plt.bar(["bin1","bin2"], q, alpha=0.8, label="q")
+plt.title("Distributions p and q (for Hellinger)")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-js">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def kl(p,q):
+    # KL(p||q) with safe masking; assumes p,q sum to 1 and q>0 where p>0
+    mask = p > 0
+    return float(np.sum(p[mask] * np.log(p[mask] / q[mask])))
+
+def js_distance(p,q):
+    p = np.asarray(p,float); q=np.asarray(q,float)
+    p = p/p.sum(); q=q/q.sum()
+    m = 0.5*(p+q)
+    js = 0.5*kl(p,m) + 0.5*kl(q,m)
+    return np.sqrt(js)
+
+p = np.array([0.5, 0.5])
+q = np.array([0.9, 0.1])
+
+d = js_distance(p,q)
+print("Jensen-Shannon distance:", d)
+
+# Plot p, q, and midpoint m
+m = 0.5*(p+q)
+plt.figure()
+plt.plot([0,1], p, marker="o", label="p")
+plt.plot([0,1], q, marker="o", label="q")
+plt.plot([0,1], m, marker="o", label="m=(p+q)/2")
+plt.xticks([0,1], ["bin1","bin2"])
+plt.ylim(0,1)
+plt.title("p, q, and midpoint m for JS")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-bhatt">
+import numpy as np
+import matplotlib.pyplot as plt
+
+p = np.array([0.5, 0.5])
+q = np.array([0.9, 0.1])
+
+BC = float(np.sum(np.sqrt(p*q)))
+DB = -np.log(BC)
+print("Bhattacharyya coefficient:", BC, "distance:", DB)
+
+plt.figure()
+plt.bar(["BC","DB"], [BC, DB])
+plt.title("Bhattacharyya coefficient vs distance")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-wasserstein">
+import numpy as np
+import matplotlib.pyplot as plt
+
+A = np.array([0.0, 1.0, 2.0])
+B = np.array([0.0, 2.0, 4.0])
+
+# If SciPy is installed:
+try:
+    from scipy.stats import wasserstein_distance
+    d = wasserstein_distance(A, B)
+    print("Wasserstein-1 distance:", d)
+except Exception as e:
+    d = None
+    print("SciPy not available; install scipy to compute wasserstein_distance. Error:", e)
+
+# Plot empirical CDFs
+def ecdf(samples):
+    s = np.sort(samples)
+    y = np.arange(1, len(s)+1)/len(s)
+    return s, y
+
+xA, yA = ecdf(A)
+xB, yB = ecdf(B)
+
+plt.figure()
+plt.step(xA, yA, where="post", label="A CDF")
+plt.step(xB, yB, where="post", label="B CDF")
+plt.xlabel("value"); plt.ylabel("CDF")
+plt.title("Empirical CDFs (Wasserstein relates to area between CDFs)")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-dtw">
+import numpy as np
+import matplotlib.pyplot as plt
+
+ts1 = np.array([1,2,3,4], dtype=float)
+ts2 = np.array([1,1,2,3,4], dtype=float)
+
+# DTW with L1 local cost
+n, m = len(ts1), len(ts2)
+D = np.full((n+1, m+1), np.inf)
+D[0,0] = 0.0
+
+for i in range(1, n+1):
+    for j in range(1, m+1):
+        cost = abs(ts1[i-1] - ts2[j-1])
+        D[i,j] = cost + min(D[i-1,j], D[i,j-1], D[i-1,j-1])
+
+dtw = D[n,m]
+print("DTW distance:", dtw)
+
+# Plot accumulated cost matrix
+plt.figure()
+plt.imshow(D[1:,1:], interpolation="nearest")
+plt.colorbar(label="accumulated cost")
+plt.xlabel("index in ts2")
+plt.ylabel("index in ts1")
+plt.title("DTW accumulated cost matrix")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-lev">
+import numpy as np
+import matplotlib.pyplot as plt
+
+s1 = "GATTACA"
+s2 = "GCATGCU"
+
+n, m = len(s1), len(s2)
+dp = np.zeros((n+1, m+1), dtype=int)
+
+# initialization
+dp[:,0] = np.arange(n+1)
+dp[0,:] = np.arange(m+1)
+
+for i in range(1, n+1):
+    for j in range(1, m+1):
+        cost = 0 if s1[i-1] == s2[j-1] else 1
+        dp[i,j] = min(
+            dp[i-1,j] + 1,      # deletion
+            dp[i,j-1] + 1,      # insertion
+            dp[i-1,j-1] + cost  # substitution
+        )
+
+d = int(dp[n,m])
+print("Levenshtein distance:", d)
+
+# Plot DP table
+plt.figure()
+plt.imshow(dp, interpolation="nearest")
+plt.colorbar(label="edit distance")
+plt.xticks(range(m+1), ["∅"] + list(s2))
+plt.yticks(range(n+1), ["∅"] + list(s1))
+plt.title("Levenshtein DP table")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script>
+  // Render codeblocks from <script type="text/plain"> sources with copy buttons
+  function renderCodeblocks(){
+    document.querySelectorAll(".codeblock").forEach(el => {
+      const src = el.getAttribute("data-src");
+      const node = document.getElementById(src);
+      if(!node) return;
+      const text = node.textContent.replace(/^\n+|\n+$/g, "");
+
+      const pre = document.createElement("pre");
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+
+      const code = document.createElement("code");
+      code.textContent = text;
+
+      btn.addEventListener("click", async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        }catch(e){
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+
+      pre.appendChild(btn);
+      pre.appendChild(code);
+      el.appendChild(pre);
+    });
+  }
+
+  // Search filter across .topic cards
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  // Expand/collapse all details
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  // Copy page link
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      }catch(e){
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  // Smooth scroll
+  function setupSmoothScroll(){
+    document.querySelectorAll(".toc a").forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        target.scrollIntoView({behavior:"smooth", block:"start"});
+        history.pushState(null, "", href);
+      });
+    });
+  }
+
+  renderCodeblocks();
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupSmoothScroll();
+</script>
+
+</body>
+</html>
