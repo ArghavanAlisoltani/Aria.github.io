@@ -1,1 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>10 Regression Methods + Regularization — Math + Numerical Examples + Python + Plots</title>
+  <meta name="description" content="A GitHub Pages-ready mini course covering 10 regression methods and regularization concepts with math, numerical examples, Python code, and matplotlib plots." />
 
+  <!-- MathJax for formulas -->
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111a33;
+      --panel2:#0f1730;
+      --text:#e9eefc;
+      --muted:#aab6e8;
+      --accent:#7aa2ff;
+      --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1280px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1150px;}
+    .kicker{
+      color:var(--accent2);
+      font-weight:900;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-top:12px;
+    }
+    .top-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .search-wrap{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex:1;
+      min-width:260px;
+    }
+    input[type="search"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1280px;
+      margin:0 auto;
+      padding: 0 18px 48px;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:14px;
+    }
+    nav{
+      position:sticky;
+      top:14px;
+      align-self:start;
+      height: calc(100vh - 28px);
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: rgba(17,26,51,.55);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    nav h2{
+      font-size:13px;
+      margin:6px 8px 10px;
+      color:var(--muted);
+      letter-spacing:.4px;
+      text-transform:uppercase;
+    }
+    .toc a{
+      display:block;
+      padding:8px 10px;
+      border-radius:12px;
+      color:var(--text);
+      border:1px solid transparent;
+      font-size: 14px;
+      line-height:1.35;
+    }
+    .toc a:hover{
+      background: rgba(255,255,255,.06);
+      border-color: var(--border);
+      text-decoration:none;
+    }
+
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background: rgba(17,26,51,.45);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background: rgba(15,23,48,.55);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:4px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{
+      padding:14px 16px 16px;
+      color:var(--text);
+      line-height:1.65;
+      font-size:14.5px;
+    }
+    .muted{color:var(--muted)}
+    .small{font-size:13px}
+
+    details{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:10px 12px;
+      margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      color:var(--text);
+      list-style:none;
+      user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+
+    .eq{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .codeblock pre{
+      margin:10px 0 0;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.32);
+      overflow:auto;
+      padding: 14px 12px 12px;
+      position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono);
+      font-size: 12.6px;
+      line-height: 1.55;
+      white-space: pre;
+      display:block;
+    }
+    .copy-btn{
+      position:absolute;
+      top:10px;
+      right:10px;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+      user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+
+    .warn{
+      border-left: 4px solid rgba(255, 180, 90, .9);
+      padding: 10px 12px;
+      background: rgba(255, 180, 90, .08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid rgba(112,255,209,.9);
+      padding: 10px 12px;
+      background: rgba(112,255,209,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.18);
+      margin-top:10px;
+    }
+    th, td{
+      text-align:left;
+      padding:10px 10px;
+      border-bottom:1px solid var(--border);
+      vertical-align:top;
+      font-size:13.5px;
+      line-height:1.45;
+    }
+    th{
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    tr:last-child td{border-bottom:none}
+
+    @media (max-width: 1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>10 Regression Methods + Regularization</h1>
+    <p class="subtitle">
+      A GitHub Pages-ready mini course covering <b>10 regression methods</b> and the <b>regularization concept</b>,
+      each with: (1) math definition, (2) a small numeric example idea, (3) Python code, and (4) a Matplotlib plot.
+      All code blocks are self-contained and copyable.
+    </p>
+
+    <div class="kicker">What you’ll learn</div>
+    <p class="subtitle">
+      OLS → Polynomial → Ridge/Lasso/ElasticNet → Logistic (classification, but “regression family”) →
+      Poisson/Negative Binomial (counts) → Robust (Huber) → Quantile regression.
+      Plus: bias–variance and why regularization improves generalization.
+    </p>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter (e.g., 'ridge', 'lasso', 'elastic', 'poisson', 'huber', 'quantile')…" />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#dataset">0) Shared dataset (synthetic)</a>
+      <a href="#regconcept">1) What is regression? What is regularization?</a>
+      <a href="#m01">2) OLS Linear Regression</a>
+      <a href="#m02">3) Polynomial Regression</a>
+      <a href="#m03">4) Ridge Regression (L2)</a>
+      <a href="#m04">5) Lasso Regression (L1)</a>
+      <a href="#m05">6) Elastic Net (L1+L2)</a>
+      <a href="#m06">7) Logistic Regression (classification)</a>
+      <a href="#m07">8) Poisson Regression (counts)</a>
+      <a href="#m08">9) Negative Binomial Regression (overdispersed counts)</a>
+      <a href="#m09">10) Robust Regression (Huber)</a>
+      <a href="#m10">11) Quantile Regression (median)</a>
+      <a href="#appendix">Appendix: plotting helpers</a>
+    </div>
+  </nav>
+
+  <section class="content">
+
+    <!-- Dataset -->
+    <article class="card topic" id="dataset" data-keywords="dataset synthetic regression example noise outliers counts">
+      <div class="card-header">
+        <h2 class="card-title">0) Shared dataset (synthetic)</h2>
+        <span class="tag">Used across methods</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          We’ll use a simple 1D dataset: \(x\in[0,10]\) with a roughly linear trend plus noise,
+          plus an “outlier” version for robust regression, plus a logistic classification dataset,
+          and a count dataset for Poisson/NB regression.
+        </p>
+
+        <details open>
+          <summary>Python: generate all shared datasets</summary>
+          <div class="codeblock" data-src="code-shared" data-lang="python"></div>
+        </details>
+
+        <div class="ok">
+          You can run each method section independently; it regenerates the data inside the code block.
+        </div>
+      </div>
+    </article>
+
+    <!-- Regularization concept -->
+    <article class="card topic" id="regconcept" data-keywords="regularization bias variance overfitting underfitting penalty l1 l2">
+      <div class="card-header">
+        <h2 class="card-title">1) What is regression? What is regularization?</h2>
+        <span class="tag">Core concept</span>
+      </div>
+      <div class="card-body">
+        <p>
+          Regression tries to learn a function \(f(x)\) that predicts \(y\) from \(x\).
+          In linear regression, \(f(x)=\beta_0+\beta_1 x\).
+        </p>
+
+        <details open>
+          <summary>OLS objective (no regularization)</summary>
+          <div class="eq">
+            \[
+              \hat{\beta}=\arg\min_{\beta}\ \sum_{i=1}^n (y_i - \mathbf{x}_i^T\beta)^2
+              =\arg\min_{\beta}\ \|y - X\beta\|_2^2
+            \]
+          </div>
+        </details>
+
+        <details open>
+          <summary>Regularized objective (Ridge / Lasso / Elastic Net)</summary>
+          <div class="eq">
+            \[
+              \hat{\beta}=\arg\min_{\beta}\ \|y - X\beta\|_2^2 + \lambda \,\Omega(\beta)
+            \]
+            where:
+            \[
+              \Omega(\beta)=\|\beta\|_2^2 \text{ (Ridge)},\quad
+              \Omega(\beta)=\|\beta\|_1 \text{ (Lasso)},\quad
+              \Omega(\beta)=\alpha\|\beta\|_1+(1-\alpha)\|\beta\|_2^2 \text{ (Elastic Net)}
+            \]
+          </div>
+        </details>
+
+        <div class="warn">
+          Regularization introduces <b>bias</b> but reduces <b>variance</b>, often improving test performance
+          (especially when features are correlated or when \(p\) is large relative to \(n\)).
+        </div>
+
+        <details>
+          <summary>Numerical mini-example (why penalties shrink coefficients)</summary>
+          <p class="muted">
+            Suppose a 1D model has a coefficient \(\beta=10\). Ridge adds \(\lambda \beta^2\) to the loss.
+            If \(\lambda=1\), then just the penalty adds 100 units, so the optimizer prefers smaller \(\beta\) unless it greatly reduces SSE.
+          </p>
+        </details>
+      </div>
+    </article>
+
+    <!-- 1 OLS -->
+    <article class="card topic" id="m01" data-keywords="ols linear regression least squares closed form normal equations">
+      <div class="card-header">
+        <h2 class="card-title">2) OLS Linear Regression</h2>
+        <span class="tag">Baseline</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            y = X\beta + \varepsilon,\quad
+            \hat{\beta}_{OLS} = (X^TX)^{-1}X^Ty
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example (tiny)</summary>
+          <p class="muted">
+            For points (x,y) = (0,1), (1,2), (2,2), the best-fit line is
+            \(\hat{y}=\frac{7}{6}+\frac{1}{2}x\). (Shown previously in your linear algebra course.)
+          </p>
+        </details>
+        <details open>
+          <summary>Python + plot (fit line)</summary>
+          <div class="codeblock" data-src="code-ols" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 2 Polynomial -->
+    <article class="card topic" id="m02" data-keywords="polynomial regression basis expansion overfitting">
+      <div class="card-header">
+        <h2 class="card-title">3) Polynomial Regression (linear in parameters)</h2>
+        <span class="tag">Flexible</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Polynomial regression expands features: \(x \mapsto [1,x,x^2,\dots,x^d]\).
+          It’s still linear regression in the transformed features.
+        </p>
+        <div class="eq">
+          \[
+            \hat{y}=\beta_0+\beta_1 x+\beta_2 x^2+\cdots+\beta_d x^d
+          \]
+        </div>
+        <details open>
+          <summary>Python + plot (degree 1 vs 5)</summary>
+          <div class="codeblock" data-src="code-poly" data-lang="python"></div>
+        </details>
+        <div class="warn">
+          Higher-degree models can overfit; regularization (Ridge/Lasso) is commonly used with polynomial features.
+        </div>
+      </div>
+    </article>
+
+    <!-- 3 Ridge -->
+    <article class="card topic" id="m03" data-keywords="ridge l2 regularization shrinkage">
+      <div class="card-header">
+        <h2 class="card-title">4) Ridge Regression (L2 regularization)</h2>
+        <span class="tag">Penalizes large weights</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            \hat{\beta}_{ridge}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_2^2
+          \]
+          Closed-form:
+          \[
+            \hat{\beta}_{ridge}=(X^TX+\lambda I)^{-1}X^Ty
+          \]
+        </div>
+        <details open>
+          <summary>Python + plot (OLS vs Ridge with polynomial features)</summary>
+          <div class="codeblock" data-src="code-ridge" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 4 Lasso -->
+    <article class="card topic" id="m04" data-keywords="lasso l1 regularization sparsity feature selection">
+      <div class="card-header">
+        <h2 class="card-title">5) Lasso Regression (L1 regularization)</h2>
+        <span class="tag">Sparse coefficients</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            \hat{\beta}_{lasso}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_1
+          \]
+        </div>
+        <p class="muted">
+          L1 penalty creates sparsity (some coefficients exactly 0) → can behave like feature selection.
+        </p>
+        <details open>
+          <summary>Python + plot (coefficients shrink to zero)</summary>
+          <div class="codeblock" data-src="code-lasso" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 5 Elastic Net -->
+    <article class="card topic" id="m05" data-keywords="elastic net l1 l2 correlated features">
+      <div class="card-header">
+        <h2 class="card-title">6) Elastic Net (L1 + L2)</h2>
+        <span class="tag">Best of both</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">
+          \[
+            \hat{\beta}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\left(\alpha\|\beta\|_1+(1-\alpha)\|\beta\|_2^2\right)
+          \]
+        </div>
+        <p class="muted">
+          Helpful when predictors are correlated: Lasso may arbitrarily pick one; Elastic Net tends to keep groups.
+        </p>
+        <details open>
+          <summary>Python + plot (compare Lasso vs ElasticNet)</summary>
+          <div class="codeblock" data-src="code-elastic" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 6 Logistic -->
+    <article class="card topic" id="m06" data-keywords="logistic regression cross entropy classification regularization">
+      <div class="card-header">
+        <h2 class="card-title">7) Logistic Regression (classification, part of GLM family)</h2>
+        <span class="tag">Binary outcomes</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Logistic regression models \(P(y=1|x)\) via the sigmoid:
+          \(\sigma(z)=1/(1+e^{-z})\).
+        </p>
+        <div class="eq">
+          \[
+            P(y=1|\mathbf{x})=\sigma(\mathbf{x}^T\beta),\quad
+            \text{Loss}=-\sum_i \left[y_i\log p_i + (1-y_i)\log(1-p_i)\right] + \lambda\Omega(\beta)
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">
+            If \(\beta_0=-2\), \(\beta_1=0.8\), and \(x=3\), then \(z=-2+0.8(3)=0.4\),
+            so \(p=\sigma(0.4)\approx 0.599\).
+          </p>
+        </details>
+        <details open>
+          <summary>Python + plot (decision boundary)</summary>
+          <div class="codeblock" data-src="code-logistic" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 7 Poisson -->
+    <article class="card topic" id="m07" data-keywords="poisson regression glm counts log link">
+      <div class="card-header">
+        <h2 class="card-title">8) Poisson Regression (count data)</h2>
+        <span class="tag">GLM for counts</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Poisson regression assumes \(y_i \sim \mathrm{Poisson}(\mu_i)\) with log link:
+          \(\log \mu_i = \mathbf{x}_i^T\beta\).
+        </p>
+        <div class="eq">
+          \[
+            y_i\sim \mathrm{Poisson}(\mu_i),\quad \log \mu_i = \mathbf{x}_i^T\beta
+          \]
+        </div>
+        <details open>
+          <summary>Numerical example</summary>
+          <p class="muted">
+            If \(\log \mu = 1.2\), then \(\mu=e^{1.2}\approx 3.32\). Expected count ≈ 3.32.
+          </p>
+        </details>
+        <details open>
+          <summary>Python + plot (fitted mean curve)</summary>
+          <div class="codeblock" data-src="code-poisson" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 8 NegBin -->
+    <article class="card topic" id="m08" data-keywords="negative binomial regression overdispersion counts">
+      <div class="card-header">
+        <h2 class="card-title">9) Negative Binomial Regression (overdispersed counts)</h2>
+        <span class="tag">Counts with variance > mean</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          When counts have variance larger than mean (common in RNA-seq), NB is often better than Poisson.
+        </p>
+        <div class="eq">
+          \[
+            y_i \sim \mathrm{NB}(\mu_i, \theta),\quad \log \mu_i = \mathbf{x}_i^T\beta
+          \]
+        </div>
+        <details open>
+          <summary>Python + plot (Poisson vs NB fit)</summary>
+          <div class="codeblock" data-src="code-nb" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 9 Huber -->
+    <article class="card topic" id="m09" data-keywords="huber robust regression outliers loss">
+      <div class="card-header">
+        <h2 class="card-title">10) Robust Regression (Huber)</h2>
+        <span class="tag">Outlier-resistant</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Huber regression uses a loss that is quadratic for small residuals and linear for large residuals.
+          It reduces the impact of outliers compared to OLS.
+        </p>
+        <div class="eq">
+          \[
+            L_\delta(r)=
+            \begin{cases}
+              \frac{1}{2}r^2 & |r|\le \delta\\
+              \delta(|r|-\frac{1}{2}\delta) & |r|>\delta
+            \end{cases}
+          \]
+        </div>
+        <details open>
+          <summary>Python + plot (OLS vs Huber with outliers)</summary>
+          <div class="codeblock" data-src="code-huber" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- 10 Quantile -->
+    <article class="card topic" id="m10" data-keywords="quantile regression median pinball loss">
+      <div class="card-header">
+        <h2 class="card-title">11) Quantile Regression (median regression)</h2>
+        <span class="tag">Robust to asymmetric noise</span>
+      </div>
+      <div class="card-body">
+        <p class="muted">
+          Quantile regression fits conditional quantiles (e.g., median) rather than conditional mean.
+          For the median (\(\tau=0.5\)), it minimizes absolute deviations.
+        </p>
+        <div class="eq">
+          \[
+            \min_{\beta}\sum_i \rho_\tau(y_i-\mathbf{x}_i^T\beta),
+            \quad
+            \rho_\tau(u)=u(\tau-\mathbb{1}[u<0])
+          \]
+        </div>
+        <details open>
+          <summary>Python + plot (mean vs median fit)</summary>
+          <div class="codeblock" data-src="code-quantile" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+    <!-- Appendix -->
+    <article class="card topic" id="appendix" data-keywords="appendix helper plot functions">
+      <div class="card-header">
+        <h2 class="card-title">Appendix: shared plotting helper</h2>
+        <span class="tag">Reusable</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Helper function (optional)</summary>
+          <div class="codeblock" data-src="code-helper" data-lang="python"></div>
+        </details>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<!-- =========================
+     CODE SNIPPETS (RAW TEXT)
+========================= -->
+
+<script type="text/plain" id="code-shared">
+import numpy as np
+
+rng = np.random.default_rng(42)
+
+# Regression dataset (continuous)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+# Outlier version for robust regression
+y_out = y.copy()
+out_idx = rng.choice(n, size=4, replace=False)
+y_out[out_idx] += rng.normal(10, 2.0, size=4)
+
+# Classification dataset for logistic regression
+x_cls = np.linspace(-4, 4, 80)
+p_true = 1/(1+np.exp(-(-0.8 + 1.2*x_cls)))
+y_cls = rng.binomial(1, p_true, size=len(x_cls))
+
+# Count dataset for Poisson/NB
+x_cnt = np.linspace(0, 4, 80)
+mu_true = np.exp(0.2 + 0.6*x_cnt)  # mean grows exponentially
+y_pois = rng.poisson(mu_true)
+
+# Overdispersed counts (simulate via Gamma-Poisson mixture)
+# Equivalent to NB: draw rate ~ Gamma, then Poisson
+shape = 2.0
+rate = shape / mu_true
+lam = rng.gamma(shape=shape, scale=1/rate)   # mean mu_true
+y_nb = rng.poisson(lam)
+
+print("Datasets ready:")
+print("  regression:", x.shape, y.shape)
+print("  outliers:", x.shape, y_out.shape)
+print("  classification:", x_cls.shape, y_cls.shape)
+print("  counts:", x_cnt.shape, y_pois.shape, y_nb.shape)
+</script>
+
+<script type="text/plain" id="code-ols">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+X = x.reshape(-1,1)
+model = LinearRegression()
+model.fit(X, y)
+
+print("Intercept:", model.intercept_)
+print("Slope:", model.coef_[0])
+print("R^2:", model.score(X,y))
+
+# Plot
+xx = np.linspace(x.min(), x.max(), 200).reshape(-1,1)
+yy = model.predict(xx)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx.ravel(), yy, label="OLS fit")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("OLS Linear Regression")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-poly">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+X = x.reshape(-1,1)
+
+deg1 = make_pipeline(PolynomialFeatures(degree=1, include_bias=False), LinearRegression())
+deg5 = make_pipeline(PolynomialFeatures(degree=5, include_bias=False), LinearRegression())
+
+deg1.fit(X,y)
+deg5.fit(X,y)
+
+xx = np.linspace(x.min(), x.max(), 300).reshape(-1,1)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx.ravel(), deg1.predict(xx), label="degree 1")
+plt.plot(xx.ravel(), deg5.predict(xx), label="degree 5")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Polynomial Regression (degree 1 vs 5)")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-ridge">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression, Ridge
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+X = x.reshape(-1,1)
+
+# Use polynomial features to make overfitting possible
+deg = 10
+ols = make_pipeline(PolynomialFeatures(degree=deg, include_bias=False), LinearRegression())
+ridge = make_pipeline(PolynomialFeatures(degree=deg, include_bias=False), Ridge(alpha=10.0))
+
+ols.fit(X,y)
+ridge.fit(X,y)
+
+xx = np.linspace(x.min(), x.max(), 400).reshape(-1,1)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx.ravel(), ols.predict(xx), label=f"OLS deg={deg}")
+plt.plot(xx.ravel(), ridge.predict(xx), label=f"Ridge deg={deg}, alpha=10")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Ridge Regularization stabilizes high-degree fit")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-lasso">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Lasso
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+X = x.reshape(-1,1)
+
+deg = 12
+model = make_pipeline(
+    PolynomialFeatures(degree=deg, include_bias=False),
+    Lasso(alpha=0.01, max_iter=20000)
+)
+model.fit(X,y)
+
+# Extract coefficients from the last step
+lasso = model.named_steps["lasso"]
+coefs = lasso.coef_
+
+xx = np.linspace(x.min(), x.max(), 400).reshape(-1,1)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx.ravel(), model.predict(xx), label=f"Lasso deg={deg}, alpha=0.01")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Lasso fit")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Plot coefficient magnitudes (sparsity)
+plt.figure()
+plt.stem(range(1, len(coefs)+1), coefs, use_line_collection=True)
+plt.xlabel("polynomial degree")
+plt.ylabel("coefficient")
+plt.title("Lasso coefficients (many shrink to 0)")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-elastic">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Lasso, ElasticNet
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+X = x.reshape(-1,1)
+
+deg = 12
+lasso_model = make_pipeline(PolynomialFeatures(degree=deg, include_bias=False),
+                            Lasso(alpha=0.01, max_iter=20000))
+enet_model = make_pipeline(PolynomialFeatures(degree=deg, include_bias=False),
+                           ElasticNet(alpha=0.01, l1_ratio=0.5, max_iter=20000))
+
+lasso_model.fit(X,y)
+enet_model.fit(X,y)
+
+xx = np.linspace(x.min(), x.max(), 400).reshape(-1,1)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx.ravel(), lasso_model.predict(xx), label="Lasso")
+plt.plot(xx.ravel(), enet_model.predict(xx), label="ElasticNet (l1_ratio=0.5)")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Lasso vs Elastic Net")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-logistic">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+
+rng = np.random.default_rng(42)
+x = np.linspace(-4, 4, 80)
+p_true = 1/(1+np.exp(-(-0.8 + 1.2*x)))
+y = rng.binomial(1, p_true, size=len(x))
+
+X = x.reshape(-1,1)
+
+# L2 regularized logistic regression by default
+clf = LogisticRegression(C=1.0, solver="lbfgs")
+clf.fit(X, y)
+
+# Predicted probabilities
+xx = np.linspace(x.min(), x.max(), 300).reshape(-1,1)
+pp = clf.predict_proba(xx)[:,1]
+
+plt.figure()
+plt.scatter(x, y, label="observed (0/1)", alpha=0.7)
+plt.plot(xx.ravel(), pp, label="logistic fit (P(y=1|x))")
+plt.xlabel("x"); plt.ylabel("P(y=1)")
+plt.title("Logistic Regression")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("coef:", clf.coef_.ravel(), "intercept:", clf.intercept_)
+</script>
+
+<script type="text/plain" id="code-poisson">
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+rng = np.random.default_rng(42)
+x = np.linspace(0, 4, 80)
+mu_true = np.exp(0.2 + 0.6*x)
+y = rng.poisson(mu_true)
+
+X = sm.add_constant(x)  # [1, x]
+model = sm.GLM(y, X, family=sm.families.Poisson())
+res = model.fit()
+
+print(res.summary())
+
+xx = np.linspace(x.min(), x.max(), 300)
+XX = sm.add_constant(xx)
+mu_hat = res.predict(XX)
+
+plt.figure()
+plt.scatter(x, y, label="counts")
+plt.plot(xx, mu_hat, label="Poisson mean fit")
+plt.xlabel("x"); plt.ylabel("count")
+plt.title("Poisson Regression (GLM with log link)")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-nb">
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+rng = np.random.default_rng(42)
+x = np.linspace(0, 4, 80)
+mu_true = np.exp(0.2 + 0.6*x)
+
+# Poisson counts
+y_pois = rng.poisson(mu_true)
+
+# Overdispersed counts via Gamma-Poisson mixture
+shape = 2.0
+rate = shape / mu_true
+lam = rng.gamma(shape=shape, scale=1/rate)
+y_nb = rng.poisson(lam)
+
+X = sm.add_constant(x)
+pois = sm.GLM(y_nb, X, family=sm.families.Poisson()).fit()
+nb = sm.GLM(y_nb, X, family=sm.families.NegativeBinomial(alpha=1.0)).fit()
+
+xx = np.linspace(x.min(), x.max(), 300)
+XX = sm.add_constant(xx)
+mu_pois = pois.predict(XX)
+mu_nb = nb.predict(XX)
+
+plt.figure()
+plt.scatter(x, y_nb, label="overdispersed counts")
+plt.plot(xx, mu_pois, label="Poisson fit")
+plt.plot(xx, mu_nb, label="NegBin fit")
+plt.xlabel("x"); plt.ylabel("count")
+plt.title("Negative Binomial handles overdispersion")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-huber">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression, HuberRegressor
+
+rng = np.random.default_rng(42)
+n = 60
+x = np.linspace(0, 10, n)
+y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
+
+# Add a few big outliers
+y_out = y.copy()
+out_idx = rng.choice(n, size=4, replace=False)
+y_out[out_idx] += rng.normal(10, 2.0, size=4)
+
+X = x.reshape(-1,1)
+
+ols = LinearRegression().fit(X, y_out)
+huber = HuberRegressor().fit(X, y_out)
+
+xx = np.linspace(x.min(), x.max(), 300).reshape(-1,1)
+
+plt.figure()
+plt.scatter(x, y_out, label="data (with outliers)")
+plt.plot(xx.ravel(), ols.predict(xx), label="OLS")
+plt.plot(xx.ravel(), huber.predict(xx), label="Huber")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Robust Regression: Huber vs OLS")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("OLS coef:", ols.coef_[0], "intercept:", ols.intercept_)
+print("Huber coef:", huber.coef_[0], "intercept:", huber.intercept_)
+</script>
+
+<script type="text/plain" id="code-quantile">
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+rng = np.random.default_rng(42)
+n = 80
+x = np.linspace(0, 10, n)
+
+# Asymmetric noise (heavier positive tail)
+noise = rng.normal(0, 0.8, size=n) + rng.exponential(0.8, size=n)*0.6
+y = 1.5 + 0.8*x + noise
+
+X = sm.add_constant(x)
+
+# OLS (mean)
+ols = sm.OLS(y, X).fit()
+
+# Quantile regression (median)
+qr = sm.QuantReg(y, X).fit(q=0.5)
+
+xx = np.linspace(x.min(), x.max(), 300)
+XX = sm.add_constant(xx)
+
+plt.figure()
+plt.scatter(x, y, label="data")
+plt.plot(xx, ols.predict(XX), label="OLS (mean)")
+plt.plot(xx, qr.predict(XX), label="QuantReg (median)")
+plt.xlabel("x"); plt.ylabel("y")
+plt.title("Quantile Regression vs OLS under asymmetric noise")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print("OLS params:", ols.params)
+print("QuantReg params:", qr.params)
+</script>
+
+<script type="text/plain" id="code-helper">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_line_fit(x, y, xgrid, yhat, title):
+    plt.figure()
+    plt.scatter(x, y, label="data")
+    plt.plot(xgrid, yhat, label="fit")
+    plt.xlabel("x"); plt.ylabel("y")
+    plt.title(title)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+</script>
+
+<script>
+  // Render codeblocks from <script type="text/plain"> sources with copy buttons
+  function renderCodeblocks(){
+    document.querySelectorAll(".codeblock").forEach(el => {
+      const src = el.getAttribute("data-src");
+      const node = document.getElementById(src);
+      if(!node) return;
+      const text = node.textContent.replace(/^\n+|\n+$/g, "");
+
+      const pre = document.createElement("pre");
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+
+      const code = document.createElement("code");
+      code.textContent = text;
+
+      btn.addEventListener("click", async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        }catch(e){
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+
+      pre.appendChild(btn);
+      pre.appendChild(code);
+      el.appendChild(pre);
+    });
+  }
+
+  // Search filter across .topic cards
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  // Expand/collapse all details
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  // Copy page link
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      }catch(e){
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  // Smooth scroll
+  function setupSmoothScroll(){
+    document.querySelectorAll(".toc a").forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        target.scrollIntoView({behavior:"smooth", block:"start"});
+        history.pushState(null, "", href);
+      });
+    });
+  }
+
+  renderCodeblocks();
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupSmoothScroll();
+</script>
+
+</body>
+</html>
