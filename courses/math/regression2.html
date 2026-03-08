@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>10 Regression Methods + Regularization — Concept + Math + Examples + Python + Plots</title>
-  <meta name="description" content="A GitHub Pages-ready mini course covering 10 regression methods and regularization with deeper conceptual explanations, math, numerical examples, Python code, and matplotlib plots." />
+  <title>10 Regression Methods + Regularization — Detailed Formula Explanations + Math + Examples + Python + Plots</title>
+  <meta name="description" content="A GitHub Pages-ready mini course covering 10 regression methods and regularization with detailed explanations of each formula, numerical examples, Python code, and matplotlib plots." />
 
   <!-- MathJax for formulas -->
   <script>
@@ -183,6 +183,12 @@
       gap:12px;
       margin-top:10px;
     }
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
+      margin-top:10px;
+    }
     .box{
       border:1px solid var(--border);
       border-radius:14px;
@@ -191,6 +197,16 @@
     }
     .box h3{margin:0 0 6px; font-size:14px}
     .box p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+    ul, ol{margin: 8px 0 0 18px}
+    li{margin: 4px 0}
+    code.inline{
+      font-family:var(--mono);
+      font-size: 0.95em;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--border);
+      padding:2px 6px;
+      border-radius:10px;
+    }
 
     details{
       border:1px solid var(--border);
@@ -264,6 +280,13 @@
       border-radius: 12px;
       margin-top: 10px;
     }
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9);
+      padding: 10px 12px;
+      background: rgba(122,162,255,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
 
     table{
       width:100%;
@@ -294,7 +317,7 @@
     @media (max-width: 1100px){
       main{grid-template-columns:1fr}
       nav{position:relative; height:auto}
-      .grid2{grid-template-columns:1fr}
+      .grid2,.grid3{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -304,21 +327,20 @@
   <div class="hero">
     <h1>10 Regression Methods + Regularization</h1>
     <p class="subtitle">
-      This version adds <b>more conceptual explanation</b> (when to use each method, what assumptions it makes,
-      what can go wrong, and how regularization changes the behavior).
-      Each method includes math, numerical intuition, Python code, and plots.
+      This version explains <b>every formula in detail</b>: what each symbol means, what it does geometrically/probabilistically,
+      and how it connects to the code and plots. Each method has: (1) formula + breakdown, (2) numeric intuition,
+      (3) Python code, (4) plot.
     </p>
 
-    <div class="kicker">High-level mental model</div>
+    <div class="kicker">How to read formulas in this page</div>
     <p class="subtitle">
-      Every regression method answers: “What function \(f(x)\) best predicts \(y\)?”
-      The differences are about (1) the assumed noise distribution, (2) the link function (GLMs),
-      (3) the loss function (robust / quantile), and (4) whether we penalize complexity (regularization).
+      Look for a formula box, then open <b>“Formula explained (symbols + meaning)”</b>.
+      If you ever feel lost: start from the <b>Symbols cheat sheet</b> below.
     </p>
 
     <div class="top-actions">
       <div class="search-wrap">
-        <input id="search" type="search" placeholder="Filter (e.g., 'ridge', 'lasso', 'elastic', 'poisson', 'huber', 'quantile')…" />
+        <input id="search" type="search" placeholder="Filter (e.g., 'ridge', 'lasso', 'elastic', 'poisson', 'huber', 'quantile', 'normal equations')…" />
         <button class="btn" id="expandAll">Expand all</button>
         <button class="btn" id="collapseAll">Collapse all</button>
       </div>
@@ -331,227 +353,323 @@
   <nav>
     <h2>Course map</h2>
     <div class="toc">
-      <a href="#dataset">0) Shared dataset (synthetic)</a>
-      <a href="#concepts">1) Core concepts: loss, noise, link, bias–variance</a>
-      <a href="#regularization">2) Regularization deep intuition (L1 vs L2)</a>
-      <a href="#m01">3) OLS Linear Regression</a>
-      <a href="#m02">4) Polynomial Regression</a>
-      <a href="#m03">5) Ridge Regression (L2)</a>
-      <a href="#m04">6) Lasso Regression (L1)</a>
-      <a href="#m05">7) Elastic Net (L1+L2)</a>
-      <a href="#m06">8) Logistic Regression</a>
-      <a href="#m07">9) Poisson Regression</a>
-      <a href="#m08">10) Negative Binomial Regression</a>
-      <a href="#m09">11) Robust Regression (Huber)</a>
-      <a href="#m10">12) Quantile Regression</a>
-      <a href="#modeling">13) Practical checklist (bioinformatics)</a>
-      <a href="#appendix">Appendix: plotting helpers</a>
+      <a href="#symbols">0) Symbols cheat sheet</a>
+      <a href="#dataset">1) Shared dataset (synthetic)</a>
+      <a href="#concepts">2) Core regression concepts (loss, likelihood, link)</a>
+      <a href="#regularization">3) Regularization (L1 vs L2) — deep intuition</a>
+
+      <a href="#m01">4) OLS Linear Regression</a>
+      <a href="#m02">5) Polynomial Regression</a>
+      <a href="#m03">6) Ridge Regression (L2)</a>
+      <a href="#m04">7) Lasso Regression (L1)</a>
+      <a href="#m05">8) Elastic Net</a>
+      <a href="#m06">9) Logistic Regression</a>
+      <a href="#m07">10) Poisson Regression</a>
+      <a href="#m08">11) Negative Binomial Regression</a>
+      <a href="#m09">12) Robust Regression (Huber)</a>
+      <a href="#m10">13) Quantile Regression</a>
+
+      <a href="#checklist">14) Practical checklist (bioinformatics)</a>
+      <a href="#appendix">Appendix: plotting helper</a>
     </div>
   </nav>
 
   <section class="content">
 
+    <!-- Symbols -->
+    <article class="card topic" id="symbols" data-keywords="symbols notation x y X beta epsilon lambda alpha loss likelihood">
+      <div class="card-header">
+        <h2 class="card-title">0) Symbols cheat sheet</h2>
+        <span class="tag">Read this once</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Symbol</th><th>Meaning</th><th>Typical shape</th><th>Intuition</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>\(n\)</td>
+              <td>Number of samples</td>
+              <td>scalar</td>
+              <td>How many observations you have</td>
+            </tr>
+            <tr>
+              <td>\(p\)</td>
+              <td>Number of features / predictors</td>
+              <td>scalar</td>
+              <td>How many variables you use to explain \(y\)</td>
+            </tr>
+            <tr>
+              <td>\(x_i\)</td>
+              <td>Feature value for sample \(i\) (in 1D)</td>
+              <td>scalar</td>
+              <td>Input value for one sample</td>
+            </tr>
+            <tr>
+              <td>\(\mathbf{x}_i\)</td>
+              <td>Feature vector for sample \(i\)</td>
+              <td>\((p\times 1)\)</td>
+              <td>All predictors for sample \(i\)</td>
+            </tr>
+            <tr>
+              <td>\(y_i\)</td>
+              <td>Outcome/target for sample \(i\)</td>
+              <td>scalar</td>
+              <td>What you want to predict</td>
+            </tr>
+            <tr>
+              <td>\(X\)</td>
+              <td>Design matrix with rows \(\mathbf{x}_i^T\)</td>
+              <td>\((n\times p)\)</td>
+              <td>All predictors for all samples</td>
+            </tr>
+            <tr>
+              <td>\(y\)</td>
+              <td>Vector of outcomes</td>
+              <td>\((n\times 1)\)</td>
+              <td>All targets stacked</td>
+            </tr>
+            <tr>
+              <td>\(\beta\)</td>
+              <td>Coefficient vector (model parameters)</td>
+              <td>\((p\times 1)\)</td>
+              <td>Weights mapping predictors → prediction</td>
+            </tr>
+            <tr>
+              <td>\(\hat{y}\)</td>
+              <td>Predicted outcomes</td>
+              <td>\((n\times 1)\)</td>
+              <td>Model output</td>
+            </tr>
+            <tr>
+              <td>\(\varepsilon_i\)</td>
+              <td>Noise / residual</td>
+              <td>scalar</td>
+              <td>What the model cannot explain</td>
+            </tr>
+            <tr>
+              <td>\(\lambda\)</td>
+              <td>Regularization strength</td>
+              <td>scalar</td>
+              <td>Higher \(\lambda\) → stronger penalty → simpler model</td>
+            </tr>
+            <tr>
+              <td>\(\alpha\)</td>
+              <td>ElasticNet mixing (L1 vs L2)</td>
+              <td>scalar in [0,1]</td>
+              <td>\(\alpha=1\) lasso-like; \(\alpha=0\) ridge-like (implementation varies)</td>
+            </tr>
+            <tr>
+              <td>\(\|\beta\|_2^2\)</td>
+              <td>L2 penalty</td>
+              <td>scalar</td>
+              <td>Encourages small weights (shrinkage)</td>
+            </tr>
+            <tr>
+              <td>\(\|\beta\|_1\)</td>
+              <td>L1 penalty</td>
+              <td>scalar</td>
+              <td>Encourages sparsity (many zeros)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          If you only remember one thing: regression is “pick \(\beta\) to minimize a loss”, and regularization adds a penalty term to that loss.
+        </div>
+      </div>
+    </article>
+
     <!-- Dataset -->
     <article class="card topic" id="dataset" data-keywords="dataset synthetic regression example noise outliers counts">
       <div class="card-header">
-        <h2 class="card-title">0) Shared dataset (synthetic)</h2>
+        <h2 class="card-title">1) Shared dataset (synthetic)</h2>
         <span class="tag">Used across methods</span>
       </div>
       <div class="card-body">
         <p class="muted">
-          We use small synthetic datasets so you can focus on concepts rather than data wrangling.
-          In practice, replace these with your expression matrices, clinical covariates, variant burdens, etc.
+          We use small synthetic datasets so the meaning of formulas is clear.
+          Replace them with real tasks (e.g., gene expression → phenotype, mutation count → risk, microbiome abundance → inflammation).
         </p>
 
         <details open>
           <summary>Python: generate all shared datasets</summary>
           <div class="codeblock" data-src="code-shared" data-lang="python"></div>
         </details>
-
-        <div class="ok">
-          Each method section regenerates data inside its code block to remain self-contained.
-        </div>
       </div>
     </article>
 
-    <!-- Core concepts -->
-    <article class="card topic" id="concepts" data-keywords="loss function noise distribution likelihood glm link bias variance">
+    <!-- Concepts -->
+    <article class="card topic" id="concepts" data-keywords="loss function likelihood glm link gaussian bernoulli poisson">
       <div class="card-header">
-        <h2 class="card-title">1) Core concepts: loss, noise, link, and bias–variance</h2>
-        <span class="tag">Conceptual foundation</span>
+        <h2 class="card-title">2) Core regression concepts: loss, likelihood, link</h2>
+        <span class="tag">Foundation</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
+        <div class="grid3">
           <div class="box">
-            <h3>Loss function</h3>
-            <p>
-              Regression is “choose parameters to minimize a loss”.
-              Different losses imply different robustness properties (e.g., squared loss vs absolute loss).
-            </p>
+            <h3>Loss</h3>
+            <p>Defines “badness” of predictions. Squared loss punishes large errors heavily; absolute loss is more robust.</p>
           </div>
           <div class="box">
-            <h3>Noise model / likelihood</h3>
-            <p>
-              In probabilistic regression, you assume a distribution for \(y\mid x\):
-              Gaussian (OLS), Bernoulli (logistic), Poisson/NB (counts).
-            </p>
+            <h3>Likelihood</h3>
+            <p>Probabilistic view: assume a distribution for \(y|x\). Minimizing negative log-likelihood gives a loss.</p>
           </div>
           <div class="box">
-            <h3>Link function (GLM)</h3>
-            <p>
-              GLMs model \(g(\mathbb{E}[y|x]) = X\beta\). For Poisson, \(g=\log\); for logistic, \(g=\mathrm{logit}\).
-            </p>
-          </div>
-          <div class="box">
-            <h3>Bias–variance tradeoff</h3>
-            <p>
-              More flexible models fit training data better (low bias) but can be unstable (high variance).
-              Regularization reduces variance by limiting complexity.
-            </p>
+            <h3>Link</h3>
+            <p>In GLMs, relate predictors to mean response: \(g(\mathbb{E}[y|x]) = X\beta\).</p>
           </div>
         </div>
 
         <details open>
-          <summary>Why squared loss corresponds to Gaussian noise (important intuition)</summary>
-          <p class="muted">
-            If you assume \(y_i = \mathbf{x}_i^T\beta + \epsilon_i\) and \(\epsilon_i \sim \mathcal{N}(0,\sigma^2)\),
-            then maximizing likelihood is equivalent to minimizing the sum of squared residuals:
-          </p>
+          <summary>Formula explained: generic supervised regression objective</summary>
           <div class="eq">
             \[
-              -\log p(y|X,\beta) \propto \sum_i (y_i-\mathbf{x}_i^T\beta)^2
+              \hat{\beta}=\arg\min_{\beta}\ \sum_{i=1}^n L\Big(y_i,\ f(\mathbf{x}_i;\beta)\Big) + \lambda \Omega(\beta)
             \]
+          </div>
+          <ul class="muted">
+            <li>\(f(\mathbf{x}_i;\beta)\) is the model (e.g., \(f=\mathbf{x}_i^T\beta\) for linear regression).</li>
+            <li>\(L(y,\hat{y})\) is the loss (e.g., \((y-\hat{y})^2\), logistic cross-entropy, Poisson deviance).</li>
+            <li>\(\Omega(\beta)\) is the penalty (e.g., \(\|\beta\|_2^2\) or \(\|\beta\|_1\)).</li>
+            <li>\(\lambda\ge 0\) controls the tradeoff between fitting data (first term) and model simplicity (second term).</li>
+          </ul>
+          <div class="note">
+            If \(\lambda=0\), you’re only fitting the training data. If \(\lambda\) is large, you force \(\beta\) to be small/sparse even if training error increases.
           </div>
         </details>
 
         <details>
-          <summary>What can go wrong in real bioinformatics regression?</summary>
-          <ul class="muted">
-            <li><b>Confounding</b>: batch effects, ancestry/structure, library size, processing pipelines</li>
-            <li><b>Collinearity</b>: correlated predictors (e.g., genes in same pathway)</li>
-            <li><b>Non-Gaussian outcomes</b>: counts, zero-inflation, heavy tails, heteroscedasticity</li>
-            <li><b>p≫n</b>: many more features than samples; regularization becomes essential</li>
-          </ul>
+          <summary>Why “minimizing squared error” corresponds to Gaussian noise</summary>
+          <p class="muted">
+            Assume \(y_i = \mathbf{x}_i^T\beta + \varepsilon_i\) and \(\varepsilon_i\sim \mathcal{N}(0,\sigma^2)\).
+            The likelihood is:
+          </p>
+          <div class="eq">
+            \[
+              p(y_i|\mathbf{x}_i,\beta)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(y_i-\mathbf{x}_i^T\beta)^2}{2\sigma^2}\right)
+            \]
+          </div>
+          <p class="muted">
+            Taking \(-\log\) and summing over \(i\) gives a constant + \(\sum (y_i-\mathbf{x}_i^T\beta)^2\). Minimizing it is OLS.
+          </p>
         </details>
       </div>
     </article>
 
     <!-- Regularization -->
-    <article class="card topic" id="regularization" data-keywords="regularization l1 l2 elastic net geometry shrinkage sparsity">
+    <article class="card topic" id="regularization" data-keywords="regularization l1 l2 geometry sparsity shrinkage lambda">
       <div class="card-header">
-        <h2 class="card-title">2) Regularization: deep intuition (geometry + effects)</h2>
-        <span class="tag">Conceptual</span>
+        <h2 class="card-title">3) Regularization (L1 vs L2): detailed formula meaning</h2>
+        <span class="tag">Concept</span>
       </div>
       <div class="card-body">
-        <p>
-          Regularization adds a penalty to discourage overly complex models.
-          It is not “just a trick”—it encodes a belief (a prior) that parameters should be small or sparse.
-        </p>
-
         <details open>
-          <summary>Penalty geometry: why L1 creates sparsity</summary>
-          <p class="muted">
-            Consider minimizing SSE subject to a constraint:
-            \(\|\beta\|_2 \le t\) (ridge) vs \(\|\beta\|_1 \le t\) (lasso).
-            In 2D, L2 constraint is a circle; L1 is a diamond with corners on axes.
-            The optimum often hits a corner → one coefficient becomes exactly 0.
-          </p>
+          <summary>Formula explained: ridge vs lasso penalties</summary>
           <div class="eq">
             \[
-              \text{Ridge: } \min \|y-X\beta\|_2^2 \ \text{s.t.}\ \|\beta\|_2^2 \le t
-              \quad\Longleftrightarrow\quad
-              \min \|y-X\beta\|_2^2 + \lambda\|\beta\|_2^2
+              \text{Ridge: }\ \min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_2^2
             \]
             \[
-              \text{Lasso: } \min \|y-X\beta\|_2^2 \ \text{s.t.}\ \|\beta\|_1 \le t
-              \quad\Longleftrightarrow\quad
-              \min \|y-X\beta\|_2^2 + \lambda\|\beta\|_1
+              \text{Lasso: }\ \min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_1
             \]
+          </div>
+          <ul class="muted">
+            <li>\(\|y-X\beta\|_2^2 = \sum_{i=1}^n (y_i-\hat{y}_i)^2\) is the total squared error.</li>
+            <li>\(\|\beta\|_2^2 = \sum_{j=1}^p \beta_j^2\): large coefficients cost a lot, so ridge shrinks all coefficients toward 0.</li>
+            <li>\(\|\beta\|_1 = \sum_{j=1}^p |\beta_j|\): linear cost encourages many coefficients to become exactly 0 → sparsity.</li>
+          </ul>
+          <div class="note">
+            A good mental model: Ridge spreads weight across correlated features; Lasso tends to select a subset.
           </div>
         </details>
 
         <details open>
-          <summary>Bayesian view (optional but powerful)</summary>
-          <ul class="muted">
-            <li>Ridge (L2) ↔ Gaussian prior on \(\beta\): \(\beta \sim \mathcal{N}(0,\tau^2I)\)</li>
-            <li>Lasso (L1) ↔ Laplace prior on \(\beta\) (sharper peak at 0 → sparsity)</li>
-          </ul>
+          <summary>Constraint view (why L1 leads to zeros)</summary>
+          <p class="muted">
+            Penalized form is equivalent to a constrained form:
+          </p>
+          <div class="eq">
+            \[
+              \min \|y-X\beta\|_2^2\ \text{s.t.}\ \|\beta\|_2^2\le t \quad (\text{ridge})
+            \]
+            \[
+              \min \|y-X\beta\|_2^2\ \text{s.t.}\ \|\beta\|_1\le t \quad (\text{lasso})
+            \]
+          </div>
+          <p class="muted">
+            In coefficient space, the L1 “ball” has corners → the optimum often hits a corner → some \(\beta_j=0\).
+          </p>
         </details>
 
         <details>
           <summary>How to choose λ (most common practice)</summary>
           <ul class="muted">
-            <li><b>Cross-validation</b> (CV) to minimize validation error</li>
-            <li><b>Nested CV</b> if you want unbiased performance estimates</li>
-            <li>For GLMs: tune via deviance / log-likelihood on held-out data</li>
+            <li>Use cross-validation to pick \(\lambda\) that minimizes validation error (MSE, deviance, etc.).</li>
+            <li>If you report performance, use nested CV to avoid optimistic bias.</li>
+            <li>Standardize features before ridge/lasso/elastic net (important!).</li>
           </ul>
         </details>
-
-        <div class="ok">
-          Rule of thumb: in high-dimensional genomics (\(p\gg n\)), you almost always need regularization (or dimensionality reduction) to generalize.
-        </div>
       </div>
     </article>
 
     <!-- OLS -->
-    <article class="card topic" id="m01" data-keywords="ols linear regression least squares assumptions">
+    <article class="card topic" id="m01" data-keywords="ols linear regression normal equations closed form">
       <div class="card-header">
-        <h2 class="card-title">3) OLS Linear Regression</h2>
+        <h2 class="card-title">4) OLS Linear Regression</h2>
         <span class="tag">Baseline</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Continuous outcomes with roughly constant variance; good baseline and interpretable coefficients.</p>
-          </div>
-          <div class="box">
-            <h3>Assumptions (ideal)</h3>
-            <p>Linearity, independent errors, constant variance, Gaussian errors (for p-values/CI).</p>
-          </div>
+        <div class="eq">
+          \[
+            y = X\beta + \varepsilon
+          \]
         </div>
+
+        <details open>
+          <summary>Formula explained: \(y=X\beta+\varepsilon\)</summary>
+          <ul class="muted">
+            <li>\(X\beta\) is the model’s “systematic” part: prediction from features.</li>
+            <li>\(\varepsilon\) is the “random” part: noise + unmodeled effects.</li>
+            <li>For sample \(i\): \(y_i = \mathbf{x}_i^T\beta + \varepsilon_i\).</li>
+          </ul>
+        </details>
 
         <div class="eq">
           \[
-            y = X\beta + \varepsilon,\quad
+            \hat{\beta}_{OLS} = \arg\min_{\beta}\ \|y-X\beta\|_2^2
+            \quad\Rightarrow\quad
             \hat{\beta}_{OLS} = (X^TX)^{-1}X^Ty
           \]
         </div>
 
         <details open>
-          <summary>Python + plot (fit line)</summary>
-          <div class="codeblock" data-src="code-ols" data-lang="python"></div>
+          <summary>Formula explained: OLS objective and solution</summary>
+          <ul class="muted">
+            <li>\(\|y-X\beta\|_2^2 = \sum_i (y_i-\hat{y}_i)^2\) is the sum of squared residuals.</li>
+            <li>The solution \((X^TX)^{-1}X^Ty\) exists when \(X^TX\) is invertible (features not perfectly collinear).</li>
+            <li>Geometric meaning: \(\hat{y}=X\hat{\beta}\) is the orthogonal projection of \(y\) onto the column space of \(X\).</li>
+          </ul>
+          <div class="note">
+            In practice, numerical solvers avoid explicitly computing \((X^TX)^{-1}\); they use QR/SVD for stability.
+          </div>
         </details>
 
-        <details>
-          <summary>What can go wrong?</summary>
-          <ul class="muted">
-            <li>Outliers can dominate the fit (see Huber section).</li>
-            <li>Nonlinear patterns: OLS underfits (see polynomial features).</li>
-            <li>Collinearity increases coefficient variance (ridge helps).</li>
-          </ul>
+        <details open>
+          <summary>Python + plot (fit line)</summary>
+          <div class="codeblock" data-src="code-ols" data-lang="python"></div>
         </details>
       </div>
     </article>
 
     <!-- Polynomial -->
-    <article class="card topic" id="m02" data-keywords="polynomial regression basis expansion overfitting">
+    <article class="card topic" id="m02" data-keywords="polynomial regression basis expansion">
       <div class="card-header">
-        <h2 class="card-title">4) Polynomial Regression (basis expansion)</h2>
-        <span class="tag">Flexible but can overfit</span>
+        <h2 class="card-title">5) Polynomial Regression</h2>
+        <span class="tag">Nonlinear in x, linear in β</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>Why it works</h3>
-            <p>Turns nonlinear relationships into a linear model in an expanded feature space.</p>
-          </div>
-          <div class="box">
-            <h3>Risk</h3>
-            <p>High degree → wiggly curve → low training error but poor generalization.</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
             \hat{y}=\beta_0+\beta_1 x+\beta_2 x^2+\cdots+\beta_d x^d
@@ -559,36 +677,52 @@
         </div>
 
         <details open>
+          <summary>Formula explained: why it’s still “linear regression”</summary>
+          <ul class="muted">
+            <li>Even though \(x^2,x^3,\dots\) appear, the model is linear in parameters \(\beta_j\).</li>
+            <li>Define a transformed feature vector \(\phi(x)=(1,x,x^2,\dots,x^d)\). Then \(\hat{y}=\phi(x)^T\beta\).</li>
+            <li>So you can still fit with OLS/ridge/lasso—just on the transformed design matrix \(\Phi\).</li>
+          </ul>
+        </details>
+
+        <details open>
           <summary>Python + plot (degree 1 vs 5)</summary>
           <div class="codeblock" data-src="code-poly" data-lang="python"></div>
         </details>
+
+        <div class="warn">
+          High-degree polynomial features can explode in magnitude; scaling + regularization is typically necessary.
+        </div>
       </div>
     </article>
 
     <!-- Ridge -->
-    <article class="card topic" id="m03" data-keywords="ridge l2 regularization shrinkage multicollinearity">
+    <article class="card topic" id="m03" data-keywords="ridge regression l2 penalty closed form">
       <div class="card-header">
-        <h2 class="card-title">5) Ridge Regression (L2)</h2>
-        <span class="tag">Stabilizes coefficients</span>
+        <h2 class="card-title">6) Ridge Regression (L2)</h2>
+        <span class="tag">Shrinkage</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Many correlated features; you want to keep all predictors but shrink them.</p>
-          </div>
-          <div class="box">
-            <h3>Effect</h3>
-            <p>Reduces coefficient variance; improves predictions; rarely sets coefficients exactly to 0.</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
-            \hat{\beta}_{ridge}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_2^2,\quad
+            \hat{\beta}_{ridge}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_2^2
+            \quad\Rightarrow\quad
             \hat{\beta}=(X^TX+\lambda I)^{-1}X^Ty
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: what each term is doing</summary>
+          <ul class="muted">
+            <li>\(\|y-X\beta\|_2^2\): fit the data (reduce residual error).</li>
+            <li>\(\lambda\|\beta\|_2^2\): penalize large coefficients; larger \(\lambda\) → more shrinkage.</li>
+            <li>\(I\): identity matrix \((p\times p)\). Adding \(\lambda I\) makes \(X^TX+\lambda I\) invertible even when \(X^TX\) is singular.</li>
+            <li>Geometric meaning: ridge changes the projection so it is less sensitive to directions with low data support (small singular values).</li>
+          </ul>
+          <div class="note">
+            Ridge is especially useful when predictors are correlated (common in omics).
+          </div>
+        </details>
 
         <details open>
           <summary>Python + plot (OLS vs Ridge with polynomial features)</summary>
@@ -598,23 +732,12 @@
     </article>
 
     <!-- Lasso -->
-    <article class="card topic" id="m04" data-keywords="lasso l1 sparsity feature selection">
+    <article class="card topic" id="m04" data-keywords="lasso regression l1 penalty sparsity">
       <div class="card-header">
-        <h2 class="card-title">6) Lasso Regression (L1)</h2>
-        <span class="tag">Sparse model</span>
+        <h2 class="card-title">7) Lasso Regression (L1)</h2>
+        <span class="tag">Sparsity</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>When to use</h3>
-            <p>You suspect only a small subset of features matter (sparse signal), and you want interpretability.</p>
-          </div>
-          <div class="box">
-            <h3>Effect</h3>
-            <p>Many coefficients become exactly zero (feature selection-like behavior).</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
             \hat{\beta}_{lasso}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\|\beta\|_1
@@ -622,43 +745,48 @@
         </div>
 
         <details open>
-          <summary>Python + plot (coefficients shrink to zero)</summary>
-          <div class="codeblock" data-src="code-lasso" data-lang="python"></div>
+          <summary>Formula explained: why L1 produces zeros</summary>
+          <ul class="muted">
+            <li>\(\|\beta\|_1=\sum_j |\beta_j|\) has a “kink” at 0 (not differentiable there).</li>
+            <li>Optimization can land exactly at \(\beta_j=0\) because moving away from 0 immediately increases penalty linearly.</li>
+            <li>Result: many coefficients become 0 → sparse model → interpretable feature set.</li>
+          </ul>
+          <div class="warn">
+            With correlated predictors, lasso may select one feature and drop others even if they are all relevant. Elastic Net can help.
+          </div>
         </details>
 
-        <details>
-          <summary>Important caveat in genomics</summary>
-          <p class="muted">
-            If many features are highly correlated (genes in pathways), lasso may pick one arbitrarily.
-            Elastic Net often behaves better for grouped signals.
-          </p>
+        <details open>
+          <summary>Python + plot (coefficients shrink to zero)</summary>
+          <div class="codeblock" data-src="code-lasso" data-lang="python"></div>
         </details>
       </div>
     </article>
 
     <!-- Elastic Net -->
-    <article class="card topic" id="m05" data-keywords="elastic net grouped features correlated predictors">
+    <article class="card topic" id="m05" data-keywords="elastic net l1 l2 mixing alpha">
       <div class="card-header">
-        <h2 class="card-title">7) Elastic Net (L1 + L2)</h2>
+        <h2 class="card-title">8) Elastic Net (L1 + L2)</h2>
         <span class="tag">Group-friendly sparsity</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>When to use</h3>
-            <p>High-dimensional data with correlated predictors (common in omics).</p>
-          </div>
-          <div class="box">
-            <h3>Effect</h3>
-            <p>Combines shrinkage (L2) + sparsity (L1); more stable than pure lasso with correlations.</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
             \hat{\beta}=\arg\min_{\beta}\ \|y-X\beta\|_2^2 + \lambda\left(\alpha\|\beta\|_1+(1-\alpha)\|\beta\|_2^2\right)
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: what α does</summary>
+          <ul class="muted">
+            <li>\(\alpha\in[0,1]\) controls the mixture: higher \(\alpha\) → more lasso-like (sparser); lower \(\alpha\) → more ridge-like (more shrinkage, less sparsity).</li>
+            <li>\(\lambda\) controls overall penalty strength (how strongly coefficients are forced toward 0).</li>
+            <li>Elastic Net often keeps groups of correlated features instead of choosing just one.</li>
+          </ul>
+          <div class="note">
+            In scikit-learn, the parameterization is consistent with the equation above (alpha = overall strength, l1_ratio = mixing).
+          </div>
+        </details>
 
         <details open>
           <summary>Python + plot (compare Lasso vs ElasticNet)</summary>
@@ -668,31 +796,43 @@
     </article>
 
     <!-- Logistic -->
-    <article class="card topic" id="m06" data-keywords="logistic regression classification odds logit regularization">
+    <article class="card topic" id="m06" data-keywords="logistic regression sigmoid logit cross entropy bernoulli">
       <div class="card-header">
-        <h2 class="card-title">8) Logistic Regression (binary outcomes)</h2>
-        <span class="tag">GLM</span>
+        <h2 class="card-title">9) Logistic Regression (binary outcomes)</h2>
+        <span class="tag">GLM (Bernoulli)</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>Interpretation</h3>
-            <p>Linear model on log-odds: \(\log\frac{p}{1-p}=\mathbf{x}^T\beta\). Coefficients change odds multiplicatively.</p>
-          </div>
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Binary outcomes: response/non-response, case/control, mutation present/absent.</p>
-          </div>
+        <div class="eq">
+          \[
+            p_i = P(y_i=1|\mathbf{x}_i)=\sigma(\mathbf{x}_i^T\beta),\quad
+            \sigma(z)=\frac{1}{1+e^{-z}}
+          \]
         </div>
+
+        <details open>
+          <summary>Formula explained: sigmoid and log-odds</summary>
+          <ul class="muted">
+            <li>\(z_i=\mathbf{x}_i^T\beta\) is a linear score (can be any real number).</li>
+            <li>\(\sigma(z)\) maps \(\mathbb{R}\to(0,1)\) so we get a valid probability.</li>
+            <li>The inverse link is <b>logit</b>: \(\log\frac{p}{1-p}=z\). So logistic regression is “linear in log-odds”.</li>
+          </ul>
+        </details>
 
         <div class="eq">
           \[
-            P(y=1|\mathbf{x})=\sigma(\mathbf{x}^T\beta),\quad \sigma(z)=\frac{1}{1+e^{-z}}
-          \]
-          \[
-            \text{Loss}=-\sum_i \left[y_i\log p_i + (1-y_i)\log(1-p_i)\right] + \lambda\Omega(\beta)
+            \mathcal{L}(\beta)= -\sum_{i=1}^n \left[y_i\log p_i + (1-y_i)\log(1-p_i)\right] + \lambda\Omega(\beta)
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: cross-entropy loss</summary>
+          <ul class="muted">
+            <li>The bracket term is the negative log-likelihood of a Bernoulli outcome.</li>
+            <li>If \(y_i=1\), the loss is \(-\log p_i\): it punishes low predicted probability for the true class.</li>
+            <li>If \(y_i=0\), the loss is \(-\log(1-p_i)\): it punishes high predicted probability for class 1 when true class is 0.</li>
+            <li>Regularization \(\lambda\Omega(\beta)\) prevents extreme coefficients (which can overfit).</li>
+          </ul>
+        </details>
 
         <details open>
           <summary>Python + plot (probability curve)</summary>
@@ -702,59 +842,66 @@
     </article>
 
     <!-- Poisson -->
-    <article class="card topic" id="m07" data-keywords="poisson regression glm log link counts">
+    <article class="card topic" id="m07" data-keywords="poisson regression glm log link likelihood">
       <div class="card-header">
-        <h2 class="card-title">9) Poisson Regression (counts)</h2>
-        <span class="tag">GLM</span>
+        <h2 class="card-title">10) Poisson Regression (counts)</h2>
+        <span class="tag">GLM (Poisson)</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Counts like mutation counts per sample, reads mapping to a feature, events per unit time.</p>
-          </div>
-          <div class="box">
-            <h3>Assumption</h3>
-            <p>Mean ≈ variance (often violated in RNA-seq; then use Negative Binomial).</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
-            y_i\sim \mathrm{Poisson}(\mu_i),\quad \log \mu_i = \mathbf{x}_i^T\beta
+            y_i \sim \mathrm{Poisson}(\mu_i),\quad \log \mu_i = \mathbf{x}_i^T\beta
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: Poisson mean model</summary>
+          <ul class="muted">
+            <li>\(\mu_i = \mathbb{E}[y_i|\mathbf{x}_i]\) is the expected count for sample \(i\).</li>
+            <li>The log link \(\log \mu_i = \mathbf{x}_i^T\beta\) ensures \(\mu_i>0\) automatically (since \(\mu_i=e^{\mathbf{x}_i^T\beta}\)).</li>
+            <li>Interpretation: a one-unit increase in feature \(x_{ij}\) multiplies \(\mu_i\) by \(e^{\beta_j}\) (holding others fixed).</li>
+          </ul>
+          <div class="note">
+            This multiplicative interpretation is why Poisson regression is popular for rates and counts.
+          </div>
+        </details>
 
         <details open>
           <summary>Python + plot (fitted mean curve)</summary>
           <div class="codeblock" data-src="code-poisson" data-lang="python"></div>
         </details>
+
+        <div class="warn">
+          Poisson assumes variance ≈ mean. If variance is much larger (overdispersion), use Negative Binomial.
+        </div>
       </div>
     </article>
 
-    <!-- NegBin -->
-    <article class="card topic" id="m08" data-keywords="negative binomial regression overdispersion rna-seq">
+    <!-- Negative Binomial -->
+    <article class="card topic" id="m08" data-keywords="negative binomial regression overdispersion dispersion alpha">
       <div class="card-header">
-        <h2 class="card-title">10) Negative Binomial Regression (overdispersed counts)</h2>
-        <span class="tag">Counts</span>
+        <h2 class="card-title">11) Negative Binomial Regression (overdispersed counts)</h2>
+        <span class="tag">Counts + dispersion</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>Why it matters in bioinformatics</h3>
-            <p>RNA-seq and metagenomic counts are overdispersed: variance &gt; mean due to biological heterogeneity.</p>
-          </div>
-          <div class="box">
-            <h3>Interpretation</h3>
-            <p>Like Poisson but with an extra dispersion parameter to allow more variability.</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
             y_i \sim \mathrm{NB}(\mu_i, \theta),\quad \log \mu_i = \mathbf{x}_i^T\beta
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: what NB adds beyond Poisson</summary>
+          <ul class="muted">
+            <li>Poisson: \(\mathrm{Var}(y_i|\mathbf{x}_i)=\mu_i\).</li>
+            <li>Negative Binomial allows: \(\mathrm{Var}(y_i|\mathbf{x}_i)=\mu_i + \alpha \mu_i^2\) (one common parameterization).</li>
+            <li>\(\alpha\) (or \(\theta\)) is the dispersion: larger dispersion → more variability than Poisson.</li>
+            <li>In RNA-seq, biological variability makes NB a much better model than Poisson.</li>
+          </ul>
+          <div class="note">
+            If you’ve used DESeq2/edgeR in R: their core count model is NB with gene-specific dispersion.
+          </div>
+        </details>
 
         <details open>
           <summary>Python + plot (Poisson vs NB fit)</summary>
@@ -764,22 +911,25 @@
     </article>
 
     <!-- Huber -->
-    <article class="card topic" id="m09" data-keywords="huber robust regression outliers heavy tail">
+    <article class="card topic" id="m09" data-keywords="huber regression robust loss delta residual">
       <div class="card-header">
-        <h2 class="card-title">11) Robust Regression (Huber)</h2>
-        <span class="tag">Outlier-resistant</span>
+        <h2 class="card-title">12) Robust Regression (Huber)</h2>
+        <span class="tag">Outlier-resistant loss</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>Concept</h3>
-            <p>Squared loss explodes for large residuals. Huber changes to linear growth, reducing outlier influence.</p>
-          </div>
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Outliers, heavy-tailed noise, measurement artifacts, occasional failed samples.</p>
-          </div>
+        <div class="eq">
+          \[
+            r_i = y_i - \mathbf{x}_i^T\beta
+          \]
         </div>
+
+        <details open>
+          <summary>Formula explained: residual</summary>
+          <ul class="muted">
+            <li>\(r_i\) is how far off your prediction is for sample \(i\).</li>
+            <li>OLS minimizes \(\sum r_i^2\), which makes large residuals extremely influential.</li>
+          </ul>
+        </details>
 
         <div class="eq">
           \[
@@ -792,6 +942,15 @@
         </div>
 
         <details open>
+          <summary>Formula explained: why Huber is robust</summary>
+          <ul class="muted">
+            <li>For small errors (\(|r|\le \delta\)), it behaves like squared loss → smooth and efficient when noise is Gaussian.</li>
+            <li>For large errors (\(|r|>\delta\)), it becomes linear in \(|r|\) → outliers don’t dominate.</li>
+            <li>\(\delta\) is the “switch point”: smaller \(\delta\) → more robust (more linear region).</li>
+          </ul>
+        </details>
+
+        <details open>
           <summary>Python + plot (OLS vs Huber with outliers)</summary>
           <div class="codeblock" data-src="code-huber" data-lang="python"></div>
         </details>
@@ -799,30 +958,45 @@
     </article>
 
     <!-- Quantile -->
-    <article class="card topic" id="m10" data-keywords="quantile regression median pinball robust heteroscedastic">
+    <article class="card topic" id="m10" data-keywords="quantile regression pinball check loss tau">
       <div class="card-header">
-        <h2 class="card-title">12) Quantile Regression (median / conditional quantiles)</h2>
-        <span class="tag">Robust + informative</span>
+        <h2 class="card-title">13) Quantile Regression (median / conditional quantiles)</h2>
+        <span class="tag">Not just the mean</span>
       </div>
       <div class="card-body">
-        <div class="grid2">
-          <div class="box">
-            <h3>What it gives you</h3>
-            <p>Not just mean response—median or other quantiles (e.g., 0.1 and 0.9) to model uncertainty bands.</p>
-          </div>
-          <div class="box">
-            <h3>When to use</h3>
-            <p>Heteroscedastic data (variance changes with x), skewed noise, interest in tails.</p>
-          </div>
-        </div>
-
         <div class="eq">
           \[
-            \min_{\beta}\sum_i \rho_\tau(y_i-\mathbf{x}_i^T\beta),
-            \quad
             \rho_\tau(u)=u(\tau-\mathbb{1}[u<0])
           \]
         </div>
+
+        <details open>
+          <summary>Formula explained: pinball (check) loss</summary>
+          <ul class="muted">
+            <li>\(u = y - \mathbf{x}^T\beta\) is the residual.</li>
+            <li>\(\mathbb{1}[u<0]\) is an indicator: 1 if residual is negative, else 0.</li>
+            <li>If \(u\ge 0\): \(\rho_\tau(u)=\tau u\) (slope \(\tau\)).</li>
+            <li>If \(u<0\): \(\rho_\tau(u)=(\tau-1)u\) (slope \(\tau-1\), which is negative).</li>
+            <li>This asymmetry forces the fitted line so that a fraction \(\tau\) of points lie below it (approximately).</li>
+          </ul>
+          <div class="note">
+            For \(\tau=0.5\) (median), pinball loss becomes proportional to absolute error: minimizing it gives the conditional median.
+          </div>
+        </details>
+
+        <div class="eq">
+          \[
+            \hat{\beta}_\tau = \arg\min_{\beta}\sum_{i=1}^n \rho_\tau\left(y_i-\mathbf{x}_i^T\beta\right)
+          \]
+        </div>
+
+        <details open>
+          <summary>Formula explained: quantile regression objective</summary>
+          <ul class="muted">
+            <li>Instead of minimizing squared errors (mean), it minimizes an asymmetric absolute-like loss (quantile).</li>
+            <li>Useful when noise is skewed or variance changes with \(x\) (heteroscedasticity).</li>
+          </ul>
+        </details>
 
         <details open>
           <summary>Python + plot (mean vs median fit)</summary>
@@ -831,41 +1005,41 @@
       </div>
     </article>
 
-    <!-- Practical checklist -->
-    <article class="card topic" id="modeling" data-keywords="checklist bioinformatics confounding batch effects feature scaling cv">
+    <!-- Checklist -->
+    <article class="card topic" id="checklist" data-keywords="checklist bioinformatics confounding batch scaling cv">
       <div class="card-header">
-        <h2 class="card-title">13) Practical checklist (bioinformatics)</h2>
-        <span class="tag">Do this before modeling</span>
+        <h2 class="card-title">14) Practical checklist (bioinformatics)</h2>
+        <span class="tag">Use this every time</span>
       </div>
       <div class="card-body">
         <details open>
-          <summary>1) Decide what your outcome distribution is</summary>
+          <summary>A) Match the model to the outcome</summary>
           <ul class="muted">
-            <li>Continuous (normalized expression, log counts): OLS/Ridge/Lasso/ElasticNet/Huber/Quantile</li>
-            <li>Binary (case/control): Logistic</li>
-            <li>Counts (mutations, reads): Poisson or Negative Binomial</li>
+            <li><b>Continuous</b>: OLS/Ridge/Lasso/ElasticNet/Huber/Quantile</li>
+            <li><b>Binary</b>: Logistic</li>
+            <li><b>Counts</b>: Poisson; if overdispersed → Negative Binomial</li>
           </ul>
         </details>
 
         <details open>
-          <summary>2) Control confounding and leakage</summary>
+          <summary>B) Always standardize features for regularization</summary>
           <ul class="muted">
-            <li>Include batch, sex, age, tumor purity, ancestry PCs, sequencing platform, etc.</li>
-            <li>Split train/test by patient (not by sample) when there are repeated measures.</li>
-            <li>Do scaling/normalization inside CV folds to avoid leakage.</li>
+            <li>Ridge/lasso compare coefficient magnitudes. If one feature has huge units, it will dominate.</li>
+            <li>Use z-scoring: \(x'=(x-\mu)/\sigma\) within the training fold.</li>
           </ul>
         </details>
 
         <details open>
-          <summary>3) Always tune λ via cross-validation</summary>
+          <summary>C) Control confounding and leakage</summary>
           <ul class="muted">
-            <li>Use nested CV for performance estimates; simple CV for model selection.</li>
-            <li>Report: chosen λ, coefficient stability, and performance variance across folds.</li>
+            <li>Include batch, sex, age, ancestry PCs, library size/purity, platform, etc.</li>
+            <li>Split data by patient or study batch if needed (avoid leakage across folds).</li>
+            <li>Do feature selection inside CV folds (never on the whole dataset).</li>
           </ul>
         </details>
 
         <div class="ok">
-          In omics, the model that “looks best” on training often fails in validation — regularization + careful splits are the fix.
+          In omics: you almost always want regularization (or dimension reduction) + careful splitting.
         </div>
       </div>
     </article>
@@ -874,7 +1048,7 @@
     <article class="card topic" id="appendix" data-keywords="appendix helper plot functions">
       <div class="card-header">
         <h2 class="card-title">Appendix: shared plotting helper</h2>
-        <span class="tag">Reusable</span>
+        <span class="tag">Optional</span>
       </div>
       <div class="card-body">
         <details open>
