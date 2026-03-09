@@ -1104,33 +1104,145 @@ print("  counts:", x_cnt.shape, y_pois.shape, y_nb.shape)
 </script>
 
 <script type="text/plain" id="code-ols">
+# Import NumPy and give it the short alias "np"
+# NumPy is used for numerical computing, arrays, random number generation, etc.
 import numpy as np
+
+# Import the plotting module from Matplotlib and call it "plt"
+# This is used to make figures, scatter plots, line plots, labels, titles, etc.
 import matplotlib.pyplot as plt
+
+# Import the LinearRegression class from scikit-learn
+# This class fits a straight-line regression model using ordinary least squares (OLS)
 from sklearn.linear_model import LinearRegression
 
+
+# Create a random number generator object with a fixed seed (42)
+# Using a seed makes the random results reproducible:
+# every time you run the code, you get the same random numbers
 rng = np.random.default_rng(42)
+
+# Number of data points to generate
 n = 60
+
+# Create 60 evenly spaced x-values between 0 and 10
+# Example idea:
+# if n were 5, this would look like [0, 2.5, 5, 7.5, 10]
 x = np.linspace(0, 10, n)
+
+# Create y-values from a linear relationship plus random noise
+# True underlying model here is:
+# y = 1.5 + 0.8*x + noise
+#
+# 1.5   -> intercept
+# 0.8*x -> slope times x
+# rng.normal(0, 1.0, size=n) -> random noise from a normal distribution
+#    mean = 0
+#    standard deviation = 1.0
+#    size = n means generate 60 random values
 y = 1.5 + 0.8*x + rng.normal(0, 1.0, size=n)
 
+
+# Reshape x from a 1D array of shape (60,) into a 2D column matrix of shape (60,1)
+# scikit-learn expects input features X to be 2D:
+# rows = samples
+# columns = features
+#
+# -1 means "figure this dimension out automatically"
+#  1 means "make 1 column"
 X = x.reshape(-1,1)
-model = LinearRegression()
-model.fit(X, y)
 
-print("Intercept:", model.intercept_)
-print("Slope:", model.coef_[0])
-print("R^2:", model.score(X,y))
+# Create a LinearRegression model object and immediately fit it to X and y
+# .fit(X, y) learns the best intercept and slope from the data
+model = LinearRegression().fit(X, y)
 
+
+# Create many x-values for drawing a smooth fitted regression line
+# x.min() gives smallest x
+# x.max() gives largest x
+# 200 points are used so the line looks smooth
+# reshape(-1,1) again makes it 2D for scikit-learn
 xx = np.linspace(x.min(), x.max(), 200).reshape(-1,1)
+
+# Predict y-values along the smooth x-grid using the fitted model
+# This gives the regression line values
 yy = model.predict(xx)
 
+
+# Predict y-values for the original training points
+# These are the fitted values corresponding to each observed x
+yhat = model.predict(X)
+
+# Compute residuals:
+# residual = observed y - predicted y
+# A residual tells us how far each point is above or below the fitted line
+resid = y - yhat
+
+
+# Print model summary values:
+# model.intercept_ -> fitted intercept
+# model.coef_[0]  -> fitted slope (first coefficient, since only one predictor)
+# model.score(X,y)-> R^2 coefficient of determination
+print("Intercept:", model.intercept_, "Slope:", model.coef_[0], "R^2:", model.score(X,y))
+
+
+# Create a new figure for the scatter plot and fitted line
 plt.figure()
+
+# Scatter plot of observed data points
+# x = horizontal coordinates
+# y = vertical coordinates
+# label is used in the legend
 plt.scatter(x, y, label="data")
+
+# Plot the fitted regression line
+# xx.ravel() converts xx from shape (200,1) back to shape (200,)
+# This is often convenient for plotting
 plt.plot(xx.ravel(), yy, label="OLS fit")
-plt.xlabel("x"); plt.ylabel("y")
-plt.title("OLS Linear Regression")
+
+# Label the x-axis
+plt.xlabel("x")
+
+# Label the y-axis
+plt.ylabel("y")
+
+# Add a title to the plot
+plt.title("OLS fit")
+
+# Display the legend using labels from scatter() and plot()
 plt.legend()
+
+# Adjust spacing automatically so labels/titles do not overlap or get cut off
 plt.tight_layout()
+
+# Show the figure
+plt.show()
+
+
+# Create another figure for residual diagnostics
+plt.figure()
+
+# Plot fitted values on x-axis and residuals on y-axis
+# This helps check whether residuals are randomly scattered around zero
+plt.scatter(yhat, resid)
+
+# Draw a horizontal line at y = 0
+# Residuals should ideally be centered around this line
+plt.axhline(0)
+
+# Label x-axis
+plt.xlabel("fitted y")
+
+# Label y-axis
+plt.ylabel("residual")
+
+# Title of the residual plot
+plt.title("Residuals vs fitted")
+
+# Adjust spacing
+plt.tight_layout()
+
+# Show the second figure
 plt.show()
 </script>
 
