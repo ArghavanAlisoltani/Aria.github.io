@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Beginner → Advanced Calculus Course (Worked Examples + Python)</title>
+  <meta name="description" content="A GitHub Pages-ready calculus course from beginner to advanced topics: limits, derivatives, integrals, series, multivariable & vector calculus, and intro differential equations—with step-by-step numerical examples and Python code for each." />
+
+  <!-- MathJax for formulas -->
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1280px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1150px;}
+    .kicker{
+      color:var(--accent2); font-weight:900; letter-spacing:.35px;
+      text-transform:uppercase; font-size:12px; margin-top:12px;
+    }
+    .top-actions{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;
+      align-items:center; justify-content:space-between;
+    }
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:800; white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1280px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 360px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start;
+      height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{
+      font-size:13px; margin:6px 8px 10px; color:var(--muted);
+      letter-spacing:.4px; text-transform:uppercase;
+    }
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px;
+      color:var(--text); border:1px solid transparent;
+      font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border);
+      background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.68; font-size:14.5px;}
+    .muted{color:var(--muted)}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em;
+      background: rgba(0,0,0,.25); border:1px solid var(--border);
+      padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer; font-weight:900; color:var(--text);
+      list-style:none; user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.22);
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto;
+      padding: 14px 12px 12px; position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono); font-size:12.6px; line-height:1.55;
+      white-space: pre; display:block;
+    }
+    .copy-btn{
+      position:absolute; top:10px; right:10px;
+      padding:6px 10px; border-radius:10px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px; user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9);
+      padding: 10px 12px; background: rgba(122,162,255,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid rgba(112,255,209,.9);
+      padding: 10px 12px; background: rgba(112,255,209,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    table{
+      width:100%; border-collapse:collapse; overflow:hidden;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.18); margin-top:10px;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.45;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>Beginner → Advanced Calculus</h1>
+    <p class="subtitle">
+      A full calculus course for GitHub Pages. Each topic includes:
+      <b>important formulas</b>, <b>step-by-step worked numerical examples</b>, and <b>Python code</b> (with plots) for every example.
+    </p>
+
+    <div class="kicker">Run the code</div>
+    <p class="subtitle">
+      Install: <code class="inline">pip install numpy matplotlib sympy scipy</code>
+    </p>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter topics (e.g., chain rule, Taylor, gradient, Simpson, Stokes)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#symbols">0) Symbols cheat sheet</a>
+      <a href="#setup">1) Python setup</a>
+
+      <a href="#limits">2) Limits + continuity</a>
+      <a href="#derivatives">3) Derivatives</a>
+      <a href="#implicit">4) Implicit differentiation</a>
+      <a href="#applications">5) Derivative applications</a>
+
+      <a href="#integrals">6) Integrals + FTC</a>
+      <a href="#techniques">7) Integration techniques</a>
+      <a href="#improper">8) Improper integrals</a>
+
+      <a href="#series">9) Series + Taylor</a>
+
+      <a href="#multivariable">10) Multivariable calculus</a>
+      <a href="#lagrange">11) Lagrange multipliers</a>
+      <a href="#multiple">12) Multiple integrals</a>
+
+      <a href="#vector">13) Vector calculus</a>
+      <a href="#odes">14) Differential equations</a>
+      <a href="#numerical">15) Numerical calculus</a>
+
+      <a href="#practice">16) Practice set</a>
+    </div>
+  </nav>
+
+  <section class="content">
+
+    <article class="card topic" id="symbols" data-keywords="symbols notation derivative integral gradient divergence curl">
+      <div class="card-header">
+        <h2 class="card-title">0) Symbols cheat sheet</h2>
+        <span class="tag">Reference</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead><tr><th>Symbol</th><th>Meaning</th><th>In words</th></tr></thead>
+          <tbody>
+            <tr><td>\(f(x)\)</td><td>function</td><td>maps input \(x\) to output</td></tr>
+            <tr><td>\(\lim_{x\to a} f(x)\)</td><td>limit</td><td>value approached near \(a\)</td></tr>
+            <tr><td>\(f'(x)\), \(\frac{df}{dx}\)</td><td>derivative</td><td>instantaneous rate of change</td></tr>
+            <tr><td>\(\int f(x)\,dx\)</td><td>indefinite integral</td><td>antiderivative</td></tr>
+            <tr><td>\(\int_a^b f(x)\,dx\)</td><td>definite integral</td><td>accumulation / signed area</td></tr>
+            <tr><td>\(\partial f/\partial x\)</td><td>partial derivative</td><td>change in \(f\) w.r.t. \(x\) holding others fixed</td></tr>
+            <tr><td>\(\nabla f\)</td><td>gradient</td><td>steepest ascent direction</td></tr>
+            <tr><td>\(\nabla\cdot \mathbf{F}\)</td><td>divergence</td><td>net outflow</td></tr>
+            <tr><td>\(\nabla\times \mathbf{F}\)</td><td>curl</td><td>local rotation</td></tr>
+            <tr><td>\(\sum_{n=0}^\infty a_n\)</td><td>series</td><td>infinite sum (if it converges)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="card topic" id="setup" data-keywords="python setup numpy matplotlib sympy scipy">
+      <div class="card-header">
+        <h2 class="card-title">1) Python setup</h2>
+        <span class="tag">Code</span>
+      </div>
+      <div class="card-body">
+        <div class="grid2">
+          <div class="box">
+            <h3>Where to run</h3>
+            <p>Jupyter notebook, VS Code, or a plain <span class="inline">.py</span> file.</p>
+          </div>
+          <div class="box">
+            <h3>Packages</h3>
+            <p><span class="inline">numpy</span>, <span class="inline">matplotlib</span>, <span class="inline">sympy</span>, <span class="inline">scipy</span>.</p>
+          </div>
+        </div>
+        <details open>
+          <summary>Python: imports + helper</summary>
+          <div class="codeblock" data-src="code-setup"></div>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="limits" data-keywords="limits continuity squeeze theorem">
+      <div class="card-header">
+        <h2 class="card-title">2) Limits + continuity</h2>
+        <span class="tag">Beginner</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">\[
+          \lim_{x\to a} f(x)=L
+        \]</div>
+
+        <details open>
+          <summary>Example 2.1: \(\lim_{x\to 0}\frac{\sin x}{x}=1\)</summary>
+          <div class="eq">\[
+            \cos x \le \frac{\sin x}{x} \le 1\ (x\ne 0)
+            \Rightarrow \lim_{x\to 0}\frac{\sin x}{x}=1
+          \]</div>
+          <details open>
+            <summary>Python: numerical check + plot</summary>
+            <div class="codeblock" data-src="code-limit-sinx"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 2.2: removable discontinuity</summary>
+          <div class="eq">\[
+            f(x)=\frac{x^2-1}{x-1}=x+1 \ (x\ne 1)\Rightarrow \lim_{x\to 1}f(x)=2
+          \]</div>
+          <details open>
+            <summary>Python: visualize</summary>
+            <div class="codeblock" data-src="code-continuity"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="derivatives" data-keywords="derivative definition power rule product quotient chain">
+      <div class="card-header">
+        <h2 class="card-title">3) Derivatives</h2>
+        <span class="tag">Beginner → Intermediate</span>
+      </div>
+      <div class="card-body">
+        <div class="eq">\[
+          f'(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}
+        \]</div>
+
+        <details open>
+          <summary>Example 3.1: \(f(x)=x^2\Rightarrow f'(x)=2x\) from definition</summary>
+          <div class="eq">\[
+            \frac{(x+h)^2-x^2}{h}=\frac{2xh+h^2}{h}=2x+h\Rightarrow f'(x)=2x
+          \]</div>
+          <details open>
+            <summary>Python: numeric derivative vs exact</summary>
+            <div class="codeblock" data-src="code-deriv-def"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 3.2: product rule — \(f(x)=x^2e^x\)</summary>
+          <div class="eq">\[
+            (x^2e^x)'=2xe^x+x^2e^x=e^x(2x+x^2)
+          \]</div>
+          <details open>
+            <summary>Python: symbolic + plot</summary>
+            <div class="codeblock" data-src="code-deriv-rules"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="implicit" data-keywords="implicit differentiation">
+      <div class="card-header">
+        <h2 class="card-title">4) Implicit differentiation</h2>
+        <span class="tag">Intermediate</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 4.1: \(x^2+y^2=25\Rightarrow dy/dx=-x/y\)</summary>
+          <div class="eq">\[
+            2x+2y\frac{dy}{dx}=0\Rightarrow \frac{dy}{dx}=-\frac{x}{y}
+          \]</div>
+          <details open>
+            <summary>Python: verify slope at a point</summary>
+            <div class="codeblock" data-src="code-implicit"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="applications" data-keywords="optimization newton method">
+      <div class="card-header">
+        <h2 class="card-title">5) Derivative applications</h2>
+        <span class="tag">Intermediate</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 5.1: minimize \(f(x)=(x-3)^2+2\)</summary>
+          <div class="eq">\[
+            f'(x)=2(x-3)=0\Rightarrow x=3,\ f(3)=2
+          \]</div>
+          <details open>
+            <summary>Python: plot + minimum</summary>
+            <div class="codeblock" data-src="code-opt-1d"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 5.2: Newton’s method for \(\sqrt{2}\)</summary>
+          <div class="eq">\[
+            x_{k+1}=x_k-\frac{x_k^2-2}{2x_k}=\frac12\left(x_k+\frac{2}{x_k}\right)
+          \]</div>
+          <details open>
+            <summary>Python: iterations + convergence</summary>
+            <div class="codeblock" data-src="code-newton"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="integrals" data-keywords="integrals riemann sum fundamental theorem">
+      <div class="card-header">
+        <h2 class="card-title">6) Integrals + FTC</h2>
+        <span class="tag">Beginner → Intermediate</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 6.1: \(\int_0^2 x^2 dx = 8/3\)</summary>
+          <div class="eq">\[
+            \int_0^2 x^2 dx=\left[\frac{x^3}{3}\right]_0^2=\frac{8}{3}
+          \]</div>
+          <details open>
+            <summary>Python: midpoint rule error plot</summary>
+            <div class="codeblock" data-src="code-integral-basic"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>FTC</summary>
+          <div class="eq">\[
+            \frac{d}{dx}\left(\int_a^x f(t)dt\right)=f(x),\quad
+            \int_a^b f(x)dx=F(b)-F(a)\ (F'=f)
+          \]</div>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="techniques" data-keywords="substitution integration by parts">
+      <div class="card-header">
+        <h2 class="card-title">7) Integration techniques</h2>
+        <span class="tag">Intermediate</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 7.1: substitution \(\int 2x\cos(x^2)dx=\sin(x^2)+C\)</summary>
+          <div class="eq">\[
+            u=x^2,\ du=2x\,dx \Rightarrow \int 2x\cos(x^2)dx=\int \cos u\,du=\sin u + C
+          \]</div>
+          <details open>
+            <summary>Python: differentiate check</summary>
+            <div class="codeblock" data-src="code-substitution"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 7.2: by parts \(\int xe^x dx = e^x(x-1)+C\)</summary>
+          <div class="eq">\[
+            \int u\,dv=uv-\int v\,du,\quad u=x,\ dv=e^x dx
+          \]</div>
+          <details open>
+            <summary>Python: symbolic check + plot</summary>
+            <div class="codeblock" data-src="code-by-parts"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="improper" data-keywords="improper integrals convergence">
+      <div class="card-header">
+        <h2 class="card-title">8) Improper integrals</h2>
+        <span class="tag">Intermediate → Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 8.1: \(\int_1^\infty 1/x^p\,dx\)</summary>
+          <div class="eq">\[
+            \int_1^\infty x^{-p}dx=
+            \lim_{b\to\infty}\left[\frac{x^{1-p}}{1-p}\right]_1^b
+          \]</div>
+          <div class="eq">
+            Converges if \(p>1\) to \(1/(p-1)\), diverges if \(p\le 1\).
+          </div>
+          <details open>
+            <summary>Python: numeric approximation</summary>
+            <div class="codeblock" data-src="code-improper"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="series" data-keywords="taylor series maclaurin convergence">
+      <div class="card-header">
+        <h2 class="card-title">9) Series + Taylor</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 9.1: Taylor series for \(e^x\)</summary>
+          <div class="eq">\[
+            e^x=\sum_{n=0}^\infty \frac{x^n}{n!}=1+x+\frac{x^2}{2}+\frac{x^3}{6}+\cdots
+          \]</div>
+          <details open>
+            <summary>Python: approximation + error</summary>
+            <div class="codeblock" data-src="code-taylor-exp"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="multivariable" data-keywords="partial derivatives gradient contour">
+      <div class="card-header">
+        <h2 class="card-title">10) Multivariable calculus</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 10.1: \(f(x,y)=x^2y+\sin y\)</summary>
+          <div class="eq">\[
+            f_x=2xy,\quad f_y=x^2+\cos y,\quad \nabla f=(2xy,\ x^2+\cos y)
+          \]</div>
+          <details open>
+            <summary>Python: contour + gradient field</summary>
+            <div class="codeblock" data-src="code-gradient"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="lagrange" data-keywords="lagrange multipliers constrained optimization">
+      <div class="card-header">
+        <h2 class="card-title">11) Lagrange multipliers</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 11.1: minimize \(x^2+y^2\) s.t. \(x+y=1\)</summary>
+          <div class="eq">\[
+            \nabla f=(2x,2y),\ \nabla g=(1,1),\ \nabla f=\lambda\nabla g \Rightarrow x=y=1/2
+          \]</div>
+          <details open>
+            <summary>Python: verify numerically</summary>
+            <div class="codeblock" data-src="code-lagrange"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="multiple" data-keywords="double integral polar coordinates monte carlo">
+      <div class="card-header">
+        <h2 class="card-title">12) Multiple integrals</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 12.1: \(\int_0^1\int_0^2 (x+y)\,dy\,dx=3\)</summary>
+          <details open>
+            <summary>Python: grid integration</summary>
+            <div class="codeblock" data-src="code-double"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 12.2: estimate \(\pi\) with Monte Carlo</summary>
+          <details open>
+            <summary>Python: Monte Carlo π</summary>
+            <div class="codeblock" data-src="code-pi-mc"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="vector" data-keywords="line integral green theorem curl">
+      <div class="card-header">
+        <h2 class="card-title">13) Vector calculus</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 13.1: \(\oint \mathbf{F}\cdot d\mathbf{r}\) on a circle</summary>
+          <div class="eq">
+            For \(\mathbf{F}=(-y,x)\) around radius \(R\) circle:
+            \(\oint \mathbf{F}\cdot d\mathbf{r}=2\pi R^2\).
+          </div>
+          <details open>
+            <summary>Python: numeric line integral</summary>
+            <div class="codeblock" data-src="code-line-integral"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="odes" data-keywords="differential equations exponential growth solve_ivp">
+      <div class="card-header">
+        <h2 class="card-title">14) Differential equations</h2>
+        <span class="tag">Advanced</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 14.1: \(y'=ky\Rightarrow y=y_0e^{kt}\)</summary>
+          <details open>
+            <summary>Python: numeric vs exact</summary>
+            <div class="codeblock" data-src="code-ode"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="numerical" data-keywords="finite difference simpson numerical integration">
+      <div class="card-header">
+        <h2 class="card-title">15) Numerical calculus</h2>
+        <span class="tag">Practical</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Example 15.1: finite differences (forward vs central)</summary>
+          <details open>
+            <summary>Python: error curves</summary>
+            <div class="codeblock" data-src="code-fdiff"></div>
+          </details>
+        </details>
+
+        <details open>
+          <summary>Example 15.2: Simpson’s rule</summary>
+          <details open>
+            <summary>Python: Simpson implementation</summary>
+            <div class="codeblock" data-src="code-simpson"></div>
+          </details>
+        </details>
+      </div>
+    </article>
+
+    <article class="card topic" id="practice" data-keywords="practice problems answers">
+      <div class="card-header">
+        <h2 class="card-title">16) Practice set</h2>
+        <span class="tag">Exercises</span>
+      </div>
+      <div class="card-body">
+        <details open>
+          <summary>Problems</summary>
+          <ol class="muted">
+            <li>\(\lim_{x\to 0}\frac{1-\cos x}{x^2}\)</li>
+            <li>Differentiate \(f(x)=\ln(1+x^2)\)</li>
+            <li>Classify critical points of \(f(x)=x^3-3x\)</li>
+            <li>Compute \(\int x\ln x\,dx\)</li>
+            <li>Approximate \(\sum_{n=1}^{\infty}\frac{1}{n^2}\) with partial sums</li>
+          </ol>
+        </details>
+        <details>
+          <summary>Answer outlines</summary>
+          <ul class="muted">
+            <li>\(\to 1/2\)</li>
+            <li>\(f'(x)=2x/(1+x^2)\)</li>
+            <li>\(x=\pm1\); use \(f''(x)=6x\)</li>
+            <li>By parts with \(u=\ln x\), \(dv=x\,dx\)</li>
+            <li>Converges to \(\pi^2/6\)</li>
+          </ul>
+        </details>
+      </div>
+    </article>
+
+  </section>
+</main>
+
+<!-- CODE SNIPPETS -->
+<script type="text/plain" id="code-setup">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def quick_plot(x, y, title, xlabel="x", ylabel="y"):
+    plt.figure()
+    plt.plot(x, y)
+    plt.xlabel(xlabel); plt.ylabel(ylabel)
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
+</script>
+
+<script type="text/plain" id="code-limit-sinx">
+import numpy as np
+import matplotlib.pyplot as plt
+
+xs = np.concatenate([np.linspace(-1, -1e-3, 200), np.linspace(1e-3, 1, 200)])
+ys = np.sin(xs)/xs
+
+print("Near 0:")
+for val in [1e-1, 1e-2, 1e-3]:
+    print(val, np.sin(val)/val)
+
+plt.figure()
+plt.plot(xs, ys)
+plt.axhline(1.0)
+plt.xlabel("x"); plt.ylabel("sin(x)/x")
+plt.title("sin(x)/x → 1 as x → 0")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-continuity">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x):
+    return (x**2 - 1)/(x - 1)
+
+xs = np.linspace(0, 2, 400)
+xs2 = xs[np.abs(xs-1) > 1e-3]
+plt.figure()
+plt.plot(xs2, f(xs2))
+plt.scatter([1],[2], label="defined point f(1)=2")
+plt.xlabel("x"); plt.ylabel("f(x)")
+plt.title("Removable discontinuity fixed by defining f(1)=2")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-deriv-def">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x): return x**2
+def fprime_exact(x): return 2*x
+
+x0 = 1.5
+hs = np.logspace(-1, -8, 50)
+approx = (f(x0+hs) - f(x0))/hs
+exact = fprime_exact(x0)
+
+plt.figure()
+plt.semilogx(hs, np.abs(approx-exact))
+plt.xlabel("h"); plt.ylabel("|approx - exact|")
+plt.title("Forward difference error for f(x)=x^2 at x=1.5")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-deriv-rules">
+import numpy as np
+import matplotlib.pyplot as plt
+import sympy as sp
+
+x = sp.Symbol('x', real=True)
+f = x**2 * sp.exp(x)
+fp = sp.diff(f, x)
+print("f'(x) =", fp)
+
+ff = sp.lambdify(x, f, "numpy")
+ffp = sp.lambdify(x, fp, "numpy")
+
+xs = np.linspace(-2, 2, 400)
+plt.figure()
+plt.plot(xs, ff(xs), label="f")
+plt.plot(xs, ffp(xs), label="f'")
+plt.xlabel("x"); plt.ylabel("value")
+plt.title("f(x)=x^2 e^x and derivative")
+plt.legend()
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-implicit">
+import numpy as np
+
+x0 = 3.0
+y0 = np.sqrt(25 - x0**2)
+slope = -x0/y0
+print("At x=3, y=", y0, "dy/dx=", slope)
+</script>
+
+<script type="text/plain" id="code-opt-1d">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x): return (x-3)**2 + 2
+
+xs = np.linspace(-2, 8, 400)
+plt.figure()
+plt.plot(xs, f(xs))
+plt.scatter([3],[f(3)])
+plt.xlabel("x"); plt.ylabel("f(x)")
+plt.title("Minimum at x=3")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-newton">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def newton_sqrt2(x0, iters=8):
+    xs = [x0]
+    x = x0
+    for _ in range(iters):
+        x = 0.5*(x + 2/x)
+        xs.append(x)
+    return np.array(xs)
+
+xs = newton_sqrt2(1.0, iters=8)
+true = np.sqrt(2)
+errs = np.abs(xs - true)
+
+plt.figure()
+plt.semilogy(range(len(errs)), errs, marker="o")
+plt.xlabel("iteration"); plt.ylabel("|x_k - sqrt(2)|")
+plt.title("Newton convergence")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-integral-basic">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x): return x**2
+
+a, b = 0.0, 2.0
+exact = (b**3 - a**3)/3
+
+ns = [10, 50, 200, 1000]
+errs = []
+for n in ns:
+    xs = np.linspace(a, b, n+1)
+    dx = (b-a)/n
+    mids = (xs[:-1] + xs[1:]) / 2
+    val = np.sum(f(mids) * dx)
+    errs.append(abs(val-exact))
+
+plt.figure()
+plt.loglog(ns, errs, marker="o")
+plt.xlabel("n"); plt.ylabel("abs error")
+plt.title("Midpoint rule error for ∫0^2 x^2 dx")
+plt.tight_layout()
+plt.show()
+</script>
+
+<script type="text/plain" id="code-substitution">
+import sympy as sp
+x = sp.Symbol('x', real=True)
+expr = 2*x*sp.cos(x**2)
+anti = sp.integrate(expr, x)
+print("Antiderivative:", anti)
+print("Check:", sp.simplify(sp.diff(anti, x) - expr))
+</script>
+
+<script type="text/plain" id="code-by-parts">
+import sympy as sp
+x = sp.Symbol('x', real=True)
+expr = x*sp.exp(x)
+anti = sp.integrate(expr, x)
+print("Antiderivative:", anti)
+print("Check:", sp.simplify(sp.diff(anti, x) - expr))
+</script>
+
+<script type="text/plain" id="code-improper">
+import numpy as np
+
+def approx_integral_p(p, b):
+    xs = np.linspace(1, b, 200000)
+    return np.trapz(xs**(-p), xs)
+
+for p in [2.0, 1.0]:
+    for b in [10, 100, 1000]:
+        print("p=", p, "b=", b, "approx=", approx_integral_p(p,b))
+</script>
+
+<script type="text/plain" id="code-taylor-exp">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def taylor_exp(x, n_terms):
+    s = 0.0
+    fact = 1.0
+    powx = 1.0
+    for k in range(n_terms):
+        if k > 0:
+            fact *= k
+            powx *= x
+        s += powx / fact
+    return s
+
+xs = np.linspace(-2, 2, 400)
+true = np.exp(xs)
+approx10 = np.array([taylor_exp(x, 10) for x in xs])
+
+plt.figure()
+plt.plot(xs, true, label="exp(x)")
+plt.plot(xs, approx10, label="Taylor 10 terms")
+plt.legend(); plt.tight_layout(); plt.show()
+
+plt.figure()
+plt.semilogy(xs, np.abs(true-approx10))
+plt.xlabel("x"); plt.ylabel("abs error")
+plt.title("Taylor error")
+plt.tight_layout(); plt.show()
+</script>
+
+<script type="text/plain" id="code-gradient">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x,y): return x**2*y + np.sin(y)
+def fx(x,y): return 2*x*y
+def fy(x,y): return x**2 + np.cos(y)
+
+xs = np.linspace(-2, 2, 40)
+ys = np.linspace(-2, 2, 40)
+X, Y = np.meshgrid(xs, ys)
+Z = f(X, Y)
+
+plt.figure()
+plt.contour(X, Y, Z, levels=20)
+plt.title("Contours of f")
+plt.xlabel("x"); plt.ylabel("y")
+plt.tight_layout(); plt.show()
+
+xs2 = np.linspace(-2, 2, 16)
+ys2 = np.linspace(-2, 2, 16)
+X2, Y2 = np.meshgrid(xs2, ys2)
+U = fx(X2, Y2)
+V = fy(X2, Y2)
+
+plt.figure()
+plt.quiver(X2, Y2, U, V)
+plt.title("Gradient field ∇f")
+plt.xlabel("x"); plt.ylabel("y")
+plt.tight_layout(); plt.show()
+</script>
+
+<script type="text/plain" id="code-lagrange">
+import numpy as np
+import matplotlib.pyplot as plt
+
+xs = np.linspace(-1, 2, 400)
+ys = 1 - xs
+f_vals = xs**2 + ys**2
+i = np.argmin(f_vals)
+print("Min approx:", xs[i], ys[i], "f=", f_vals[i])
+
+plt.figure()
+plt.plot(xs, ys, label="x+y=1")
+plt.scatter([xs[i]],[ys[i]], label="minimum")
+plt.legend(); plt.xlabel("x"); plt.ylabel("y")
+plt.tight_layout(); plt.show()
+</script>
+
+<script type="text/plain" id="code-double">
+import numpy as np
+nx, ny = 600, 600
+xs = np.linspace(0, 1, nx)
+ys = np.linspace(0, 2, ny)
+dx = xs[1]-xs[0]; dy = ys[1]-ys[0]
+X, Y = np.meshgrid(xs, ys, indexing="ij")
+val = np.sum(X+Y) * dx * dy
+print("Approx double integral:", val, " (exact 3)")
+</script>
+
+<script type="text/plain" id="code-pi-mc">
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(42)
+N = 20000
+pts = rng.uniform(-1, 1, size=(N,2))
+inside = np.sum(pts[:,0]**2 + pts[:,1]**2 <= 1)
+pi_hat = 4*inside/N
+print("pi estimate:", pi_hat)
+</script>
+
+<script type="text/plain" id="code-line-integral">
+import numpy as np
+
+def line_integral_F(R=2.0, n=200000):
+    ts = np.linspace(0, 2*np.pi, n, endpoint=False)
+    x = R*np.cos(ts); y = R*np.sin(ts)
+    Fx, Fy = -y, x
+    dt = ts[1]-ts[0]
+    dx = -R*np.sin(ts)*dt
+    dy =  R*np.cos(ts)*dt
+    return np.sum(Fx*dx + Fy*dy)
+
+R = 2.0
+approx = line_integral_F(R)
+exact = 2*np.pi*R**2
+print("Approx:", approx, "Exact:", exact, "Error:", abs(approx-exact))
+</script>
+
+<script type="text/plain" id="code-ode">
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+k = 0.7
+y0 = 1.2
+def rhs(t, y): return k*y
+
+t_eval = np.linspace(0, 5, 200)
+sol = solve_ivp(rhs, (0,5), [y0], t_eval=t_eval)
+t = sol.t
+y_num = sol.y[0]
+y_exact = y0*np.exp(k*t)
+
+plt.figure()
+plt.plot(t, y_num, label="numerical")
+plt.plot(t, y_exact, label="exact")
+plt.legend(); plt.xlabel("t"); plt.ylabel("y")
+plt.tight_layout(); plt.show()
+</script>
+
+<script type="text/plain" id="code-fdiff">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def f(x): return np.sin(x)
+def fp(x): return np.cos(x)
+
+x0 = 1.0
+hs = np.logspace(-1, -8, 50)
+forward = (f(x0+hs)-f(x0))/hs
+central = (f(x0+hs)-f(x0-hs))/(2*hs)
+exact = fp(x0)
+
+plt.figure()
+plt.semilogx(hs, np.abs(forward-exact), label="forward")
+plt.semilogx(hs, np.abs(central-exact), label="central")
+plt.legend(); plt.xlabel("h"); plt.ylabel("abs error")
+plt.tight_layout(); plt.show()
+</script>
+
+<script type="text/plain" id="code-simpson">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def simpson(f, a, b, n):
+    if n % 2 != 0: raise ValueError("n must be even")
+    xs = np.linspace(a, b, n+1)
+    h = (b-a)/n
+    fx = f(xs)
+    s = fx[0] + fx[-1]
+    s += 4*np.sum(fx[1:-1:2])
+    s += 2*np.sum(fx[2:-1:2])
+    return (h/3)*s
+
+exact = 2.0
+ns = [2,4,10,50,200]
+errs=[]
+for n in ns:
+    val = simpson(np.sin, 0.0, np.pi, n)
+    errs.append(abs(val-exact))
+    print(n, val, abs(val-exact))
+
+plt.figure()
+plt.loglog(ns, errs, marker="o")
+plt.xlabel("n"); plt.ylabel("abs error")
+plt.tight_layout(); plt.show()
+</script>
+
+<script>
+  function renderCodeblocks(){
+    document.querySelectorAll(".codeblock").forEach(el => {
+      const src = el.getAttribute("data-src");
+      const node = document.getElementById(src);
+      if(!node) return;
+      const text = node.textContent.replace(/^\n+|\n+$/g, "");
+      const pre = document.createElement("pre");
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+      const code = document.createElement("code");
+      code.textContent = text;
+      btn.addEventListener("click", async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        }catch(e){
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+      pre.appendChild(btn);
+      pre.appendChild(code);
+      el.appendChild(pre);
+    });
+  }
+
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      }catch(e){
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  function setupSmoothScroll(){
+    document.querySelectorAll(".toc a").forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        target.scrollIntoView({behavior:"smooth", block:"start"});
+        history.pushState(null, "", href);
+      });
+    });
+  }
+
+  renderCodeblocks();
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupSmoothScroll();
+</script>
+
+</body>
+</html>
