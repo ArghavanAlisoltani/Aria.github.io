@@ -1,0 +1,2556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>30 Machine Learning Models — Formulas, Numerical Examples, and Annotated Python</title>
+  <meta name="description" content="A GitHub Pages-ready machine learning course in a dark interactive style covering 30 models with formulas, numerical examples, and annotated Python code." />
+
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1320px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1180px;}
+    .kicker{
+      color:var(--accent2); font-weight:900; letter-spacing:.35px;
+      text-transform:uppercase; font-size:12px; margin-top:12px;
+    }
+    .top-actions{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;
+      align-items:center; justify-content:space-between;
+    }
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:800; white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1320px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 360px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start;
+      height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{
+      font-size:13px; margin:6px 8px 10px; color:var(--muted);
+      letter-spacing:.4px; text-transform:uppercase;
+    }
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px;
+      color:var(--text); border:1px solid transparent;
+      font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border);
+      background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.68; font-size:14.5px;}
+    .muted{color:var(--muted)}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .grid3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em;
+      background: rgba(0,0,0,.25); border:1px solid var(--border);
+      padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer; font-weight:900; color:var(--text);
+      list-style:none; user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.22);
+      overflow-x:auto;
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto;
+      padding: 14px 12px 12px; position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono); font-size:12.6px; line-height:1.55;
+      white-space: pre; display:block;
+    }
+    .copy-btn{
+      position:absolute; top:10px; right:10px;
+      padding:6px 10px; border-radius:10px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px; user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9);
+      padding: 10px 12px; background: rgba(122,162,255,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid rgba(112,255,209,.9);
+      padding: 10px 12px; background: rgba(112,255,209,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    table{
+      width:100%; border-collapse:collapse; overflow:hidden;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.18); margin-top:10px;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.45;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2,.grid3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>30 Machine Learning Models</h1>
+    <p class="subtitle">
+      A single interactive HTML page in the same dark, expandable teaching style as your calculus page.
+      It covers <b>30 machine learning models</b> from core supervised methods to clustering, anomaly detection,
+      probabilistic sequence models, and deep learning — each with a <b>formula</b>, a <b>small numerical example</b>,
+      and <b>annotated Python code</b>.
+    </p>
+
+    <div class="kicker">Suggested packages</div>
+    <p class="subtitle">
+      Install: <code class="inline">pip install numpy scipy scikit-learn matplotlib torch hmmlearn</code>
+    </p>
+
+    <div class="grid3">
+      <div class="box">
+        <h3>How to use this page</h3>
+        <p>Open any model, study the formula, read the worked example, then copy and run the code snippet.</p>
+      </div>
+      <div class="box">
+        <h3>Model coverage</h3>
+        <p>Regression, classification, ensembles, kernel methods, clustering, dimensionality reduction, anomaly detection, HMMs, and neural networks.</p>
+      </div>
+      <div class="box">
+        <h3>Teaching goal</h3>
+        <p>Show the intuition, math, and runnable implementation together so the theory connects directly to practice.</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter models (e.g., ridge, svm, clustering, anomaly, neural network)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#overview">0) Model overview table</a>
+      <a href="#setup">1) Quick Python setup</a>
+      <a href="#linear">1) Linear Regression</a>
+      <a href="#ridge">2) Ridge Regression</a>
+      <a href="#lasso">3) Lasso Regression</a>
+      <a href="#elasticnet">4) Elastic Net</a>
+      <a href="#logistic">5) Logistic Regression</a>
+      <a href="#knn">6) k-Nearest Neighbors (kNN)</a>
+      <a href="#gnb">7) Gaussian Naive Bayes</a>
+      <a href="#lda">8) Linear Discriminant Analysis (LDA)</a>
+      <a href="#qda">9) Quadratic Discriminant Analysis (QDA)</a>
+      <a href="#tree">10) Decision Tree</a>
+      <a href="#rf">11) Random Forest</a>
+      <a href="#extratrees">12) Extra Trees (Extremely Randomized Trees)</a>
+      <a href="#adaboost">13) AdaBoost</a>
+      <a href="#gboost">14) Gradient Boosting</a>
+      <a href="#svm-linear">15) Support Vector Machine (Linear SVM)</a>
+      <a href="#svm-rbf">16) Support Vector Machine (RBF Kernel)</a>
+      <a href="#perceptron">17) Perceptron</a>
+      <a href="#mlp">18) Multilayer Perceptron (MLP)</a>
+      <a href="#cnn">19) Convolutional Neural Network (CNN)</a>
+      <a href="#lstm">20) Recurrent Neural Network / LSTM</a>
+      <a href="#kmeans">21) k-Means Clustering</a>
+      <a href="#hier">22) Hierarchical Clustering</a>
+      <a href="#dbscan">23) DBSCAN</a>
+      <a href="#gmm">24) Gaussian Mixture Model (GMM)</a>
+      <a href="#pca">25) Principal Component Analysis (PCA)</a>
+      <a href="#nmf">26) Nonnegative Matrix Factorization (NMF)</a>
+      <a href="#hmm">27) Hidden Markov Model (HMM)</a>
+      <a href="#isoforest">28) Isolation Forest</a>
+      <a href="#ocsvm">29) One-Class SVM</a>
+      <a href="#autoencoder">30) Autoencoder</a>
+    </div>
+  </nav>
+
+  <section class="content">
+
+    <article class="card topic" id="overview" data-keywords="overview summary table all models">
+      <div class="card-header">
+        <h2 class="card-title">0) Model overview table</h2>
+        <span class="tag">Reference</span>
+      </div>
+      <div class="card-body">
+        <p>This table lets you scan the 30 covered models before diving into the details.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Type</th>
+              <th>Main idea</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Linear Regression</td><td>Supervised · Regression</td><td>Predicts a continuous outcome by fitting a straight-line or linear hyperplane relationship between features and target.</td></tr>
+<tr><td>Ridge Regression</td><td>Supervised · Regularized Regression</td><td>Adds an L2 penalty to linear regression to shrink coefficients and reduce variance when predictors are noisy or correlated.</td></tr>
+<tr><td>Lasso Regression</td><td>Supervised · Sparse Regression</td><td>Uses an L1 penalty so some coefficients become exactly zero, making it useful for feature selection.</td></tr>
+<tr><td>Elastic Net</td><td>Supervised · Regularized Regression</td><td>Combines ridge and lasso penalties, giving both shrinkage and sparse feature selection.</td></tr>
+<tr><td>Logistic Regression</td><td>Supervised · Classification</td><td>Models class probability for binary outcomes using the logistic sigmoid.</td></tr>
+<tr><td>k-Nearest Neighbors (kNN)</td><td>Supervised · Instance-Based</td><td>Predicts a label or value by looking at the nearest training examples under a distance metric such as Euclidean distance.</td></tr>
+<tr><td>Gaussian Naive Bayes</td><td>Supervised · Probabilistic Classification</td><td>Uses Bayes' rule with a conditional independence assumption and Gaussian feature likelihoods.</td></tr>
+<tr><td>Linear Discriminant Analysis (LDA)</td><td>Supervised · Generative Classification</td><td>Assumes each class is Gaussian with its own mean but a shared covariance matrix, producing linear decision boundaries.</td></tr>
+<tr><td>Quadratic Discriminant Analysis (QDA)</td><td>Supervised · Generative Classification</td><td>Like LDA, but each class gets its own covariance matrix, allowing curved or quadratic decision boundaries.</td></tr>
+<tr><td>Decision Tree</td><td>Supervised · Tree-Based</td><td>Recursively splits the feature space into regions that are as pure as possible with respect to the target.</td></tr>
+<tr><td>Random Forest</td><td>Supervised · Ensemble Trees</td><td>Builds many decision trees on bootstrap samples and random feature subsets, then averages or votes across trees.</td></tr>
+<tr><td>Extra Trees (Extremely Randomized Trees)</td><td>Supervised · Ensemble Trees</td><td>Similar to random forests, but splits are chosen more randomly, which can further reduce variance and training cost.</td></tr>
+<tr><td>AdaBoost</td><td>Supervised · Boosting</td><td>Builds a strong classifier by sequentially adding weak learners that focus on previously misclassified examples.</td></tr>
+<tr><td>Gradient Boosting</td><td>Supervised · Boosting</td><td>Adds weak learners sequentially, each one fitting the residual errors or negative gradient of the loss from the current model.</td></tr>
+<tr><td>Support Vector Machine (Linear SVM)</td><td>Supervised · Margin-Based</td><td>Finds a separating hyperplane with maximum margin between classes while allowing some violations through slack variables.</td></tr>
+<tr><td>Support Vector Machine (RBF Kernel)</td><td>Supervised · Kernel Method</td><td>Uses a kernel to create nonlinear decision boundaries without explicitly mapping data to a high-dimensional feature space.</td></tr>
+<tr><td>Perceptron</td><td>Supervised · Linear Classifier</td><td>A simple linear classifier that updates weights only when a training point is misclassified.</td></tr>
+<tr><td>Multilayer Perceptron (MLP)</td><td>Supervised · Neural Network</td><td>Stacks multiple fully connected layers with nonlinear activation functions, enabling the model to learn nonlinear patterns.</td></tr>
+<tr><td>Convolutional Neural Network (CNN)</td><td>Deep Learning · Structured Inputs</td><td>Learns local patterns with convolutional filters, making it powerful for images, signals, and other spatially structured data.</td></tr>
+<tr><td>Recurrent Neural Network / LSTM</td><td>Deep Learning · Sequences</td><td>Processes sequential inputs one step at a time, carrying information forward through a hidden state. LSTMs use gates to better preserve long-range information.</td></tr>
+<tr><td>k-Means Clustering</td><td>Unsupervised · Clustering</td><td>Partitions points into \(k\) clusters by alternating between assigning points to nearest centroids and updating centroids.</td></tr>
+<tr><td>Hierarchical Clustering</td><td>Unsupervised · Clustering</td><td>Builds a dendrogram by repeatedly merging the closest clusters under a linkage rule.</td></tr>
+<tr><td>DBSCAN</td><td>Unsupervised · Density-Based Clustering</td><td>Finds dense regions of points and labels sparse points as noise. It can recover irregularly shaped clusters.</td></tr>
+<tr><td>Gaussian Mixture Model (GMM)</td><td>Unsupervised · Probabilistic Clustering</td><td>Represents the data distribution as a weighted mixture of Gaussian components, giving soft cluster memberships.</td></tr>
+<tr><td>Principal Component Analysis (PCA)</td><td>Unsupervised · Dimensionality Reduction</td><td>Rotates the data into orthogonal directions that capture maximum variance, often used for compression and visualization.</td></tr>
+<tr><td>Nonnegative Matrix Factorization (NMF)</td><td>Unsupervised · Parts-Based Representation</td><td>Factorizes a nonnegative matrix into two lower-rank nonnegative matrices, often yielding interpretable parts or latent topics.</td></tr>
+<tr><td>Hidden Markov Model (HMM)</td><td>Probabilistic · Sequence Model</td><td>Models sequences where an unobserved state process emits the observed data at each step.</td></tr>
+<tr><td>Isolation Forest</td><td>Unsupervised · Anomaly Detection</td><td>Detects anomalies by randomly partitioning the data. Outliers are isolated faster and therefore have shorter path lengths in the trees.</td></tr>
+<tr><td>One-Class SVM</td><td>Unsupervised · Anomaly Detection</td><td>Learns a boundary around mostly normal data and labels points outside that boundary as anomalies.</td></tr>
+<tr><td>Autoencoder</td><td>Deep Learning · Representation Learning</td><td>Learns to compress data into a latent code and reconstruct it, often used for representation learning, denoising, or anomaly detection.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="card topic" id="setup" data-keywords="python setup sklearn torch hmmlearn packages">
+      <div class="card-header">
+        <h2 class="card-title">1) Quick Python setup</h2>
+        <span class="tag">Code</span>
+      </div>
+      <div class="card-body">
+        <div class="grid2">
+          <div class="box">
+            <h3>Recommended environment</h3>
+            <p>Use a Jupyter notebook, VS Code notebook, or a plain <span class="inline">.py</span> file in a virtual environment.</p>
+          </div>
+          <div class="box">
+            <h3>Core libraries</h3>
+            <p><span class="inline">numpy</span>, <span class="inline">scikit-learn</span>, <span class="inline">scipy</span>, <span class="inline">torch</span>, and optionally <span class="inline">hmmlearn</span>.</p>
+          </div>
+        </div>
+        <details open>
+          <summary>Starter imports</summary>
+          <div class="codeblock" data-src="code-setup"></div>
+        </details>
+      </div>
+    </article>
+
+    
+    <article class="card topic" id="linear" data-keywords="linear regression ols least squares supervised">
+      <div class="card-header">
+        <h2 class="card-title">1) Linear Regression</h2>
+        <span class="tag">Supervised · Regression</span>
+      </div>
+      <div class="card-body">
+        <p>Predicts a continuous outcome by fitting a straight-line or linear hyperplane relationship between features and target.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Predicts a continuous outcome by fitting a straight-line or linear hyperplane relationship between features and target.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Predicting continuous outcomes</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{y} = X\beta,\qquad
+\hat{\beta} = (X^\top X)^{-1}X^\top y
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(X\) is the design matrix containing the input features.</li><li>\(\beta\) contains the coefficients (slopes) and often an intercept term after augmentation.</li><li>OLS chooses \(\beta\) to minimize the residual sum of squares: \(\sum_i (y_i-\hat y_i)^2\).</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">Suppose three points are ​(1,2), (2,3), (3,5). The fitted line is approximately \(\hat y = 0.33 + 1.5x\). At \(x=4\), the model predicts about \(6.33\).</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-linear"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="ridge" data-keywords="ridge regression l2 penalty shrinkage">
+      <div class="card-header">
+        <h2 class="card-title">2) Ridge Regression</h2>
+        <span class="tag">Supervised · Regularized Regression</span>
+      </div>
+      <div class="card-body">
+        <p>Adds an L2 penalty to linear regression to shrink coefficients and reduce variance when predictors are noisy or correlated.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Adds an L2 penalty to linear regression to shrink coefficients and reduce variance when predictors are noisy or correlated.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Controlling overfitting and unstable coefficients</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{\beta}=\arg\min_{\beta}\left\{\|y-X\beta\|_2^2+\lambda\|\beta\|_2^2\right\},
+\qquad
+\hat{\beta}=(X^\top X+\lambda I)^{-1}X^\top y
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\lambda \ge 0\) controls how strongly coefficients are shrunk toward zero.</li><li>As \(\lambda\) increases, coefficients get smaller and the model usually becomes more stable.</li><li>Unlike lasso, ridge usually keeps all predictors but with reduced magnitude.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If two predictors carry nearly duplicate information, OLS can give unstable slopes. Ridge spreads weight more evenly. With \(\lambda=1\), coefficients are shrunk relative to OLS.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-ridge"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="lasso" data-keywords="lasso regression l1 penalty sparse feature selection">
+      <div class="card-header">
+        <h2 class="card-title">3) Lasso Regression</h2>
+        <span class="tag">Supervised · Sparse Regression</span>
+      </div>
+      <div class="card-body">
+        <p>Uses an L1 penalty so some coefficients become exactly zero, making it useful for feature selection.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Uses an L1 penalty so some coefficients become exactly zero, making it useful for feature selection.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Selecting a smaller set of predictors</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{\beta}=\arg\min_{\beta}\left\{\|y-X\beta\|_2^2+\lambda\|\beta\|_1\right\}
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\|\beta\|_1=\sum_j |\beta_j|\) encourages sparsity.</li><li>When \(\lambda\) is large enough, irrelevant features are driven to exactly zero.</li><li>This is helpful when you have many predictors and want a compact model.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">Imagine only the first feature truly matters. Lasso can keep the first coefficient nonzero and shrink the others to zero, effectively selecting a smaller set of variables.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-lasso"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="elasticnet" data-keywords="elastic net l1 l2 regularization">
+      <div class="card-header">
+        <h2 class="card-title">4) Elastic Net</h2>
+        <span class="tag">Supervised · Regularized Regression</span>
+      </div>
+      <div class="card-body">
+        <p>Combines ridge and lasso penalties, giving both shrinkage and sparse feature selection.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Combines ridge and lasso penalties, giving both shrinkage and sparse feature selection.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Controlling overfitting and unstable coefficients</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{\beta}=\arg\min_{\beta}\left\{
+\|y-X\beta\|_2^2+
+\lambda\left(\alpha\|\beta\|_1+(1-\alpha)\|\beta\|_2^2\right)
+\right\}
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\alpha=1\) gives lasso-like behavior and \(\alpha=0\) gives ridge-like behavior.</li><li>It is often useful when predictors are correlated and you still want sparsity.</li><li>The mix of L1 and L2 usually makes optimization more stable than pure lasso.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If features 1 and 2 are highly correlated and both informative, elastic net can keep both with moderate shrinkage instead of keeping only one arbitrarily.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-elasticnet"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="logistic" data-keywords="logistic regression binary classification sigmoid">
+      <div class="card-header">
+        <h2 class="card-title">5) Logistic Regression</h2>
+        <span class="tag">Supervised · Classification</span>
+      </div>
+      <div class="card-body">
+        <p>Models class probability for binary outcomes using the logistic sigmoid.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Models class probability for binary outcomes using the logistic sigmoid.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Binary or multiclass label prediction</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+p(y=1\mid x)=\sigma(w^\top x+b)=\frac{1}{1+e^{-(w^\top x+b)}}
+\]
+
+\[
+\mathcal{L}=-\sum_i \left[y_i\log p_i + (1-y_i)\log(1-p_i)\right]
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The first formula maps any real-valued score to a probability between 0 and 1.</li><li>The second formula is the binary cross-entropy loss used for estimation.</li><li>A threshold such as 0.5 turns probabilities into class labels.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If \(w=2\), \(b=-3\), and \(x=2\), then the score is \(1\) and the probability is \(\sigma(1)\approx 0.731\), so class 1 is more likely.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-logistic"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="knn" data-keywords="knn nearest neighbors classification regression distance">
+      <div class="card-header">
+        <h2 class="card-title">6) k-Nearest Neighbors (kNN)</h2>
+        <span class="tag">Supervised · Instance-Based</span>
+      </div>
+      <div class="card-body">
+        <p>Predicts a label or value by looking at the nearest training examples under a distance metric such as Euclidean distance.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Predicts a label or value by looking at the nearest training examples under a distance metric such as Euclidean distance.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Simple nonparametric local prediction</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+d(x,x_i)=\sqrt{\sum_{j=1}^p (x_j-x_{ij})^2}
+\]
+
+\[
+\hat{y}=\mathrm{mode}\{y_i: x_i \in \mathcal{N}_k(x)\}
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The first formula is Euclidean distance between a query point and a training point.</li><li>\(\mathcal{N}_k(x)\) is the set of the \(k\) nearest neighbors of \(x\).</li><li>For regression, the prediction is usually the average of neighbors instead of a majority vote.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If the three nearest neighbors to a new point have labels [1, 1, 0], then with \(k=3\) the predicted class is 1.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-knn"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gnb" data-keywords="gaussian naive bayes conditional independence">
+      <div class="card-header">
+        <h2 class="card-title">7) Gaussian Naive Bayes</h2>
+        <span class="tag">Supervised · Probabilistic Classification</span>
+      </div>
+      <div class="card-body">
+        <p>Uses Bayes' rule with a conditional independence assumption and Gaussian feature likelihoods.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Uses Bayes' rule with a conditional independence assumption and Gaussian feature likelihoods.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Fast probabilistic classification with simple assumptions</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+p(y=k\mid x)\propto p(y=k)\prod_{j=1}^p p(x_j\mid y=k)
+\]
+
+\[
+x_j\mid y=k \sim \mathcal{N}(\mu_{kj}, \sigma_{kj}^2)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The model multiplies class prior by feature-wise likelihoods.</li><li>'Naive' means features are treated as conditionally independent given the class.</li><li>Despite the strong assumption, it can work surprisingly well, especially on high-dimensional data.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If class A has prior 0.6 and feature likelihood 0.2 while class B has prior 0.4 and likelihood 0.1, the unnormalized posteriors are 0.12 and 0.04, so class A wins.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-gnb"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="lda" data-keywords="lda linear discriminant analysis shared covariance">
+      <div class="card-header">
+        <h2 class="card-title">8) Linear Discriminant Analysis (LDA)</h2>
+        <span class="tag">Supervised · Generative Classification</span>
+      </div>
+      <div class="card-body">
+        <p>Assumes each class is Gaussian with its own mean but a shared covariance matrix, producing linear decision boundaries.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Assumes each class is Gaussian with its own mean but a shared covariance matrix, producing linear decision boundaries.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Class separation with Gaussian assumptions</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\delta_k(x)=x^\top \Sigma^{-1}\mu_k - \frac{1}{2}\mu_k^\top\Sigma^{-1}\mu_k + \log \pi_k
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\mu_k\) is the class mean vector and \(\pi_k\) is the class prior.</li><li>\(\Sigma\) is the covariance matrix shared across classes.</li><li>The class with the largest discriminant score \(\delta_k(x)\) is predicted.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If two classes have different centers but similar spread, the shared-covariance assumption is reasonable and the boundary is linear.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-lda"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="qda" data-keywords="qda quadratic discriminant analysis class covariance">
+      <div class="card-header">
+        <h2 class="card-title">9) Quadratic Discriminant Analysis (QDA)</h2>
+        <span class="tag">Supervised · Generative Classification</span>
+      </div>
+      <div class="card-body">
+        <p>Like LDA, but each class gets its own covariance matrix, allowing curved or quadratic decision boundaries.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Like LDA, but each class gets its own covariance matrix, allowing curved or quadratic decision boundaries.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Class separation with Gaussian assumptions</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\delta_k(x)= -\frac{1}{2}\log |\Sigma_k|
+-\frac{1}{2}(x-\mu_k)^\top\Sigma_k^{-1}(x-\mu_k)
++\log \pi_k
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\Sigma_k\) differs by class, so the geometry can differ class by class.</li><li>This extra flexibility can capture heteroscedastic classes better than LDA.</li><li>It needs more data because more covariance parameters must be estimated.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If one class is tightly clustered and another is wide and elongated, QDA can model that difference while LDA cannot.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-qda"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="tree" data-keywords="decision tree gini entropy splits">
+      <div class="card-header">
+        <h2 class="card-title">10) Decision Tree</h2>
+        <span class="tag">Supervised · Tree-Based</span>
+      </div>
+      <div class="card-body">
+        <p>Recursively splits the feature space into regions that are as pure as possible with respect to the target.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Recursively splits the feature space into regions that are as pure as possible with respect to the target.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Interpretable rule-based prediction</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+Gini(t)=1-\sum_{k=1}^K p(k\mid t)^2
+\]
+
+\[
+\Delta I = I(\text{parent}) - \sum_{c\in \{\text{left,right}\}} \frac{n_c}{n}I(c)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The first formula is Gini impurity for a node \(t\).</li><li>The second formula measures impurity reduction from a split.</li><li>Trees are easy to interpret but can overfit if grown too deep.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If a node has class proportions [0.5, 0.5], Gini is 0.5. A split that creates pure children reduces impurity strongly and is preferred.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-tree"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="rf" data-keywords="random forest bagging ensemble trees">
+      <div class="card-header">
+        <h2 class="card-title">11) Random Forest</h2>
+        <span class="tag">Supervised · Ensemble Trees</span>
+      </div>
+      <div class="card-body">
+        <p>Builds many decision trees on bootstrap samples and random feature subsets, then averages or votes across trees.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Builds many decision trees on bootstrap samples and random feature subsets, then averages or votes across trees.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Strong general-purpose tabular modeling</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{f}(x)=\frac{1}{B}\sum_{b=1}^B T_b(x)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(T_b(x)\) is the prediction from tree \(b\).</li><li>Bootstrap sampling and random feature selection decorrelate the trees.</li><li>The ensemble usually reduces variance compared with a single deep tree.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If five trees vote [1, 1, 0, 1, 0], the final class is 1 by majority vote.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-rf"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="extratrees" data-keywords="extra trees extremely randomized trees">
+      <div class="card-header">
+        <h2 class="card-title">12) Extra Trees (Extremely Randomized Trees)</h2>
+        <span class="tag">Supervised · Ensemble Trees</span>
+      </div>
+      <div class="card-body">
+        <p>Similar to random forests, but splits are chosen more randomly, which can further reduce variance and training cost.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Similar to random forests, but splits are chosen more randomly, which can further reduce variance and training cost.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Strong general-purpose tabular modeling</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{f}(x)=\frac{1}{B}\sum_{b=1}^B T_b^{\text{random-split}}(x)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>Extra Trees typically use the whole dataset or large subsets instead of bootstrap by default.</li><li>Candidate split thresholds are more random than in random forests.</li><li>The extra randomness can improve generalization in some problems.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">Instead of searching exhaustively for the best split threshold, the algorithm samples random thresholds and keeps the best among them.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-extratrees"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="adaboost" data-keywords="adaboost boosting weighted weak learners">
+      <div class="card-header">
+        <h2 class="card-title">13) AdaBoost</h2>
+        <span class="tag">Supervised · Boosting</span>
+      </div>
+      <div class="card-body">
+        <p>Builds a strong classifier by sequentially adding weak learners that focus on previously misclassified examples.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Builds a strong classifier by sequentially adding weak learners that focus on previously misclassified examples.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>High-performance additive ensembles on tabular data</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+F(x)=\sum_{t=1}^T \alpha_t h_t(x),\qquad
+\alpha_t=\frac{1}{2}\log\left(\frac{1-\varepsilon_t}{\varepsilon_t}\right)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(h_t(x)\) is the weak learner at round \(t\), often a shallow tree or stump.</li><li>\(\varepsilon_t\) is the weighted training error of that learner.</li><li>Misclassified points get up-weighted so the next learner pays more attention to them.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If a stump has weighted error 0.2, then \(\alpha = 0.5\log(0.8/0.2) \approx 0.693\), so it gets substantial weight in the final vote.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-adaboost"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gboost" data-keywords="gradient boosting residuals ensemble">
+      <div class="card-header">
+        <h2 class="card-title">14) Gradient Boosting</h2>
+        <span class="tag">Supervised · Boosting</span>
+      </div>
+      <div class="card-body">
+        <p>Adds weak learners sequentially, each one fitting the residual errors or negative gradient of the loss from the current model.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Adds weak learners sequentially, each one fitting the residual errors or negative gradient of the loss from the current model.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>High-performance additive ensembles on tabular data</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+F_m(x)=F_{m-1}(x)+\nu \gamma_m h_m(x)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(F_{m-1}(x)\) is the current ensemble prediction.</li><li>\(h_m(x)\) is the new weak learner fit to residual-like targets.</li><li>\(\nu\) is the learning rate controlling how much each learner contributes.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If the current prediction is 6 but the true target is 8, the residual is 2. The next tree tries to correct errors like that.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-gboost"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="svm-linear" data-keywords="svm linear hinge loss margin">
+      <div class="card-header">
+        <h2 class="card-title">15) Support Vector Machine (Linear SVM)</h2>
+        <span class="tag">Supervised · Margin-Based</span>
+      </div>
+      <div class="card-body">
+        <p>Finds a separating hyperplane with maximum margin between classes while allowing some violations through slack variables.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Finds a separating hyperplane with maximum margin between classes while allowing some violations through slack variables.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Maximum-margin classification</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\min_{w,b,\xi}\ \frac{1}{2}\|w\|^2 + C\sum_{i=1}^n \xi_i
+\]
+
+\[
+y_i(w^\top x_i+b)\ge 1-\xi_i,\qquad \xi_i \ge 0
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The first term prefers a large margin because smaller \(\|w\|\) means wider margin.</li><li>The second term penalizes misclassified or margin-violating points through \(\xi_i\).</li><li>\(C\) controls the tradeoff between margin width and classification errors.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If two classes are almost linearly separable, the optimal hyperplane is the one that leaves the largest gap between the closest points of the two classes.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-svm-linear"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="svm-rbf" data-keywords="svm rbf kernel nonlinear">
+      <div class="card-header">
+        <h2 class="card-title">16) Support Vector Machine (RBF Kernel)</h2>
+        <span class="tag">Supervised · Kernel Method</span>
+      </div>
+      <div class="card-body">
+        <p>Uses a kernel to create nonlinear decision boundaries without explicitly mapping data to a high-dimensional feature space.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Uses a kernel to create nonlinear decision boundaries without explicitly mapping data to a high-dimensional feature space.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Flexible nonlinear classification</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+K(x,x')=\exp\left(-\gamma \|x-x'\|^2\right)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>If two points are close, the kernel value is near 1; if far apart, it approaches 0.</li><li>The RBF kernel lets SVM capture curved boundaries.</li><li>\(\gamma\) controls how local the influence of each support vector is.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">For two points separated by distance 1 and \(\gamma=0.5\), the kernel similarity is \(e^{-0.5}\approx 0.607\).</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-svm-rbf"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="perceptron" data-keywords="perceptron online learning update rule">
+      <div class="card-header">
+        <h2 class="card-title">17) Perceptron</h2>
+        <span class="tag">Supervised · Linear Classifier</span>
+      </div>
+      <div class="card-body">
+        <p>A simple linear classifier that updates weights only when a training point is misclassified.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>A simple linear classifier that updates weights only when a training point is misclassified.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Fast online linear learning</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\hat{y}=\mathrm{sign}(w^\top x+b)
+\]
+
+\[
+w \leftarrow w + \eta y_i x_i,\qquad
+b \leftarrow b + \eta y_i
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>If a point is correctly classified, no update is made.</li><li>If a point is misclassified, the weights are nudged toward the correct class.</li><li>The perceptron converges when data are linearly separable.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If \(w=(0,0)\), \(\eta=1\), and a positive point \(x=(2,1)\) is misclassified, then the update becomes \(w=(2,1)\).</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-perceptron"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="mlp" data-keywords="mlp neural network backpropagation hidden layer">
+      <div class="card-header">
+        <h2 class="card-title">18) Multilayer Perceptron (MLP)</h2>
+        <span class="tag">Supervised · Neural Network</span>
+      </div>
+      <div class="card-body">
+        <p>Stacks multiple fully connected layers with nonlinear activation functions, enabling the model to learn nonlinear patterns.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Stacks multiple fully connected layers with nonlinear activation functions, enabling the model to learn nonlinear patterns.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Learning nonlinear feature interactions</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+a^{(l)} = \phi\left(W^{(l)}a^{(l-1)} + b^{(l)}\right)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(a^{(l-1)}\) is the input to layer \(l\), \(W^{(l)}\) are weights, and \(b^{(l)}\) are biases.</li><li>\(\phi\) is a nonlinear activation such as ReLU or tanh.</li><li>Backpropagation computes gradients of the loss with respect to all parameters.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A 2→3→1 network can map two inputs into a hidden representation of three learned features before producing a single output.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-mlp"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="cnn" data-keywords="cnn convolution pooling images local patterns">
+      <div class="card-header">
+        <h2 class="card-title">19) Convolutional Neural Network (CNN)</h2>
+        <span class="tag">Deep Learning · Structured Inputs</span>
+      </div>
+      <div class="card-body">
+        <p>Learns local patterns with convolutional filters, making it powerful for images, signals, and other spatially structured data.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Learns local patterns with convolutional filters, making it powerful for images, signals, and other spatially structured data.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Images, grids, motifs, local patterns</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+z_{i,j}^{(k)} = \sum_{u}\sum_{v} K_{u,v}^{(k)} X_{i+u,j+v} + b_k
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The filter \(K^{(k)}\) slides across the input and reuses the same weights everywhere.</li><li>This creates translation-aware feature detectors such as edge or motif detectors.</li><li>Pooling layers reduce spatial size and can improve robustness.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A 3×3 edge detector kernel gives high output wherever local pixel patterns look like an edge.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-cnn"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="lstm" data-keywords="rnn lstm sequence modeling hidden state">
+      <div class="card-header">
+        <h2 class="card-title">20) Recurrent Neural Network / LSTM</h2>
+        <span class="tag">Deep Learning · Sequences</span>
+      </div>
+      <div class="card-body">
+        <p>Processes sequential inputs one step at a time, carrying information forward through a hidden state. LSTMs use gates to better preserve long-range information.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Processes sequential inputs one step at a time, carrying information forward through a hidden state. LSTMs use gates to better preserve long-range information.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Ordered series, language, temporal data, biological sequences</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+h_t = f(W_{xh}x_t + W_{hh}h_{t-1} + b)
+\]
+
+\[
+c_t = f_t \odot c_{t-1} + i_t \odot \tilde{c}_t
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The first equation is the basic RNN hidden-state update.</li><li>The second equation is the LSTM cell-state update using forget gate \(f_t\), input gate \(i_t\), and candidate state \(\tilde c_t\).</li><li>LSTMs help with vanishing gradients and long-term dependencies.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">In a DNA, protein, or text sequence, the model can use earlier context to interpret later positions.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-lstm"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="kmeans" data-keywords="kmeans clustering centroid unsupervised">
+      <div class="card-header">
+        <h2 class="card-title">21) k-Means Clustering</h2>
+        <span class="tag">Unsupervised · Clustering</span>
+      </div>
+      <div class="card-body">
+        <p>Partitions points into \(k\) clusters by alternating between assigning points to nearest centroids and updating centroids.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Partitions points into \(k\) clusters by alternating between assigning points to nearest centroids and updating centroids.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Discovering groups without labels</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\min_{\{\mu_k\},\{c_i\}} \sum_{i=1}^n \|x_i-\mu_{c_i}\|^2
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\mu_{c_i}\) is the centroid of the cluster assigned to point \(i\).</li><li>The algorithm alternates between assignment and centroid update until convergence.</li><li>It works best for roughly spherical, similarly sized clusters.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If points [1,2,10,11] are clustered into \(k=2\), the centroids converge near 1.5 and 10.5.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-kmeans"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="hier" data-keywords="hierarchical clustering agglomerative dendrogram linkage">
+      <div class="card-header">
+        <h2 class="card-title">22) Hierarchical Clustering</h2>
+        <span class="tag">Unsupervised · Clustering</span>
+      </div>
+      <div class="card-body">
+        <p>Builds a dendrogram by repeatedly merging the closest clusters under a linkage rule.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Builds a dendrogram by repeatedly merging the closest clusters under a linkage rule.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Discovering groups without labels</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+d_{\text{avg}}(A,B)=\frac{1}{|A||B|}\sum_{x\in A}\sum_{y\in B} d(x,y)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The example formula is average linkage distance between clusters \(A\) and \(B\).</li><li>Other common linkage rules are single, complete, and Ward.</li><li>Unlike k-means, hierarchical clustering gives a full tree of cluster relationships.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If clusters A={1,2} and B={8,9}, the average pairwise distance is large, so they merge late in the dendrogram.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-hier"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="dbscan" data-keywords="dbscan density clustering noise outliers">
+      <div class="card-header">
+        <h2 class="card-title">23) DBSCAN</h2>
+        <span class="tag">Unsupervised · Density-Based Clustering</span>
+      </div>
+      <div class="card-body">
+        <p>Finds dense regions of points and labels sparse points as noise. It can recover irregularly shaped clusters.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Finds dense regions of points and labels sparse points as noise. It can recover irregularly shaped clusters.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Finding irregular clusters and noise points</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+N_\varepsilon(x)=\{x_i : d(x_i,x)\le \varepsilon\}
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>A point is a core point if its \(\varepsilon\)-neighborhood contains at least min_samples points.</li><li>Clusters grow by connecting density-reachable points.</li><li>Noise points are labeled as outliers instead of being forced into a cluster.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If a point has 6 neighbors within radius 0.5 and min_samples=5, it is a core point and can seed a cluster.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-dbscan"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gmm" data-keywords="gmm gaussian mixture em soft clustering">
+      <div class="card-header">
+        <h2 class="card-title">24) Gaussian Mixture Model (GMM)</h2>
+        <span class="tag">Unsupervised · Probabilistic Clustering</span>
+      </div>
+      <div class="card-body">
+        <p>Represents the data distribution as a weighted mixture of Gaussian components, giving soft cluster memberships.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Represents the data distribution as a weighted mixture of Gaussian components, giving soft cluster memberships.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Soft cluster membership and density modeling</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+p(x)=\sum_{k=1}^K \pi_k \,\mathcal{N}(x\mid \mu_k,\Sigma_k)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\pi_k\) is the mixture weight of component \(k\), with \(\sum_k \pi_k=1\).</li><li>Each component has its own mean \(\mu_k\) and covariance \(\Sigma_k\).</li><li>EM alternates between computing responsibilities and updating parameters.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A point may belong 70% to cluster 1 and 30% to cluster 2 instead of being assigned hard membership.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-gmm"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="pca" data-keywords="pca eigenvectors variance reduction">
+      <div class="card-header">
+        <h2 class="card-title">25) Principal Component Analysis (PCA)</h2>
+        <span class="tag">Unsupervised · Dimensionality Reduction</span>
+      </div>
+      <div class="card-body">
+        <p>Rotates the data into orthogonal directions that capture maximum variance, often used for compression and visualization.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Rotates the data into orthogonal directions that capture maximum variance, often used for compression and visualization.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Compression and visualization</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\Sigma = \frac{1}{n-1}X^\top X,\qquad
+\Sigma v_j = \lambda_j v_j
+\]
+
+\[
+Z = XW
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The covariance matrix \(\Sigma\) summarizes feature variability and correlation.</li><li>Eigenvectors \(v_j\) give principal directions; eigenvalues \(\lambda_j\) give explained variance.</li><li>The projected coordinates \(Z\) are the lower-dimensional representation.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">If most variance lies along a diagonal line in 2D, one principal component may explain nearly all of the variability.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-pca"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="nmf" data-keywords="nmf nonnegative matrix factorization topic modeling">
+      <div class="card-header">
+        <h2 class="card-title">26) Nonnegative Matrix Factorization (NMF)</h2>
+        <span class="tag">Unsupervised · Parts-Based Representation</span>
+      </div>
+      <div class="card-body">
+        <p>Factorizes a nonnegative matrix into two lower-rank nonnegative matrices, often yielding interpretable parts or latent topics.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Factorizes a nonnegative matrix into two lower-rank nonnegative matrices, often yielding interpretable parts or latent topics.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Interpretable latent nonnegative factors</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+X \approx WH,\qquad W\ge 0,\ H\ge 0
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(X\) is the original nonnegative matrix, such as counts or intensities.</li><li>\(W\) contains sample-by-factor weights and \(H\) contains factor-by-feature weights.</li><li>The nonnegativity constraint often makes the decomposition easier to interpret than PCA.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A gene-expression matrix can be decomposed into a few latent programs, each with nonnegative activity across samples and genes.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-nmf"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="hmm" data-keywords="hidden markov model hmm states transitions emissions">
+      <div class="card-header">
+        <h2 class="card-title">27) Hidden Markov Model (HMM)</h2>
+        <span class="tag">Probabilistic · Sequence Model</span>
+      </div>
+      <div class="card-body">
+        <p>Models sequences where an unobserved state process emits the observed data at each step.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Models sequences where an unobserved state process emits the observed data at each step.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Latent states behind sequential observations</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+p(z_{1:T},x_{1:T}) = p(z_1)\prod_{t=2}^T p(z_t\mid z_{t-1}) \prod_{t=1}^T p(x_t\mid z_t)
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(z_t\) is the hidden state at time \(t\), and \(x_t\) is the observed symbol or vector.</li><li>The transition probabilities describe how states evolve.</li><li>The emission probabilities describe what observations are likely in each state.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">In a two-state weather model, hidden states might be sunny/rainy while observations are umbrella/no-umbrella.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-hmm"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="isoforest" data-keywords="isolation forest anomaly detection outlier">
+      <div class="card-header">
+        <h2 class="card-title">28) Isolation Forest</h2>
+        <span class="tag">Unsupervised · Anomaly Detection</span>
+      </div>
+      <div class="card-body">
+        <p>Detects anomalies by randomly partitioning the data. Outliers are isolated faster and therefore have shorter path lengths in the trees.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Detects anomalies by randomly partitioning the data. Outliers are isolated faster and therefore have shorter path lengths in the trees.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Finding unusual or rare examples</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+s(x,n)=2^{-\frac{E[h(x)]}{c(n)}}
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(E[h(x)]\) is the expected path length needed to isolate point \(x\).</li><li>\(c(n)\) normalizes by sample size \(n\).</li><li>Shorter paths imply more anomalous points.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A point far from the main data cloud may be isolated by only a few random splits, while typical points require more splits.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-isoforest"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="ocsvm" data-keywords="one class svm novelty detection anomaly">
+      <div class="card-header">
+        <h2 class="card-title">29) One-Class SVM</h2>
+        <span class="tag">Unsupervised · Anomaly Detection</span>
+      </div>
+      <div class="card-body">
+        <p>Learns a boundary around mostly normal data and labels points outside that boundary as anomalies.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Learns a boundary around mostly normal data and labels points outside that boundary as anomalies.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Finding unusual or rare examples</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+\min_{w,\rho,\xi}\ \frac{1}{2}\|w\|^2 + \frac{1}{\nu n}\sum_{i=1}^n \xi_i - \rho
+\]
+
+\[
+w^\top \phi(x_i) \ge \rho - \xi_i,\qquad \xi_i \ge 0
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>\(\nu\) controls the allowed fraction of outliers and support vectors.</li><li>The feature map \(\phi(x)\) is often induced by a kernel such as RBF.</li><li>It is useful when you have many examples of normal behavior but few labeled anomalies.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">Train on typical sensor measurements; later, readings outside the learned support are flagged as novel or abnormal.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-ocsvm"></div>
+        </details>
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="autoencoder" data-keywords="autoencoder encoder decoder latent representation anomaly detection">
+      <div class="card-header">
+        <h2 class="card-title">30) Autoencoder</h2>
+        <span class="tag">Deep Learning · Representation Learning</span>
+      </div>
+      <div class="card-body">
+        <p>Learns to compress data into a latent code and reconstruct it, often used for representation learning, denoising, or anomaly detection.</p>
+
+        <div class="grid2">
+          <div class="box">
+            <h3>Core idea</h3>
+            <p>Learns to compress data into a latent code and reconstruct it, often used for representation learning, denoising, or anomaly detection.</p>
+          </div>
+          <div class="box">
+            <h3>When it is useful</h3>
+            <p>Compression, denoising, latent features</p>
+          </div>
+        </div>
+
+        <details open>
+          <summary>Formula</summary>
+          <div class="eq">
+\[
+z = f_{\text{enc}}(x),\qquad \hat{x}=f_{\text{dec}}(z)
+\]
+
+\[
+\mathcal{L}=\|x-\hat{x}\|_2^2
+\]
+</div>
+        </details>
+
+        <details open>
+          <summary>Explain the formula</summary>
+          <ul class="muted">
+            <li>The encoder maps the input to a compact latent representation \(z\).</li><li>The decoder tries to reconstruct the original input from \(z\).</li><li>If the latent bottleneck is small, the model is forced to learn efficient structure.</li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="note">A 10-dimensional vector may be compressed into 2 latent values and then reconstructed. Large reconstruction error can indicate an outlier.</div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock" data-src="code-autoencoder"></div>
+        </details>
+      </div>
+    </article>
+    
+
+  </section>
+</main>
+
+<script type="text/plain" id="code-setup">
+import numpy as np
+
+# Common scikit-learn imports for many classical models
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, mean_squared_error
+
+# Optional packages for some sections
+# import torch
+# from hmmlearn.hmm import GaussianHMM
+</script>
+
+<script type="text/plain" id="code-linear">
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+# Tiny training set: one feature x and one target y
+X = np.array([[1.0], [2.0], [3.0]])
+y = np.array([2.0, 3.0, 5.0])
+
+# Fit ordinary least squares
+model = LinearRegression()
+model.fit(X, y)
+
+# Inspect learned parameters
+print("Intercept:", model.intercept_)
+print("Slope:", model.coef_[0])
+
+# Predict a new value at x = 4
+x_new = np.array([[4.0]])
+pred = model.predict(x_new)[0]
+print("Prediction at x=4:", pred)
+</script>
+
+<script type="text/plain" id="code-ridge">
+import numpy as np
+from sklearn.linear_model import Ridge
+
+# Two correlated predictors
+X = np.array([
+    [1.0, 1.1],
+    [2.0, 1.9],
+    [3.0, 3.1],
+    [4.0, 3.9]
+])
+y = np.array([2.1, 4.0, 6.1, 8.0])
+
+# alpha in scikit-learn is lambda
+model = Ridge(alpha=1.0)
+model.fit(X, y)
+
+print("Intercept:", model.intercept_)
+print("Coefficients:", model.coef_)
+
+# Prediction for a new sample
+x_new = np.array([[5.0, 5.1]])
+print("Prediction:", model.predict(x_new)[0])
+</script>
+
+<script type="text/plain" id="code-lasso">
+import numpy as np
+from sklearn.linear_model import Lasso
+
+# First column matters most; others are weak/noisy
+X = np.array([
+    [1.0, 0.1, 0.0],
+    [2.0, 0.2, 0.1],
+    [3.0, 0.2, 0.0],
+    [4.0, 0.3, 0.2],
+    [5.0, 0.4, 0.1]
+])
+y = np.array([2.0, 4.1, 6.0, 8.1, 10.2])
+
+model = Lasso(alpha=0.05, max_iter=10000)
+model.fit(X, y)
+
+print("Intercept:", model.intercept_)
+print("Coefficients:", model.coef_)  # Some can become exactly 0
+</script>
+
+<script type="text/plain" id="code-elasticnet">
+import numpy as np
+from sklearn.linear_model import ElasticNet
+
+X = np.array([
+    [1.0, 1.1, 0.0],
+    [2.0, 2.1, 0.1],
+    [3.0, 2.9, 0.0],
+    [4.0, 4.2, 0.2],
+    [5.0, 5.1, 0.1]
+])
+y = np.array([2.2, 4.2, 6.0, 8.3, 10.1])
+
+model = ElasticNet(alpha=0.05, l1_ratio=0.5, max_iter=10000)
+model.fit(X, y)
+
+print("Intercept:", model.intercept_)
+print("Coefficients:", model.coef_)
+</script>
+
+<script type="text/plain" id="code-logistic">
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+# Simple binary dataset
+X = np.array([[0.2], [0.8], [1.2], [2.0], [2.5], [3.0]])
+y = np.array([0, 0, 0, 1, 1, 1])
+
+model = LogisticRegression()
+model.fit(X, y)
+
+# Probability and class for a new point
+x_new = np.array([[1.8]])
+proba = model.predict_proba(x_new)[0]
+pred = model.predict(x_new)[0]
+
+print("Class probabilities [0,1]:", proba)
+print("Predicted class:", pred)
+</script>
+
+<script type="text/plain" id="code-knn">
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+
+X = np.array([
+    [1.0, 1.0],
+    [1.5, 1.2],
+    [3.0, 3.2],
+    [3.5, 3.0]
+])
+y = np.array([0, 0, 1, 1])
+
+model = KNeighborsClassifier(n_neighbors=3)
+model.fit(X, y)
+
+x_new = np.array([[2.0, 2.0]])
+print("Predicted class:", model.predict(x_new)[0])
+print("Neighbor distances:", model.kneighbors(x_new)[0][0])
+</script>
+
+<script type="text/plain" id="code-gnb">
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
+
+X = np.array([
+    [1.0, 20.0],
+    [1.2, 19.5],
+    [3.0, 35.0],
+    [3.2, 36.0]
+])
+y = np.array([0, 0, 1, 1])
+
+model = GaussianNB()
+model.fit(X, y)
+
+x_new = np.array([[2.8, 34.0]])
+print("Class probabilities:", model.predict_proba(x_new)[0])
+print("Predicted class:", model.predict(x_new)[0])
+</script>
+
+<script type="text/plain" id="code-lda">
+import numpy as np
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+X = np.array([
+    [1.0, 1.2], [1.3, 0.9], [0.8, 1.1],
+    [3.0, 3.1], [3.2, 2.8], [2.9, 3.3]
+])
+y = np.array([0, 0, 0, 1, 1, 1])
+
+model = LinearDiscriminantAnalysis()
+model.fit(X, y)
+
+x_new = np.array([[2.0, 2.1]])
+print("Class probabilities:", model.predict_proba(x_new)[0])
+print("Predicted class:", model.predict(x_new)[0])
+</script>
+
+<script type="text/plain" id="code-qda">
+import numpy as np
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
+X = np.array([
+    [1.0, 1.0], [1.1, 0.9], [0.8, 1.2],
+    [3.0, 3.0], [4.0, 2.5], [2.5, 4.2]
+])
+y = np.array([0, 0, 0, 1, 1, 1])
+
+model = QuadraticDiscriminantAnalysis()
+model.fit(X, y)
+
+x_new = np.array([[2.7, 2.9]])
+print("Class probabilities:", model.predict_proba(x_new)[0])
+print("Predicted class:", model.predict(x_new)[0])
+</script>
+
+<script type="text/plain" id="code-tree">
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+X = np.array([
+    [1.0], [1.5], [2.0], [3.0], [3.5], [4.0]
+])
+y = np.array([0, 0, 0, 1, 1, 1])
+
+model = DecisionTreeClassifier(max_depth=2, random_state=42)
+model.fit(X, y)
+
+print("Predictions:", model.predict([[1.8], [3.2]]))
+print("Tree depth:", model.get_depth())
+print("Number of leaves:", model.get_n_leaves())
+</script>
+
+<script type="text/plain" id="code-rf">
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+
+X = np.array([
+    [1.0, 2.0],
+    [1.2, 2.1],
+    [3.0, 3.1],
+    [3.2, 3.0],
+    [0.8, 1.9],
+    [3.4, 3.3]
+])
+y = np.array([0, 0, 1, 1, 0, 1])
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=3,
+    random_state=42
+)
+model.fit(X, y)
+
+print("Prediction:", model.predict([[2.8, 3.0]])[0])
+print("Feature importances:", model.feature_importances_)
+</script>
+
+<script type="text/plain" id="code-extratrees">
+import numpy as np
+from sklearn.ensemble import ExtraTreesClassifier
+
+X = np.array([
+    [1.0, 2.0],
+    [1.2, 1.8],
+    [3.0, 3.2],
+    [3.4, 3.1],
+    [0.9, 2.1],
+    [3.1, 2.9]
+])
+y = np.array([0, 0, 1, 1, 0, 1])
+
+model = ExtraTreesClassifier(n_estimators=100, random_state=42)
+model.fit(X, y)
+
+print("Prediction:", model.predict([[2.7, 3.0]])[0])
+print("Feature importances:", model.feature_importances_)
+</script>
+
+<script type="text/plain" id="code-adaboost">
+import numpy as np
+from sklearn.ensemble import AdaBoostClassifier
+
+X = np.array([
+    [1.0], [1.5], [2.0], [2.5], [3.0], [3.5]
+])
+y = np.array([0, 0, 0, 1, 1, 1])
+
+model = AdaBoostClassifier(n_estimators=50, random_state=42)
+model.fit(X, y)
+
+print("Prediction:", model.predict([[2.2]])[0])
+print("Estimator weights:", model.estimator_weights_[:5])
+</script>
+
+<script type="text/plain" id="code-gboost">
+import numpy as np
+from sklearn.ensemble import GradientBoostingRegressor
+
+X = np.array([[1.0], [2.0], [3.0], [4.0], [5.0]])
+y = np.array([1.2, 1.9, 3.1, 3.9, 5.2])
+
+model = GradientBoostingRegressor(
+    n_estimators=100,
+    learning_rate=0.05,
+    max_depth=2,
+    random_state=42
+)
+model.fit(X, y)
+
+print("Predictions:", model.predict([[2.5], [4.5]]))
+</script>
+
+<script type="text/plain" id="code-svm-linear">
+import numpy as np
+from sklearn.svm import SVC
+
+X = np.array([
+    [1.0, 1.0],
+    [1.2, 1.1],
+    [3.0, 3.1],
+    [3.2, 2.9]
+])
+y = np.array([0, 0, 1, 1])
+
+model = SVC(kernel="linear", C=1.0)
+model.fit(X, y)
+
+print("Prediction:", model.predict([[2.0, 2.1]])[0])
+print("Number of support vectors:", model.n_support_)
+</script>
+
+<script type="text/plain" id="code-svm-rbf">
+import numpy as np
+from sklearn.svm import SVC
+
+# XOR-like pattern: not linearly separable
+X = np.array([
+    [0.0, 0.0],
+    [1.0, 1.0],
+    [0.0, 1.0],
+    [1.0, 0.0]
+])
+y = np.array([0, 0, 1, 1])
+
+model = SVC(kernel="rbf", gamma=1.0, C=10.0)
+model.fit(X, y)
+
+print("Predictions:", model.predict([[0.1, 0.9], [0.8, 0.8]]))
+</script>
+
+<script type="text/plain" id="code-perceptron">
+import numpy as np
+from sklearn.linear_model import Perceptron
+
+X = np.array([
+    [1.0, 1.0],
+    [1.2, 1.1],
+    [3.0, 3.1],
+    [3.2, 3.0]
+])
+y = np.array([0, 0, 1, 1])
+
+model = Perceptron(max_iter=1000, eta0=1.0, random_state=42)
+model.fit(X, y)
+
+print("Prediction:", model.predict([[2.8, 3.0]])[0])
+print("Learned coefficients:", model.coef_)
+</script>
+
+<script type="text/plain" id="code-mlp">
+import numpy as np
+from sklearn.neural_network import MLPClassifier
+
+X = np.array([
+    [0.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 0.0],
+    [1.0, 1.0]
+])
+y = np.array([0, 1, 1, 0])  # XOR
+
+model = MLPClassifier(
+    hidden_layer_sizes=(5,),
+    activation="relu",
+    max_iter=5000,
+    random_state=42
+)
+model.fit(X, y)
+
+print("Predictions:", model.predict(X))
+print("Training accuracy:", model.score(X, y))
+</script>
+
+<script type="text/plain" id="code-cnn">
+import torch
+import torch.nn as nn
+
+# A minimal CNN for 8x8 grayscale images
+class TinyCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = nn.Conv2d(
+            in_channels=1,
+            out_channels=4,
+            kernel_size=3,
+            padding=1
+        )
+        self.relu = nn.ReLU()
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(4, 2)
+
+    def forward(self, x):
+        x = self.conv(x)       # Convolution: local pattern detector
+        x = self.relu(x)       # Nonlinearity
+        x = self.pool(x)       # Reduce each channel to 1 number
+        x = x.view(x.size(0), -1)
+        return self.fc(x)      # Final class logits
+
+model = TinyCNN()
+dummy = torch.randn(5, 1, 8, 8)  # batch=5 images
+out = model(dummy)
+print("Output shape:", out.shape)  # (5, 2)
+</script>
+
+<script type="text/plain" id="code-lstm">
+import torch
+import torch.nn as nn
+
+# A tiny LSTM that reads a length-6 sequence of 3 features
+lstm = nn.LSTM(
+    input_size=3,
+    hidden_size=5,
+    num_layers=1,
+    batch_first=True
+)
+
+# batch=4, sequence length=6, features=3
+x = torch.randn(4, 6, 3)
+
+# output contains hidden state at every time step
+output, (h_n, c_n) = lstm(x)
+
+print("Output shape:", output.shape)   # (4, 6, 5)
+print("Final hidden shape:", h_n.shape)  # (1, 4, 5)
+print("Final cell shape:", c_n.shape)    # (1, 4, 5)
+</script>
+
+<script type="text/plain" id="code-kmeans">
+import numpy as np
+from sklearn.cluster import KMeans
+
+X = np.array([
+    [1.0, 1.0],
+    [1.2, 0.9],
+    [4.0, 4.1],
+    [4.2, 3.9]
+])
+
+model = KMeans(n_clusters=2, random_state=42, n_init=10)
+labels = model.fit_predict(X)
+
+print("Cluster labels:", labels)
+print("Centroids:")
+print(model.cluster_centers_)
+</script>
+
+<script type="text/plain" id="code-hier">
+import numpy as np
+from sklearn.cluster import AgglomerativeClustering
+
+X = np.array([
+    [1.0, 1.0],
+    [1.1, 0.9],
+    [4.0, 4.0],
+    [4.2, 4.1]
+])
+
+model = AgglomerativeClustering(n_clusters=2, linkage="average")
+labels = model.fit_predict(X)
+
+print("Cluster labels:", labels)
+</script>
+
+<script type="text/plain" id="code-dbscan">
+import numpy as np
+from sklearn.cluster import DBSCAN
+
+X = np.array([
+    [1.0, 1.0],
+    [1.1, 1.0],
+    [0.9, 1.1],
+    [4.0, 4.0],
+    [4.1, 4.2],
+    [8.0, 1.0]  # likely noise
+])
+
+model = DBSCAN(eps=0.35, min_samples=2)
+labels = model.fit_predict(X)
+
+print("Labels (-1 means noise):", labels)
+</script>
+
+<script type="text/plain" id="code-gmm">
+import numpy as np
+from sklearn.mixture import GaussianMixture
+
+X = np.array([
+    [1.0, 1.0],
+    [1.2, 0.8],
+    [4.0, 4.1],
+    [4.2, 3.9]
+])
+
+model = GaussianMixture(n_components=2, random_state=42)
+model.fit(X)
+
+x_new = np.array([[2.0, 2.0]])
+print("Soft memberships:", model.predict_proba(x_new)[0])
+print("Predicted component:", model.predict(x_new)[0])
+</script>
+
+<script type="text/plain" id="code-pca">
+import numpy as np
+from sklearn.decomposition import PCA
+
+X = np.array([
+    [1.0, 1.1],
+    [2.0, 2.1],
+    [3.0, 3.1],
+    [4.0, 4.2]
+])
+
+model = PCA(n_components=1)
+Z = model.fit_transform(X)
+
+print("1D projection:")
+print(Z.ravel())
+print("Explained variance ratio:", model.explained_variance_ratio_)
+</script>
+
+<script type="text/plain" id="code-nmf">
+import numpy as np
+from sklearn.decomposition import NMF
+
+# Nonnegative matrix
+X = np.array([
+    [2.0, 1.0, 0.0],
+    [3.0, 1.5, 0.2],
+    [0.1, 2.0, 3.0],
+    [0.0, 2.5, 3.5]
+])
+
+model = NMF(n_components=2, init="random", random_state=42, max_iter=1000)
+W = model.fit_transform(X)
+H = model.components_
+
+print("W shape:", W.shape)
+print("H shape:", H.shape)
+print("Reconstruction error:", model.reconstruction_err_)
+</script>
+
+<script type="text/plain" id="code-hmm">
+import numpy as np
+from hmmlearn.hmm import GaussianHMM
+
+# Sequence of 1D observations
+X = np.array([[0.1], [0.2], [0.0], [3.0], [3.2], [2.9]])
+
+# Two hidden states
+model = GaussianHMM(n_components=2, covariance_type="diag", random_state=42, n_iter=100)
+model.fit(X)
+
+states = model.predict(X)
+print("Most likely hidden states:", states)
+print("Transition matrix:")
+print(model.transmat_)
+</script>
+
+<script type="text/plain" id="code-isoforest">
+import numpy as np
+from sklearn.ensemble import IsolationForest
+
+X = np.array([
+    [1.0, 1.0],
+    [1.1, 0.9],
+    [0.9, 1.2],
+    [4.0, 4.0]  # outlier
+])
+
+model = IsolationForest(random_state=42, contamination=0.25)
+labels = model.fit_predict(X)  # 1=inlier, -1=outlier
+scores = model.decision_function(X)
+
+print("Labels:", labels)
+print("Scores:", scores)
+</script>
+
+<script type="text/plain" id="code-ocsvm">
+import numpy as np
+from sklearn.svm import OneClassSVM
+
+# Mostly normal points near (1,1)
+X_train = np.array([
+    [1.0, 1.0],
+    [1.1, 0.9],
+    [0.9, 1.1],
+    [1.0, 0.95]
+])
+
+model = OneClassSVM(kernel="rbf", gamma=2.0, nu=0.25)
+model.fit(X_train)
+
+X_test = np.array([
+    [1.0, 1.0],
+    [3.0, 3.0]
+])
+
+print("Predictions (1 normal, -1 anomaly):", model.predict(X_test))
+</script>
+
+<script type="text/plain" id="code-autoencoder">
+import torch
+import torch.nn as nn
+
+class TinyAutoencoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(4, 2),
+            nn.ReLU()
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 4)
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)   # compress to latent representation
+        x_hat = self.decoder(z)  # reconstruct original input
+        return x_hat
+
+model = TinyAutoencoder()
+x = torch.tensor([[1.0, 0.5, 0.2, 0.1]])
+x_hat = model(x)
+
+print("Input:", x)
+print("Reconstruction:", x_hat)
+</script>
+
+<script>
+  function renderCodeblocks(){
+    document.querySelectorAll(".codeblock").forEach(el => {
+      const src = el.getAttribute("data-src");
+      const node = document.getElementById(src);
+      if(!node) return;
+      const text = node.textContent.replace(/^\n+|\n+$/g, "");
+      const pre = document.createElement("pre");
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+      const code = document.createElement("code");
+      code.textContent = text;
+      btn.addEventListener("click", async () => {
+        try{
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        }catch(e){
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+      pre.appendChild(btn);
+      pre.appendChild(code);
+      el.appendChild(pre);
+    });
+  }
+
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      }catch(e){
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  function setupSmoothScroll(){
+    document.querySelectorAll(".toc a").forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        target.scrollIntoView({behavior:"smooth", block:"start"});
+        history.pushState(null, "", href);
+      });
+    });
+  }
+
+  renderCodeblocks();
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupSmoothScroll();
+</script>
+
+</body>
+</html>
