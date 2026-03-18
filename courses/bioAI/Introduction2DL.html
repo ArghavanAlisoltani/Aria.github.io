@@ -1,0 +1,2131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>30 Deep Learning Models — Formulas, Worked Examples, and Annotated Python</title>
+  <meta name="description" content="A GitHub Pages-ready deep learning guide with 30 important models, formulas, numerical mini-examples, and annotated Python code." />
+
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1400px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1220px;}
+    .kicker{
+      color:var(--accent2); font-weight:900; letter-spacing:.35px;
+      text-transform:uppercase; font-size:12px; margin-top:12px;
+    }
+    .top-actions{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;
+      align-items:center; justify-content:space-between;
+    }
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:800; white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1400px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 380px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start;
+      height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{
+      font-size:13px; margin:6px 8px 10px; color:var(--muted);
+      letter-spacing:.4px; text-transform:uppercase;
+    }
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px;
+      color:var(--text); border:1px solid transparent;
+      font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border);
+      background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.68; font-size:14.5px;}
+    .muted{color:var(--muted)}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.8px; line-height:1.62}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em;
+      background: rgba(0,0,0,.25); border:1px solid var(--border);
+      padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer; font-weight:900; color:var(--text);
+      list-style:none; user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.22); overflow-x:auto;
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto;
+      padding: 14px 12px 12px; position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono); font-size:12.4px; line-height:1.55;
+      white-space: pre; display:block;
+    }
+    .copy-btn{
+      position:absolute; top:10px; right:10px;
+      padding:6px 10px; border-radius:10px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px; user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9);
+      padding: 10px 12px; background: rgba(122,162,255,.08);
+      border-radius: 12px; margin-top: 12px;
+    }
+    table{
+      width:100%; border-collapse:collapse; overflow:hidden;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.18); margin-top:10px;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.45;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    .lead-list li{margin:6px 0}
+    footer{max-width:1400px; margin:0 auto 30px; padding:0 18px; color:var(--muted);}
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>30 Deep Learning Models</h1>
+    <p class="subtitle">
+      A standalone HTML course page in the same overall spirit as your attached calculus page:
+      a dark, searchable, collapsible teaching layout with <b>formulas</b>, <b>small worked numerical examples</b>,
+      and <b>annotated Python code</b> for each model.
+    </p>
+
+    <div class="kicker">Python setup</div>
+    <p class="subtitle">
+      Core packages: <code class="inline">pip install torch torchvision numpy matplotlib</code>
+    </p>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter models (e.g., CNN, LSTM, transformer, GAN, graph)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#overview">0) Overview</a>
+      <a href="#comparison">1) Family comparison</a>
+      <a href="#perceptron">1) Perceptron</a>
+<a href="#mlp">2) Multilayer Perceptron (MLP)</a>
+<a href="#cnn">3) Convolutional Neural Network (CNN)</a>
+<a href="#lenet">4) LeNet-5</a>
+<a href="#alexnet">5) AlexNet</a>
+<a href="#vgg">6) VGG</a>
+<a href="#resnet">7) ResNet</a>
+<a href="#densenet">8) DenseNet</a>
+<a href="#inception">9) Inception / GoogLeNet</a>
+<a href="#mobilenet">10) MobileNet</a>
+<a href="#efficientnet">11) EfficientNet</a>
+<a href="#rnn">12) Recurrent Neural Network (RNN)</a>
+<a href="#lstm">13) Long Short-Term Memory (LSTM)</a>
+<a href="#gru">14) Gated Recurrent Unit (GRU)</a>
+<a href="#bilstm">15) Bidirectional LSTM</a>
+<a href="#seq2seq">16) Sequence-to-Sequence (Encoder–Decoder)</a>
+<a href="#attention">17) Additive / Soft Attention</a>
+<a href="#transformer">18) Transformer</a>
+<a href="#bert">19) BERT (Bidirectional Encoder Representations from Transformers)</a>
+<a href="#gpt">20) GPT-style Decoder Transformer</a>
+<a href="#autoencoder">21) Autoencoder</a>
+<a href="#denoising-autoencoder">22) Denoising Autoencoder</a>
+<a href="#vae">23) Variational Autoencoder (VAE)</a>
+<a href="#gan">24) Generative Adversarial Network (GAN)</a>
+<a href="#cgan">25) Conditional GAN (cGAN)</a>
+<a href="#unet">26) U-Net</a>
+<a href="#siamese">27) Siamese Network</a>
+<a href="#gcn">28) Graph Convolutional Network (GCN)</a>
+<a href="#gat">29) Graph Attention Network (GAT)</a>
+<a href="#diffusion">30) Diffusion Model</a>
+    </div>
+  </nav>
+
+  <section class="content">
+
+    <article class="card topic" id="overview" data-keywords="overview course roadmap">
+      <div class="card-header">
+        <h2 class="card-title">0) Overview</h2>
+        <span class="tag">Roadmap</span>
+      </div>
+      <div class="card-body">
+        <p>
+          This page is organized from foundational models to modern architectures.
+          The goal is not just to list names, but to explain <b>how each model works mathematically</b>,
+          <b>what problem it solves</b>, and <b>how to recognize it in code</b>.
+        </p>
+        <div class="grid2">
+          <div class="box">
+            <h3>What each section contains</h3>
+            <ul class="lead-list muted">
+              <li>Main equations</li>
+              <li>A tiny numerical example you can compute by hand</li>
+              <li>Annotated PyTorch code for a forward pass or core mechanism</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>How to study this page</h3>
+            <ul class="lead-list muted">
+              <li>Start with perceptron, MLP, and CNN</li>
+              <li>Then move to RNN, LSTM, attention, and Transformers</li>
+              <li>Finish with generative, graph, and metric-learning models</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="card topic" id="comparison" data-keywords="comparison families summary">
+      <div class="card-header">
+        <h2 class="card-title">1) Deep learning family comparison</h2>
+        <span class="tag">Reference</span>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Family</th><th>Typical input</th><th>Common uses</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Perceptron / MLP</td><td>tabular vectors</td><td>baseline classification, regression</td></tr>
+<tr><td>CNN family</td><td>images and grids</td><td>vision, segmentation, microscopy</td></tr>
+<tr><td>RNN / LSTM / GRU</td><td>ordered sequences</td><td>time series, tokens, biosignals</td></tr>
+<tr><td>Attention / Transformers</td><td>long sequences and multimodal tokens</td><td>language, protein sequences, sequence modeling</td></tr>
+<tr><td>Autoencoder / VAE / GAN / Diffusion</td><td>unsupervised or generative data</td><td>representation learning, synthesis, denoising</td></tr>
+<tr><td>Graph models</td><td>nodes + edges</td><td>molecules, interaction networks, relational data</td></tr>
+<tr><td>Metric learning</td><td>paired examples</td><td>similarity search, duplicates, one-shot tasks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    
+    <article class="card topic" id="perceptron" data-keywords="perceptron linear threshold binary classification">
+      <div class="card-header">
+        <h2 class="card-title">1) Perceptron</h2>
+        <span class="tag">Foundations</span>
+      </div>
+      <div class="card-body">
+        <p>The perceptron is the simplest neural classifier: it computes a weighted sum of inputs and applies a step function.
+It is useful for understanding how neural networks turn features into decisions, but it can only separate linearly separable data.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ z = \mathbf{w}^\top \mathbf{x} + b \]</div>
+<div class="eq">\[ \hat{y} = \mathbb{1}(z \ge 0) \]</div>
+<div class="eq">\[ \mathbf{w} \leftarrow \mathbf{w} + \eta (y-\hat{y}) \mathbf{x}, \quad b \leftarrow b + \eta (y-\hat{y}) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Let \(\mathbf{x}=[2,1]\), \(\mathbf{w}=[0.6,-0.2]\), and \(b=-0.1\).
+Then \(z = 0.6(2) + (-0.2)(1) - 0.1 = 0.9\). Since \(z \ge 0\), the perceptron predicts class \(1\).
+If the true label were \(0\), the update would push the weights in the opposite direction.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Perceptron forward pass and one manual update
+import torch
+
+# One sample with two features
+x = torch.tensor([2.0, 1.0])
+
+# Current weights and bias
+w = torch.tensor([0.6, -0.2])
+b = torch.tensor(-0.1)
+
+# Linear score z = w^T x + b
+z = torch.dot(w, x) + b
+
+# Step activation: predict 1 if z &gt;= 0 else 0
+y_hat = (z &gt;= 0).float()
+print(&quot;score z:&quot;, z.item(), &quot;prediction:&quot;, int(y_hat.item()))
+
+# Suppose the correct label is 0
+y_true = torch.tensor(0.0)
+eta = 0.1
+
+# Perceptron error term
+error = y_true - y_hat
+
+# Weight update: move weights against the mistaken prediction
+w = w + eta * error * x
+b = b + eta * error
+
+print(&quot;updated w:&quot;, w)
+print(&quot;updated b:&quot;, b.item())</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Best for: teaching the core idea of weighted decisions.</li><li>Limitation: cannot solve XOR without adding hidden layers.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="mlp" data-keywords="mlp dense fully connected relu softmax">
+      <div class="card-header">
+        <h2 class="card-title">2) Multilayer Perceptron (MLP)</h2>
+        <span class="tag">Feedforward</span>
+      </div>
+      <div class="card-body">
+        <p>An MLP stacks linear layers and nonlinear activations. This allows the network to learn curved decision boundaries and richer feature interactions than a single perceptron.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{h} = \phi(\mathbf{W}_1 \mathbf{x} + \mathbf{b}_1) \]</div>
+<div class="eq">\[ \mathbf{o} = \mathbf{W}_2 \mathbf{h} + \mathbf{b}_2 \]</div>
+<div class="eq">\[ \hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{o}) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Take \(\mathbf{x}=[1,2]\). Suppose
+\[
+\mathbf{W}_1 = egin{bmatrix}1 & -1\0.5 & 0.5\end{bmatrix},\;
+\mathbf{b}_1=egin{bmatrix}0\0\end{bmatrix}.
+\]
+Then \(\mathbf{W}_1\mathbf{x}=[-1,1.5]\), so after ReLU the hidden state is \([0,1.5]\).
+A second layer can convert this hidden representation into class scores.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Small MLP for a single forward pass
+import torch
+import torch.nn as nn
+
+# Two inputs -&gt; four hidden units -&gt; three output classes
+model = nn.Sequential(
+    nn.Linear(2, 4),   # affine transform
+    nn.ReLU(),         # nonlinearity
+    nn.Linear(4, 3)    # class logits
+)
+
+# One sample
+x = torch.tensor([[1.0, 2.0]])
+
+# Forward pass returns raw scores (logits)
+logits = model(x)
+
+# Convert logits to probabilities
+probs = torch.softmax(logits, dim=1)
+
+print(&quot;logits:&quot;, logits)
+print(&quot;probabilities:&quot;, probs)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Common for tabular features, baseline classifiers, and small regression tasks.</li><li>The depth and hidden width determine model capacity.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="cnn" data-keywords="cnn convolution feature maps kernels images">
+      <div class="card-header">
+        <h2 class="card-title">3) Convolutional Neural Network (CNN)</h2>
+        <span class="tag">Vision</span>
+      </div>
+      <div class="card-body">
+        <p>CNNs exploit spatial locality by sliding learnable filters across an input. The same filter is reused at many positions, which drastically reduces parameters compared with a fully connected image model.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ (\mathbf{X} * \mathbf{K})_{i,j} = \sum_{m}\sum_{n} X_{i+m,j+n} K_{m,n} \]</div>
+<div class="eq">\[ \mathbf{H} = \phi(\mathbf{X} * \mathbf{K} + b) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>For a \(3	imes 3\) image patch
+\[
+\mathbf{X}=egin{bmatrix}1&2&0\0&1&3\2&1&1\end{bmatrix}
+\]
+and a \(2	imes 2\) filter
+\[
+\mathbf{K}=egin{bmatrix}1&0\-1&1\end{bmatrix},
+\]
+the top-left output value is \(1(1)+2(0)+0(-1)+1(1)=2\).</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Minimal CNN example on one 8x8 grayscale image
+import torch
+import torch.nn as nn
+
+# Batch size 1, channels 1, height 8, width 8
+x = torch.randn(1, 1, 8, 8)
+
+cnn = nn.Sequential(
+    nn.Conv2d(1, 4, kernel_size=3, padding=1),  # 4 feature maps
+    nn.ReLU(),
+    nn.MaxPool2d(2),                             # 8x8 -&gt; 4x4
+    nn.Conv2d(4, 8, kernel_size=3, padding=1),
+    nn.ReLU()
+)
+
+y = cnn(x)
+print(&quot;input shape :&quot;, x.shape)
+print(&quot;output shape:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Great for images, spectrograms, and any grid-like data.</li><li>Key ideas: local receptive fields, weight sharing, pooling.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="lenet" data-keywords="lenet classic cnn mnist digits">
+      <div class="card-header">
+        <h2 class="card-title">4) LeNet-5</h2>
+        <span class="tag">Classic CNN</span>
+      </div>
+      <div class="card-body">
+        <p>LeNet-5 is one of the earliest successful CNN architectures. It established the now-familiar pattern of convolution, pooling, and fully connected classification.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ 32\times 32 \rightarrow \text{Conv} \rightarrow \text{Pool} \rightarrow \text{Conv} \rightarrow \text{Pool} \rightarrow \text{FC} \rightarrow \text{FC} \]</div>
+<div class="eq">\[ \hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{W}\mathbf{h} + \mathbf{b}) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>A \(32	imes 32\) grayscale image passed through a \(5	imes 5\) convolution with 6 filters yields 6 feature maps.
+After pooling, the spatial size shrinks while the number of channels grows, which lets later layers use broader context.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># LeNet-style network for digit-like images
+import torch
+import torch.nn as nn
+
+class LeNet(nn.Module):
+    def __init__(self, n_classes=10):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 6, kernel_size=5),  # 32 -&gt; 28
+            nn.Tanh(),
+            nn.AvgPool2d(2),                 # 28 -&gt; 14
+            nn.Conv2d(6, 16, kernel_size=5), # 14 -&gt; 10
+            nn.Tanh(),
+            nn.AvgPool2d(2)                  # 10 -&gt; 5
+        )
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(16 * 5 * 5, 120),
+            nn.Tanh(),
+            nn.Linear(120, 84),
+            nn.Tanh(),
+            nn.Linear(84, n_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        return self.classifier(x)
+
+x = torch.randn(4, 1, 32, 32)
+model = LeNet()
+print(model(x).shape)  # batch of 4 -&gt; 10 logits each</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Historically important for handwritten digit recognition.</li><li>Still excellent for teaching shape calculations through CNNs.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="alexnet" data-keywords="alexnet relu dropout data augmentation">
+      <div class="card-header">
+        <h2 class="card-title">5) AlexNet</h2>
+        <span class="tag">Classic CNN</span>
+      </div>
+      <div class="card-body">
+        <p>AlexNet helped trigger the deep learning revolution in computer vision. Compared with earlier CNNs, it used deeper stacks, ReLU activations, dropout, and large-scale GPU training.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \text{Conv}(11\times 11, s=4) \rightarrow \text{ReLU} \rightarrow \text{Pool} \rightarrow \cdots \rightarrow \text{FC} \]</div>
+<div class="eq">\[ \mathrm{ReLU}(x)=\max(0,x) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>For an input of size \(227	imes 227\), an \(11	imes 11\) convolution with stride \(4\) produces
+\[
+\left\lfloor rac{227-11}{4} ightfloor + 1 = 55
+\]
+positions along each axis, so each output map is \(55	imes 55\).</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># AlexNet is available directly in torchvision
+import torch
+from torchvision import models
+
+# Create model without downloading pretrained weights
+model = models.alexnet(weights=None)
+
+# Fake RGB image batch: 2 images, 3 channels, 224x224
+x = torch.randn(2, 3, 224, 224)
+logits = model(x)
+
+print(&quot;AlexNet output shape:&quot;, logits.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Large receptive fields early in the network.</li><li>Introduced dropout as an important regularizer in CNN pipelines.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="vgg" data-keywords="vgg deep 3x3 convolutions vision">
+      <div class="card-header">
+        <h2 class="card-title">6) VGG</h2>
+        <span class="tag">Classic CNN</span>
+      </div>
+      <div class="card-body">
+        <p>VGG showed that depth alone can be a powerful design principle. It uses repeated small \(3	imes 3\) convolutions instead of large filters, making the architecture conceptually simple and modular.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \text{stack of } 3\times 3 \text{ convolutions} \Rightarrow \text{larger effective receptive field} \]</div>
+<div class="eq">\[ \text{Two } 3\times 3 \text{ layers} \approx \text{one } 5\times 5 \text{ receptive field, but with extra nonlinearity} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>A single \(5	imes 5\) convolution has \(25C_	ext{in}C_	ext{out}\) weights.
+Two \(3	imes 3\) convolutions have \(18C^2\) weights when channel counts match, and they insert an extra nonlinearity between layers.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># VGG-style network from torchvision
+import torch
+from torchvision import models
+
+model = models.vgg16(weights=None)
+
+# Forward pass through a standard VGG
+x = torch.randn(1, 3, 224, 224)
+y = model(x)
+
+print(&quot;VGG16 output shape:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Simple and strong baseline for feature extraction.</li><li>Heavy in memory and parameters compared with newer efficient models.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="resnet" data-keywords="resnet skip connections residual learning">
+      <div class="card-header">
+        <h2 class="card-title">7) ResNet</h2>
+        <span class="tag">Residual</span>
+      </div>
+      <div class="card-body">
+        <p>ResNet adds identity skip connections so a block learns a residual function instead of an entire transformation from scratch.
+This makes optimization easier and allows very deep models to train reliably.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{y} = \mathcal{F}(\mathbf{x}) + \mathbf{x} \]</div>
+<div class="eq">\[ \mathbf{y} = \phi(\mathcal{F}(\mathbf{x}) + \mathbf{x}) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If a block input is \(\mathbf{x}=[1,-2]\) and the learned residual is \(\mathcal{F}(\mathbf{x})=[0.2,0.5]\),
+then the block output before activation is \([1.2,-1.5]\). The network only had to learn the correction, not the full mapping.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Residual block example
+import torch
+import torch.nn as nn
+
+class ResidualBlock(nn.Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.Conv2d(channels, channels, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(channels, channels, 3, padding=1)
+        )
+        self.act = nn.ReLU()
+
+    def forward(self, x):
+        # Add the skip path directly to the learned residual
+        return self.act(self.block(x) + x)
+
+x = torch.randn(1, 16, 32, 32)
+block = ResidualBlock(16)
+print(block(x).shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Core idea behind many modern image and multimodal backbones.</li><li>Residual connections are now used well beyond CNNs.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="densenet" data-keywords="densenet dense connectivity feature reuse">
+      <div class="card-header">
+        <h2 class="card-title">8) DenseNet</h2>
+        <span class="tag">Residual / Dense</span>
+      </div>
+      <div class="card-body">
+        <p>DenseNet connects each layer to all later layers within a dense block. Earlier features are reused by concatenation, which encourages feature diversity and efficient gradient flow.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{x}_\ell = H_\ell([\mathbf{x}_0; \mathbf{x}_1; \ldots; \mathbf{x}_{\ell-1}]) \]</div>
+<div class="eq">\[ [\cdot ; \cdot] \text{ denotes concatenation along the channel dimension} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If layer 0 outputs 16 channels and each new layer adds 8 channels, then after three growth steps the block contains
+\(16 + 3	imes 8 = 40\) channels.
+The growth rate controls how quickly width increases.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Simple DenseNet-style concatenation idea
+import torch
+import torch.nn as nn
+
+x0 = torch.randn(1, 8, 16, 16)
+
+layer1 = nn.Conv2d(8, 4, kernel_size=3, padding=1)
+x1 = torch.relu(layer1(x0))
+
+# Concatenate old and new features
+x_cat = torch.cat([x0, x1], dim=1)
+
+layer2 = nn.Conv2d(12, 4, kernel_size=3, padding=1)
+x2 = torch.relu(layer2(x_cat))
+
+print(&quot;x0 channels :&quot;, x0.shape[1])
+print(&quot;after concat :&quot;, x_cat.shape[1])
+print(&quot;new output   :&quot;, x2.shape[1])</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Encourages feature reuse instead of repeatedly relearning similar filters.</li><li>Concatenation can increase memory use.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="inception" data-keywords="inception googlenet multi branch convolutions">
+      <div class="card-header">
+        <h2 class="card-title">9) Inception / GoogLeNet</h2>
+        <span class="tag">Multi-branch CNN</span>
+      </div>
+      <div class="card-body">
+        <p>Inception uses parallel branches with different kernel sizes so the model can capture information at multiple spatial scales in the same layer.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \text{Output} = [\text{branch}_{1\times 1}; \text{branch}_{3\times 3}; \text{branch}_{5\times 5}; \text{pool branch}] \]</div>
+<div class="eq">\[ 1\times 1 \text{ convolutions reduce channels before expensive branches} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Suppose four branches produce 8, 16, 8, and 4 channels.
+After concatenation, the module output has \(8+16+8+4=36\) channels.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Tiny Inception-style module
+import torch
+import torch.nn as nn
+
+class InceptionMini(nn.Module):
+    def __init__(self, in_ch):
+        super().__init__()
+        self.b1 = nn.Conv2d(in_ch, 8, kernel_size=1)
+        self.b2 = nn.Conv2d(in_ch, 8, kernel_size=3, padding=1)
+        self.b3 = nn.Conv2d(in_ch, 8, kernel_size=5, padding=2)
+        self.pool = nn.Sequential(
+            nn.MaxPool2d(3, stride=1, padding=1),
+            nn.Conv2d(in_ch, 4, kernel_size=1)
+        )
+
+    def forward(self, x):
+        return torch.cat([self.b1(x), self.b2(x), self.b3(x), self.pool(x)], dim=1)
+
+x = torch.randn(1, 3, 32, 32)
+m = InceptionMini(3)
+print(m(x).shape)  # 8 + 8 + 8 + 4 channels</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Multi-scale pattern extraction in one module.</li><li>A precursor to many later architectural search ideas.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="mobilenet" data-keywords="mobilenet depthwise separable convolution efficient">
+      <div class="card-header">
+        <h2 class="card-title">10) MobileNet</h2>
+        <span class="tag">Efficient CNN</span>
+      </div>
+      <div class="card-body">
+        <p>MobileNet reduces computation using depthwise separable convolution: a depthwise convolution filters each channel independently, then a pointwise \(1	imes 1\) convolution mixes channels.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \text{Standard conv cost} \approx D_k^2 M N D_f^2 \]</div>
+<div class="eq">\[ \text{Depthwise separable cost} \approx D_k^2 M D_f^2 + M N D_f^2 \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>With kernel size \(3\), \(M=32\) input channels, \(N=64\) output channels, and feature map size \(D_f=56\),
+depthwise separable convolution uses far fewer multiply-add operations than a full convolution.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Depthwise separable convolution in PyTorch
+import torch
+import torch.nn as nn
+
+depthwise = nn.Conv2d(32, 32, kernel_size=3, padding=1, groups=32)
+pointwise = nn.Conv2d(32, 64, kernel_size=1)
+
+x = torch.randn(1, 32, 56, 56)
+y = pointwise(torch.relu(depthwise(x)))
+
+print(&quot;input :&quot;, x.shape)
+print(&quot;output:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Strong choice for mobile and edge devices.</li><li>Often paired with width multipliers for further compression.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="efficientnet" data-keywords="efficientnet compound scaling width depth resolution">
+      <div class="card-header">
+        <h2 class="card-title">11) EfficientNet</h2>
+        <span class="tag">Efficient CNN</span>
+      </div>
+      <div class="card-body">
+        <p>EfficientNet scales network depth, width, and image resolution together rather than scaling only one dimension. This produces better accuracy-efficiency tradeoffs than naive scaling.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ d = \alpha^\phi,\quad w = \beta^\phi,\quad r = \gamma^\phi \]</div>
+<div class="eq">\[ \alpha \beta^2 \gamma^2 \approx 2 \quad \text{under a doubled-compute constraint} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If \(\phi=1\), and the chosen coefficients satisfy \(lpha=1.2\), \(eta=1.1\), \(\gamma=1.15\),
+then the next model is slightly deeper, wider, and uses higher-resolution inputs, instead of scaling only one part.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># EfficientNet from torchvision
+import torch
+from torchvision import models
+
+model = models.efficientnet_b0(weights=None)
+x = torch.randn(1, 3, 224, 224)
+y = model(x)
+
+print(&quot;EfficientNet-B0 output shape:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Excellent accuracy per FLOP for many image tasks.</li><li>Compound scaling is the key conceptual contribution.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="rnn" data-keywords="rnn recurrent sequence time series hidden state">
+      <div class="card-header">
+        <h2 class="card-title">12) Recurrent Neural Network (RNN)</h2>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="card-body">
+        <p>An RNN processes sequences one step at a time, carrying a hidden state forward. It is the simplest recurrent architecture for modeling temporal dependence.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{h}_t = \tanh(\mathbf{W}_{xh}\mathbf{x}_t + \mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{b}_h) \]</div>
+<div class="eq">\[ \mathbf{o}_t = \mathbf{W}_{ho}\mathbf{h}_t + \mathbf{b}_o \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>With scalar inputs and hidden state, let \(x_t=1\), \(h_{t-1}=0.5\), \(W_{xh}=0.8\), \(W_{hh}=0.4\), \(b=0\).
+Then \(h_t=	anh(0.8+0.2)pprox 	anh(1.0)pprox 0.762\).</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Basic RNN layer
+import torch
+import torch.nn as nn
+
+# Sequence length 5, batch size 2, input size 3
+x = torch.randn(5, 2, 3)
+
+rnn = nn.RNN(input_size=3, hidden_size=4)
+y, h_last = rnn(x)
+
+print(&quot;all hidden states:&quot;, y.shape)   # (seq, batch, hidden)
+print(&quot;final hidden state:&quot;, h_last.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Simple and instructive, but struggles with long-term dependencies.</li><li>Vanishing and exploding gradients motivated LSTM and GRU.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="lstm" data-keywords="lstm cell state forget gate input gate output gate">
+      <div class="card-header">
+        <h2 class="card-title">13) Long Short-Term Memory (LSTM)</h2>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="card-body">
+        <p>LSTM adds gates and a cell state so information can be kept, updated, or discarded more selectively than in a vanilla RNN.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{f}_t = \sigma(\mathbf{W}_f[\mathbf{h}_{t-1},\mathbf{x}_t]+\mathbf{b}_f) \]</div>
+<div class="eq">\[ \mathbf{i}_t = \sigma(\mathbf{W}_i[\mathbf{h}_{t-1},\mathbf{x}_t]+\mathbf{b}_i),\quad \tilde{\mathbf{c}}_t=\tanh(\mathbf{W}_c[\mathbf{h}_{t-1},\mathbf{x}_t]+\mathbf{b}_c) \]</div>
+<div class="eq">\[ \mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t,\quad \mathbf{h}_t = \mathbf{o}_t \odot \tanh(\mathbf{c}_t) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Suppose \(f_t=0.9\), \(i_t=0.2\), \(c_{t-1}=1.0\), and \(	ilde{c}_t=0.5\).
+Then \(c_t = 0.9(1.0) + 0.2(0.5)=1.0\).
+The forget gate kept most past memory while the input gate added only a small update.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># LSTM forward pass on a toy sequence
+import torch
+import torch.nn as nn
+
+x = torch.randn(7, 3, 5)  # seq=7, batch=3, features=5
+
+lstm = nn.LSTM(input_size=5, hidden_size=6, num_layers=1)
+y, (h_n, c_n) = lstm(x)
+
+print(&quot;sequence outputs:&quot;, y.shape)
+print(&quot;final hidden    :&quot;, h_n.shape)
+print(&quot;final cell      :&quot;, c_n.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Widely used for time series, biosignals, and text before Transformers became dominant.</li><li>Cell state is the main mechanism for long-range memory.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gru" data-keywords="gru update gate reset gate recurrent">
+      <div class="card-header">
+        <h2 class="card-title">14) Gated Recurrent Unit (GRU)</h2>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="card-body">
+        <p>GRU is a streamlined alternative to LSTM. It uses fewer gates and no separate cell state, which often makes it faster while remaining effective.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{z}_t = \sigma(\mathbf{W}_z[\mathbf{h}_{t-1},\mathbf{x}_t]) \]</div>
+<div class="eq">\[ \mathbf{r}_t = \sigma(\mathbf{W}_r[\mathbf{h}_{t-1},\mathbf{x}_t]) \]</div>
+<div class="eq">\[ \tilde{\mathbf{h}}_t = \tanh(\mathbf{W}_h[\mathbf{r}_t \odot \mathbf{h}_{t-1}, \mathbf{x}_t]) \]</div>
+<div class="eq">\[ \mathbf{h}_t = (1-\mathbf{z}_t)\odot \mathbf{h}_{t-1} + \mathbf{z}_t \odot \tilde{\mathbf{h}}_t \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If \(z_t=0.7\), \(h_{t-1}=0.2\), and \(	ilde{h}_t=0.9\),
+then \(h_t = 0.3(0.2) + 0.7(0.9) = 0.69\).
+The update gate controlled how much of the candidate state replaced the old state.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># GRU layer
+import torch
+import torch.nn as nn
+
+x = torch.randn(10, 4, 8)  # seq=10, batch=4, features=8
+gru = nn.GRU(input_size=8, hidden_size=12)
+
+y, h_n = gru(x)
+print(&quot;outputs:&quot;, y.shape)
+print(&quot;last hidden:&quot;, h_n.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Often a practical alternative to LSTM when you want fewer parameters.</li><li>Still recurrent, so sequence processing is not fully parallel across time.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="bilstm" data-keywords="bilstm bidirectional context sequence">
+      <div class="card-header">
+        <h2 class="card-title">15) Bidirectional LSTM</h2>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="card-body">
+        <p>A bidirectional LSTM reads the sequence in both forward and backward directions, then combines both hidden states.
+This is helpful when the full sequence is available and both past and future context matter.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \overrightarrow{\mathbf{h}}_t = \mathrm{LSTM}_f(\mathbf{x}_t,\overrightarrow{\mathbf{h}}_{t-1}) \]</div>
+<div class="eq">\[ \overleftarrow{\mathbf{h}}_t = \mathrm{LSTM}_b(\mathbf{x}_t,\overleftarrow{\mathbf{h}}_{t+1}) \]</div>
+<div class="eq">\[ \mathbf{h}_t = [\overrightarrow{\mathbf{h}}_t ; \overleftarrow{\mathbf{h}}_t] \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the forward hidden state at a token is length 16 and the backward hidden state is also length 16,
+their concatenation produces a 32-dimensional contextual representation.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Bidirectional LSTM
+import torch
+import torch.nn as nn
+
+x = torch.randn(6, 2, 4)  # seq=6, batch=2, features=4
+
+bilstm = nn.LSTM(input_size=4, hidden_size=5, bidirectional=True)
+y, (h_n, c_n) = bilstm(x)
+
+print(&quot;token representations:&quot;, y.shape)  # hidden becomes 2*5
+print(&quot;final hidden states  :&quot;, h_n.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Common in tagging, speech, and biological sequence labeling.</li><li>Not suitable when only past context is allowed at inference time.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="seq2seq" data-keywords="seq2seq encoder decoder translation generation">
+      <div class="card-header">
+        <h2 class="card-title">16) Sequence-to-Sequence (Encoder–Decoder)</h2>
+        <span class="tag">Sequence</span>
+      </div>
+      <div class="card-body">
+        <p>Seq2Seq maps one sequence to another by encoding the source sequence into a context representation and then decoding the target sequence step by step.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{h}^{enc}_t = f_{enc}(\mathbf{x}_t, \mathbf{h}^{enc}_{t-1}) \]</div>
+<div class="eq">\[ \mathbf{s}_t = f_{dec}(\mathbf{y}_{t-1}, \mathbf{s}_{t-1}, \mathbf{c}) \]</div>
+<div class="eq">\[ p(y_t \mid y_{<t}, x) = \mathrm{softmax}(\mathbf{W}\mathbf{s}_t) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the encoder compresses a 5-token source sequence into a context vector of length 64,
+the decoder uses that context plus previously generated tokens to emit the next target token at each time step.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Toy seq2seq with GRU encoder and decoder
+import torch
+import torch.nn as nn
+
+encoder = nn.GRU(input_size=8, hidden_size=16)
+decoder = nn.GRU(input_size=8, hidden_size=16)
+out_layer = nn.Linear(16, 20)  # vocabulary of 20 tokens
+
+src = torch.randn(5, 1, 8)  # source sequence
+tgt = torch.randn(4, 1, 8)  # decoder inputs (e.g., teacher forcing embeddings)
+
+_, h = encoder(src)         # final encoder state
+dec_out, _ = decoder(tgt, h)
+logits = out_layer(dec_out)
+
+print(&quot;decoder logits shape:&quot;, logits.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Historically central in machine translation and summarization.</li><li>Attention made seq2seq much stronger by removing the fixed-size bottleneck.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="attention" data-keywords="attention bahdanau context weights alignment">
+      <div class="card-header">
+        <h2 class="card-title">17) Additive / Soft Attention</h2>
+        <span class="tag">Attention</span>
+      </div>
+      <div class="card-body">
+        <p>Attention lets a model focus on the most relevant input positions when producing an output.
+Instead of forcing all information through a single vector, it computes a weighted combination of encoder states.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ e_{t,i} = \mathrm{score}(\mathbf{s}_{t-1}, \mathbf{h}_i) \]</div>
+<div class="eq">\[ \alpha_{t,i} = \frac{\exp(e_{t,i})}{\sum_j \exp(e_{t,j})} \]</div>
+<div class="eq">\[ \mathbf{c}_t = \sum_i \alpha_{t,i}\mathbf{h}_i \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Suppose the alignment scores for three source positions are \([1,2,0]\).
+Then
+\[
+\mathrm{softmax}([1,2,0]) pprox [0.245, 0.665, 0.090].
+\]
+The second position receives the most attention, so it contributes most to the context vector.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Manual attention weight computation
+import torch
+
+# Three encoder states, each of dimension 4
+H = torch.tensor([
+    [1.0, 0.0, 1.0, 0.0],
+    [0.5, 1.0, 0.5, 1.0],
+    [0.0, 1.0, 0.0, 1.0]
+])
+
+# Pretend these are the attention scores for one decoder step
+scores = torch.tensor([1.0, 2.0, 0.0])
+
+# Turn scores into a probability distribution
+alpha = torch.softmax(scores, dim=0)
+
+# Weighted average of encoder states
+context = (alpha[:, None] * H).sum(dim=0)
+
+print(&quot;attention weights:&quot;, alpha)
+print(&quot;context vector:&quot;, context)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Core concept that paved the way for Transformers.</li><li>The weights are often interpretable as relevance scores, though not always perfectly.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="transformer" data-keywords="transformer self attention multi head positional encoding">
+      <div class="card-header">
+        <h2 class="card-title">18) Transformer</h2>
+        <span class="tag">Attention</span>
+      </div>
+      <div class="card-body">
+        <p>The Transformer replaces recurrence with self-attention, allowing each token to directly interact with all others in the sequence.
+This makes training highly parallel and gives excellent long-range modeling power.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \mathrm{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right)\mathbf{V} \]</div>
+<div class="eq">\[ \mathrm{MultiHead}(\mathbf{X}) = \mathrm{Concat}(\text{head}_1,\ldots,\text{head}_h)\mathbf{W}^O \]</div>
+<div class="eq">\[ \mathbf{X}' = \mathrm{LayerNorm}(\mathbf{X} + \mathrm{Attention}(\mathbf{X})) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If a query and three keys produce scaled scores \([0.1, 1.2, -0.3]\),
+their softmax weights may be roughly \([0.21, 0.64, 0.15]\), so the output is mostly the value vector from the second token.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Transformer encoder block from PyTorch
+import torch
+import torch.nn as nn
+
+layer = nn.TransformerEncoderLayer(
+    d_model=32,      # embedding dimension
+    nhead=4,         # four attention heads
+    dim_feedforward=64,
+    batch_first=True
+)
+
+# Batch of 2 sequences, each with 6 tokens, embedding size 32
+x = torch.randn(2, 6, 32)
+y = layer(x)
+
+print(&quot;input shape :&quot;, x.shape)
+print(&quot;output shape:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Dominant architecture for language and widely used in vision, biology, audio, and multimodal learning.</li><li>Needs positional information because self-attention alone is permutation-invariant.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="bert" data-keywords="bert masked language model bidirectional encoder">
+      <div class="card-header">
+        <h2 class="card-title">19) BERT (Bidirectional Encoder Representations from Transformers)</h2>
+        <span class="tag">Language</span>
+      </div>
+      <div class="card-body">
+        <p>BERT is a Transformer encoder trained to predict masked tokens from both left and right context.
+It produces contextual embeddings that are highly effective for downstream classification and token-level tasks.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ p(x_m \mid x_{\setminus m}) = \mathrm{softmax}(\mathbf{W}\mathbf{h}_m) \]</div>
+<div class="eq">\[ \text{BERT uses bidirectional self-attention over the full input sequence} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>In the sentence “[CLS] the cell is [MASK] rapidly”, BERT uses both “the cell is” and “rapidly” to predict a word such as “dividing”.
+This differs from left-to-right generation because the masked position can see both sides.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Tiny BERT-like encoder idea using embeddings + Transformer encoder
+import torch
+import torch.nn as nn
+
+vocab_size = 100
+d_model = 32
+
+embedding = nn.Embedding(vocab_size, d_model)
+encoder = nn.TransformerEncoder(
+    nn.TransformerEncoderLayer(d_model=d_model, nhead=4, batch_first=True),
+    num_layers=2
+)
+mlm_head = nn.Linear(d_model, vocab_size)
+
+# Batch of token IDs
+tokens = torch.randint(0, vocab_size, (2, 8))
+hidden = encoder(embedding(tokens))
+logits = mlm_head(hidden)
+
+print(&quot;token logits shape:&quot;, logits.shape)  # (batch, seq, vocab)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Usually fine-tuned for classification, tagging, ranking, and embedding extraction.</li><li>Encoder-only: good for understanding tasks, not autoregressive generation.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gpt" data-keywords="gpt autoregressive causal mask next token">
+      <div class="card-header">
+        <h2 class="card-title">20) GPT-style Decoder Transformer</h2>
+        <span class="tag">Language</span>
+      </div>
+      <div class="card-body">
+        <p>GPT is a decoder-only Transformer trained to predict the next token.
+The causal mask ensures each position can only use earlier positions, making the model suitable for text generation.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ p(x_1,\ldots,x_T) = \prod_{t=1}^{T} p(x_t \mid x_{<t}) \]</div>
+<div class="eq">\[ \text{causal mask blocks attention to future positions} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the context is “deep learning models are”, GPT estimates a probability distribution over the next token,
+for example giving higher mass to “powerful”, “useful”, or “widely” than unrelated words.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Causal Transformer decoder-style forward pass
+import torch
+import torch.nn as nn
+
+d_model = 32
+vocab_size = 120
+
+embedding = nn.Embedding(vocab_size, d_model)
+decoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=4, batch_first=True)
+decoder = nn.TransformerEncoder(decoder_layer, num_layers=2)
+lm_head = nn.Linear(d_model, vocab_size)
+
+tokens = torch.randint(0, vocab_size, (2, 6))
+x = embedding(tokens)
+
+# Build a causal mask so future tokens cannot be used
+seq_len = tokens.size(1)
+mask = torch.triu(torch.ones(seq_len, seq_len) * float(&quot;-inf&quot;), diagonal=1)
+
+hidden = decoder(x, mask=mask)
+logits = lm_head(hidden)
+
+print(&quot;language model logits:&quot;, logits.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Decoder-only Transformers dominate modern generative language modeling.</li><li>Training objective is conceptually simple: next-token prediction.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="autoencoder" data-keywords="autoencoder bottleneck reconstruction latent space">
+      <div class="card-header">
+        <h2 class="card-title">21) Autoencoder</h2>
+        <span class="tag">Representation Learning</span>
+      </div>
+      <div class="card-body">
+        <p>An autoencoder learns to compress an input into a latent representation and reconstruct it.
+The bottleneck forces the model to capture the most informative structure in the data.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{z} = f_\theta(\mathbf{x}) \]</div>
+<div class="eq">\[ \hat{\mathbf{x}} = g_\phi(\mathbf{z}) \]</div>
+<div class="eq">\[ \mathcal{L} = \|\mathbf{x}-\hat{\mathbf{x}}\|_2^2 \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>Suppose a 10-dimensional input is compressed into a latent vector of length 2.
+If reconstruction remains accurate, those 2 latent dimensions have captured a compact summary of the original pattern.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Small fully connected autoencoder
+import torch
+import torch.nn as nn
+
+class Autoencoder(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(10, 4),
+            nn.ReLU(),
+            nn.Linear(4, 2)   # bottleneck
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(2, 4),
+            nn.ReLU(),
+            nn.Linear(4, 10)
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)
+        x_hat = self.decoder(z)
+        return x_hat, z
+
+x = torch.randn(3, 10)
+model = Autoencoder()
+x_hat, z = model(x)
+
+print(&quot;latent shape:&quot;, z.shape)
+print(&quot;reconstruction shape:&quot;, x_hat.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Useful for compression, denoising, anomaly detection, and latent-space exploration.</li><li>Too much capacity can let the model memorize instead of learn structure.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="denoising-autoencoder" data-keywords="denoising autoencoder noise reconstruction robust features">
+      <div class="card-header">
+        <h2 class="card-title">22) Denoising Autoencoder</h2>
+        <span class="tag">Representation Learning</span>
+      </div>
+      <div class="card-body">
+        <p>A denoising autoencoder learns to recover the clean input from a corrupted version.
+This encourages the latent representation to focus on stable structure rather than raw noise.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \tilde{\mathbf{x}} = \mathbf{x} + \epsilon \]</div>
+<div class="eq">\[ \hat{\mathbf{x}} = g_\phi(f_\theta(\tilde{\mathbf{x}})) \]</div>
+<div class="eq">\[ \mathcal{L} = \|\mathbf{x} - \hat{\mathbf{x}}\|_2^2 \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the clean vector is \([1,0,1,0]\) and Gaussian noise perturbs it to \([0.8,0.1,1.2,-0.2]\),
+the model is trained to reconstruct the clean target, not the noisy version.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Denoising autoencoder idea
+import torch
+import torch.nn as nn
+
+encoder = nn.Sequential(nn.Linear(6, 3), nn.ReLU())
+decoder = nn.Linear(3, 6)
+
+x_clean = torch.randn(4, 6)
+
+# Add Gaussian noise to inputs
+noise = 0.2 * torch.randn_like(x_clean)
+x_noisy = x_clean + noise
+
+z = encoder(x_noisy)
+x_hat = decoder(z)
+
+loss = torch.mean((x_clean - x_hat) ** 2)
+print(&quot;denoising loss:&quot;, loss.item())</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Improves robustness and often learns better latent representations than a plain autoencoder.</li><li>Noise type can be Gaussian, masking, salt-and-pepper, and more.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="vae" data-keywords="vae reparameterization kl divergence latent distribution">
+      <div class="card-header">
+        <h2 class="card-title">23) Variational Autoencoder (VAE)</h2>
+        <span class="tag">Generative</span>
+      </div>
+      <div class="card-body">
+        <p>A VAE is a probabilistic autoencoder. Instead of mapping each input to a fixed code, it maps to a distribution in latent space and regularizes that latent space toward a simple prior.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ q_\phi(\mathbf{z}\mid \mathbf{x}) = \mathcal{N}(\boldsymbol{\mu}(\mathbf{x}), \mathrm{diag}(\boldsymbol{\sigma}^2(\mathbf{x}))) \]</div>
+<div class="eq">\[ \mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\sigma}\odot \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon}\sim \mathcal{N}(0,\mathbf{I}) \]</div>
+<div class="eq">\[ \mathcal{L} = \underbrace{\|\mathbf{x}-\hat{\mathbf{x}}\|^2}_{\text{reconstruction}} + \underbrace{D_{KL}(q_\phi(\mathbf{z}\mid\mathbf{x}) \,\|\, p(\mathbf{z}))}_{\text{regularization}} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>For \(\mu=[0.2,-0.1]\) and \(\log \sigma^2=[-0.2,0.1]\), the KL term for each dimension is
+\[
+-	frac12(1 + \log\sigma^2 - \mu^2 - \sigma^2).
+\]
+This penalizes latent distributions that drift too far from the standard normal prior.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># VAE encoder pieces: mu, logvar, reparameterization
+import torch
+import torch.nn as nn
+
+encoder = nn.Linear(8, 6)
+to_mu = nn.Linear(6, 2)
+to_logvar = nn.Linear(6, 2)
+decoder = nn.Linear(2, 8)
+
+x = torch.randn(5, 8)
+h = torch.relu(encoder(x))
+mu = to_mu(h)
+logvar = to_logvar(h)
+
+# Reparameterization trick
+std = torch.exp(0.5 * logvar)
+eps = torch.randn_like(std)
+z = mu + std * eps
+
+x_hat = decoder(z)
+
+# Mean KL divergence to N(0, I)
+kl = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
+print(&quot;recon shape:&quot;, x_hat.shape)
+print(&quot;KL term:&quot;, kl.item())</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Useful for generative modeling and smooth latent interpolation.</li><li>Tends to generate blurrier images than strong GANs or diffusion models.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gan" data-keywords="gan generator discriminator adversarial learning">
+      <div class="card-header">
+        <h2 class="card-title">24) Generative Adversarial Network (GAN)</h2>
+        <span class="tag">Generative</span>
+      </div>
+      <div class="card-body">
+        <p>A GAN trains two networks in opposition: a generator produces fake samples, and a discriminator tries to distinguish real from fake.
+The adversarial game pushes the generator toward realistic outputs.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \min_G \max_D \; \mathbb{E}_{x\sim p_{data}}[\log D(x)] + \mathbb{E}_{z\sim p(z)}[\log(1-D(G(z)))] \]</div>
+<div class="eq">\[ G: \mathbf{z}\mapsto \hat{\mathbf{x}}, \quad D: \mathbf{x}\mapsto [0,1] \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the discriminator gives \(D(x_{real})=0.9\) and \(D(G(z))=0.2\), then it currently distinguishes real and fake well.
+Training updates the generator to increase \(D(G(z))\) and fool the discriminator.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Very small GAN components
+import torch
+import torch.nn as nn
+
+generator = nn.Sequential(
+    nn.Linear(5, 16),
+    nn.ReLU(),
+    nn.Linear(16, 8)
+)
+
+discriminator = nn.Sequential(
+    nn.Linear(8, 16),
+    nn.ReLU(),
+    nn.Linear(16, 1),
+    nn.Sigmoid()
+)
+
+z = torch.randn(4, 5)      # latent noise
+fake = generator(z)        # generated samples
+scores = discriminator(fake)
+
+print(&quot;fake samples shape:&quot;, fake.shape)
+print(&quot;discriminator scores:&quot;, scores.squeeze())</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Excellent for sharp synthetic samples, but training can be unstable.</li><li>Mode collapse is a classic GAN failure mode.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="cgan" data-keywords="conditional gan labels class conditional generation">
+      <div class="card-header">
+        <h2 class="card-title">25) Conditional GAN (cGAN)</h2>
+        <span class="tag">Generative</span>
+      </div>
+      <div class="card-body">
+        <p>A conditional GAN guides generation using an external condition such as a class label, style tag, or auxiliary measurement.
+Both generator and discriminator receive the condition so outputs can be targeted.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ G(\mathbf{z}, \mathbf{y}) \rightarrow \hat{\mathbf{x}} \]</div>
+<div class="eq">\[ D(\mathbf{x}, \mathbf{y}) \rightarrow [0,1] \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the condition is the class label “cat”, the generator is trained to produce cat-like samples rather than arbitrary images.
+Changing the condition to “dog” should shift the generated distribution accordingly.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Conditional GAN idea: concatenate latent vector with one-hot label
+import torch
+import torch.nn as nn
+
+n_classes = 3
+z_dim = 5
+
+generator = nn.Sequential(
+    nn.Linear(z_dim + n_classes, 16),
+    nn.ReLU(),
+    nn.Linear(16, 8)
+)
+
+# One latent sample and one class condition
+z = torch.randn(1, z_dim)
+label = torch.tensor([[0., 1., 0.]])  # class 1 in one-hot form
+
+g_input = torch.cat([z, label], dim=1)
+fake = generator(g_input)
+
+print(&quot;conditional fake sample:&quot;, fake)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Used in class-conditional image synthesis, super-resolution, and paired translation setups.</li><li>Conditioning adds controllability to adversarial generation.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="unet" data-keywords="u-net segmentation skip connections biomedical images">
+      <div class="card-header">
+        <h2 class="card-title">26) U-Net</h2>
+        <span class="tag">Segmentation</span>
+      </div>
+      <div class="card-body">
+        <p>U-Net is an encoder–decoder architecture for dense prediction such as image segmentation.
+Its skip connections pass high-resolution spatial detail from the encoder to the decoder, which is crucial for precise localization.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \text{Encoder features} \rightarrow \text{bottleneck} \rightarrow \text{Decoder features} \]</div>
+<div class="eq">\[ \text{Decoder input at level } \ell = [\text{upsampled feature}_\ell ; \text{encoder feature}_\ell] \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If the encoder creates a \(64	imes 64\) feature map with 32 channels and the decoder upsamples a matching \(64	imes 64\) map with 32 channels,
+their concatenation yields 64 channels before the next convolution block.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Very small U-Net-like skeleton
+import torch
+import torch.nn as nn
+
+enc1 = nn.Conv2d(1, 8, 3, padding=1)
+pool = nn.MaxPool2d(2)
+enc2 = nn.Conv2d(8, 16, 3, padding=1)
+
+up = nn.ConvTranspose2d(16, 8, kernel_size=2, stride=2)
+dec = nn.Conv2d(16, 8, 3, padding=1)  # receives skip + upsampled
+out = nn.Conv2d(8, 1, 1)
+
+x = torch.randn(1, 1, 64, 64)
+s1 = torch.relu(enc1(x))
+b = torch.relu(enc2(pool(s1)))
+u = up(b)
+
+# Skip connection: concatenate encoder and decoder features
+cat = torch.cat([u, s1], dim=1)
+y = out(torch.relu(dec(cat)))
+
+print(&quot;segmentation output shape:&quot;, y.shape)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>A standard baseline for biomedical and remote-sensing segmentation.</li><li>Skip connections restore fine structure lost during downsampling.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="siamese" data-keywords="siamese contrastive learning pair similarity embeddings">
+      <div class="card-header">
+        <h2 class="card-title">27) Siamese Network</h2>
+        <span class="tag">Metric Learning</span>
+      </div>
+      <div class="card-body">
+        <p>A Siamese network learns an embedding space where similar inputs are close and dissimilar inputs are far apart.
+The two branches share weights, so both inputs are transformed by the same encoder.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{e}_1 = f_\theta(\mathbf{x}_1), \quad \mathbf{e}_2 = f_\theta(\mathbf{x}_2) \]</div>
+<div class="eq">\[ d = \|\mathbf{e}_1 - \mathbf{e}_2\|_2 \]</div>
+<div class="eq">\[ \mathcal{L} = y d^2 + (1-y)\max(0, m-d)^2 \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If two positive examples produce embeddings with distance \(d=0.3\), the contrastive loss for \(y=1\) is small.
+If a negative pair has \(d=0.4\) but margin \(m=1\), it is penalized because the pair is still too close.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Siamese embedding distance
+import torch
+import torch.nn as nn
+
+encoder = nn.Sequential(
+    nn.Linear(6, 4),
+    nn.ReLU(),
+    nn.Linear(4, 2)
+)
+
+x1 = torch.randn(1, 6)
+x2 = torch.randn(1, 6)
+
+e1 = encoder(x1)
+e2 = encoder(x2)
+
+distance = torch.norm(e1 - e2, p=2)
+print(&quot;embedding 1:&quot;, e1)
+print(&quot;embedding 2:&quot;, e2)
+print(&quot;Euclidean distance:&quot;, distance.item())</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Useful for one-shot learning, duplicate detection, and similarity search.</li><li>Triplet loss is a close relative of contrastive loss.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gcn" data-keywords="gcn graph neural network adjacency message passing">
+      <div class="card-header">
+        <h2 class="card-title">28) Graph Convolutional Network (GCN)</h2>
+        <span class="tag">Graph</span>
+      </div>
+      <div class="card-body">
+        <p>A GCN propagates information over graph edges so each node updates its representation using its neighbors.
+This is useful when relationships are not arranged on a regular grid.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ \mathbf{H}^{(\ell+1)} = \sigma(\hat{\mathbf{A}}\mathbf{H}^{(\ell)}\mathbf{W}^{(\ell)}) \]</div>
+<div class="eq">\[ \hat{\mathbf{A}} = \tilde{\mathbf{D}}^{-1/2}\tilde{\mathbf{A}}\tilde{\mathbf{D}}^{-1/2}, \quad \tilde{\mathbf{A}} = \mathbf{A} + \mathbf{I} \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If node 2 is connected to nodes 1 and 3, then its next representation is a normalized mixture of its own features and those of its neighbors.
+The normalization prevents high-degree nodes from dominating the aggregation.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># One manual GCN layer using plain PyTorch
+import torch
+
+# Adjacency for a 3-node chain plus self-loops
+A = torch.tensor([
+    [1., 1., 0.],
+    [1., 1., 1.],
+    [0., 1., 1.]
+])
+
+# Node feature matrix: 3 nodes x 2 features
+H = torch.tensor([
+    [1., 0.],
+    [0., 1.],
+    [1., 1.]
+])
+
+# Symmetric normalization
+D = torch.diag(torch.sum(A, dim=1) ** -0.5)
+A_hat = D @ A @ D
+
+# Learnable weights for a graph layer
+W = torch.randn(2, 4)
+
+# Message passing + linear projection + nonlinearity
+H_next = torch.relu(A_hat @ H @ W)
+print(H_next)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Common in node classification, molecular graphs, and biological interaction networks.</li><li>Message passing is the core organizing idea in graph neural networks.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="gat" data-keywords="gat graph attention neighbor importance">
+      <div class="card-header">
+        <h2 class="card-title">29) Graph Attention Network (GAT)</h2>
+        <span class="tag">Graph</span>
+      </div>
+      <div class="card-body">
+        <p>GAT improves graph aggregation by learning attention weights over neighbors.
+Instead of treating all adjacent nodes equally, it decides which neighbors are most informative for the current node.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ e_{ij} = \mathrm{LeakyReLU}\!\left(\mathbf{a}^\top[\mathbf{W}\mathbf{h}_i \, \| \, \mathbf{W}\mathbf{h}_j]\right) \]</div>
+<div class="eq">\[ \alpha_{ij} = \mathrm{softmax}_{j\in \mathcal{N}(i)}(e_{ij}) \]</div>
+<div class="eq">\[ \mathbf{h}'_i = \sigma\!\left(\sum_{j\in\mathcal{N}(i)} \alpha_{ij}\mathbf{W}\mathbf{h}_j\right) \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If node \(i\) has three neighbors with unnormalized scores \([0.2, 1.0, -0.1]\),
+their softmax weights might be \([0.25, 0.55, 0.20]\), so the second neighbor contributes most to the update.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># Tiny hand-computed attention weights for one graph node
+import torch
+
+scores = torch.tensor([0.2, 1.0, -0.1])   # attention scores to three neighbors
+alpha = torch.softmax(scores, dim=0)
+
+neighbor_messages = torch.tensor([
+    [1.0, 0.0],
+    [0.5, 1.0],
+    [0.0, 1.0]
+])
+
+updated = (alpha[:, None] * neighbor_messages).sum(dim=0)
+
+print(&quot;attention weights:&quot;, alpha)
+print(&quot;updated node representation:&quot;, updated)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Better than plain averaging when some neighbors are much more relevant than others.</li><li>Can be more expressive but also a bit more expensive than a simple GCN.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+    <article class="card topic" id="diffusion" data-keywords="diffusion denoising score matching generative model">
+      <div class="card-header">
+        <h2 class="card-title">30) Diffusion Model</h2>
+        <span class="tag">Generative</span>
+      </div>
+      <div class="card-body">
+        <p>Diffusion models learn to reverse a gradual noising process. During training, noise is added to data at many levels, and the network learns to predict or remove that noise.</p>
+
+        <details open>
+          <summary>Main formulas</summary>
+          <div class="eq">\[ q(\mathbf{x}_t \mid \mathbf{x}_{t-1}) = \mathcal{N}(\sqrt{1-\beta_t}\mathbf{x}_{t-1}, \beta_t \mathbf{I}) \]</div>
+<div class="eq">\[ \mathbf{x}_t = \sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1-\bar{\alpha}_t}\boldsymbol{\epsilon} \]</div>
+<div class="eq">\[ \mathcal{L} = \mathbb{E}_{t,\mathbf{x}_0,\boldsymbol{\epsilon}} \big[\|\boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta(\mathbf{x}_t,t)\|_2^2\big] \]</div>
+        </details>
+
+        <details open>
+          <summary>Numerical example</summary>
+          <div class="box">
+            <p>If \(ar{lpha}_t = 0.81\), then \(\sqrt{ar{lpha}_t}=0.9\) and \(\sqrt{1-ar{lpha}_t}pprox 0.436\).
+So at step \(t\), the noisy sample is a weighted mixture of 90% signal and 43.6% random noise amplitude.</p>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Annotated Python code</summary>
+          <div class="codeblock">
+            <pre><button class="copy-btn">Copy</button><code># One forward noising step for diffusion
+import torch
+
+x0 = torch.tensor([[1.0, -1.0, 0.5]])   # clean sample
+alpha_bar_t = 0.81
+eps = torch.randn_like(x0)              # Gaussian noise
+
+# Closed-form noisy sample at time t
+xt = (alpha_bar_t ** 0.5) * x0 + ((1 - alpha_bar_t) ** 0.5) * eps
+
+print(&quot;clean sample :&quot;, x0)
+print(&quot;noise        :&quot;, eps)
+print(&quot;noisy sample :&quot;, xt)</code></pre>
+          </div>
+        </details>
+
+        
+        <div class="note">
+          <b>Key takeaways</b>
+          <ul><li>Now a leading approach for high-quality image, audio, and multimodal generation.</li><li>Training is stable compared with GANs, though sampling can be slower.</li></ul>
+        </div>
+        
+      </div>
+    </article>
+    
+
+  </section>
+</main>
+
+<footer>
+  Built as a single-file teaching page so you can open it locally or place it on GitHub Pages.
+</footer>
+
+<script>
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      }catch(e){
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  function setupCodeCopy(){
+    document.querySelectorAll(".copy-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const code = btn.parentElement.querySelector("code").innerText;
+        try{
+          await navigator.clipboard.writeText(code);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        }catch(e){
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+    });
+  }
+
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupCodeCopy();
+</script>
+</body>
+</html>
