@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Computational Protein Structure — Beginner to Advanced Course</title>
+  <meta name="description" content="A detailed beginner-to-advanced HTML course on computational protein structure with formulas, real-life examples, fully annotated Python code, and reproducible pipelines." />
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1400px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px);}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.65; font-size:15px; max-width:1240px;}
+    .kicker{color:var(--accent2); font-weight:900; text-transform:uppercase; font-size:12px; margin-top:12px;}
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; justify-content:space-between;}
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.04); color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:800;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1400px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 360px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start; height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{font-size:13px; margin:6px 8px 10px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase;}
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px; color:var(--text);
+      border:1px solid transparent; font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border); background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04); white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.72; font-size:14.5px;}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.8px; line-height:1.62}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em; background: rgba(0,0,0,.25);
+      border:1px solid var(--border); padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{cursor:pointer; font-weight:900; color:var(--text); list-style:none; user-select:none;}
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.22); overflow-x:auto;
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto; padding:14px 12px 12px; position: relative;
+    }
+    .codeblock code{font-family: var(--mono); font-size:12.4px; line-height:1.55; white-space: pre; display:block;}
+    .copy-btn{
+      position:absolute; top:10px; right:10px; padding:6px 10px; border-radius:10px;
+      border:1px solid var(--border); background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9); padding: 10px 12px;
+      background: rgba(122,162,255,.08); border-radius: 12px; margin-top: 12px;
+    }
+    table{
+      width:100%; border-collapse:collapse; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.18); margin-top:10px; overflow:hidden;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.45;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    footer{max-width:1400px; margin:0 auto 30px; padding:0 18px; color:var(--muted);}
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <h1>Computational Protein Structure — Beginner to Advanced</h1>
+    <p class="subtitle">
+      A detailed standalone HTML course in the same general teaching style as your earlier page:
+      dark theme, sticky navigation, search, collapsible code sections, MathJax formulas,
+      <b>real-life examples</b>, <b>fully annotated Python code</b>, and <b>practical pipelines</b>.
+    </p>
+    <div class="kicker">Suggested use</div>
+    <p class="subtitle">
+      Start from files, geometry, and RMSD if you are new. Jump directly to ColabFold, ESMFold,
+      Foldseek, mutation analysis, docking, or MD if you want the practical workflows first.
+    </p>
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter sections (e.g., RMSD, AlphaFold, Foldseek, docking, MD, mutation)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+<a href="#overview">0) Course overview</a>
+<a href="#motivation">1) Why protein structure matters in real life</a>
+<a href="#hierarchy">2) Protein structure hierarchy and amino-acid chemistry</a>
+<a href="#experimental">3) Experimental structure methods and their caveats</a>
+<a href="#files">4) Files, databases, and identifiers</a>
+<a href="#setup">5) Python environment and package setup</a>
+<a href="#geometry">6) Distances, angles, and dihedrals</a>
+<a href="#contacts">7) Contact maps and local packing</a>
+<a href="#rmsd">8) Optimal superposition and RMSD</a>
+<a href="#tmscore">9) TM-score and structural alignment</a>
+<a href="#secondary">10) Secondary structure, exposure, and domains</a>
+<a href="#visualize">11) Notebook visualization</a>
+<a href="#homology">12) Homology modeling logic</a>
+<a href="#alphafold">13) AlphaFold-style prediction and confidence</a>
+<a href="#colabfold">14) Practical batch prediction with ColabFold</a>
+<a href="#esmfold">15) ESMFold and protein language models</a>
+<a href="#complexes">16) Complexes, interfaces, ligands, and uncertainty</a>
+<a href="#mutations">17) Mutation analysis and ΔΔG</a>
+<a href="#docking">18) Docking basics</a>
+<a href="#mdintro">19) Molecular dynamics fundamentals</a>
+<a href="#mdanalysis">20) RMSD and RMSF on trajectories</a>
+<a href="#foldseek">21) Structure search at scale with Foldseek</a>
+<a href="#clustering">22) Pairwise similarity matrices and clustering</a>
+<a href="#cases">23) Real-life case-study logic</a>
+<a href="#pipeline">24) End-to-end FASTA → report pipeline</a>
+<a href="#pitfalls">25) Common pitfalls and how to avoid them</a>
+<a href="#next">26) What to do next</a>
+    </div>
+  </nav>
+  <div class="content">
+
+<section id="overview" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">0) Course overview</h2>
+    <div class="tag">start here</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  This page is a <b>beginner → advanced</b> course on computational protein structure.
+  It is built in the same broad teaching style as your previous HTML page:
+  dark layout, sticky left navigation, search, collapsible code, formulas, and worked examples.
+</p>
+<div class="grid2">
+  <div class="box"><h3>What you will learn</h3><p>
+    How to read structure files, inspect chains and residues, compute distances and dihedrals,
+    compare folds, interpret confidence in predicted models, estimate mutation effects,
+    run structure search, perform basic docking, and analyze short MD trajectories.
+  </p></div>
+  <div class="box"><h3>How to use the page</h3><p>
+    Read top to bottom as a course, or search for a topic such as RMSD, Foldseek,
+    mutation, docking, or MD. Expand all code blocks when you want a runnable notebook-like experience.
+  </p></div>
+</div>
+<table>
+  <tr><th>Level</th><th>Main focus</th><th>Typical output</th></tr>
+  <tr><td>Beginner</td><td>Biology, files, geometry, parsing, contact maps</td><td>Clean structure summary and simple plots</td></tr>
+  <tr><td>Intermediate</td><td>RMSD, TM-score, AlphaFold/ColabFold, Foldseek</td><td>Prediction and comparison report</td></tr>
+  <tr><td>Advanced</td><td>Mutation stability, docking, MD, clustering, pipelines</td><td>Reproducible project workflow</td></tr>
+</table>
+
+  </div>
+</section>
+
+<section id="motivation" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">1) Why protein structure matters in real life</h2>
+    <div class="tag">biology</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Sequence tells you what residues exist. Structure tells you where they sit, which partners they can touch,
+  whether a pocket is open, whether a loop is flexible, and whether a mutation lands in a buried core, a catalytic site,
+  an interface, or a disordered tail.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Hemoglobin</h3><p>
+    A classic quaternary-structure example: oxygen binding is cooperative because subunits influence one another.
+  </p></div>
+  <div class="box"><h3>p53</h3><p>
+    Some mutations destabilize the fold, others mainly disrupt DNA binding. Structure helps separate those mechanisms.
+  </p></div>
+  <div class="box"><h3>SARS-CoV-2 spike</h3><p>
+    Small local substitutions can alter receptor binding or antibody recognition without changing the whole fold.
+  </p></div>
+  <div class="box"><h3>AMR proteins</h3><p>
+    Porins, enzymes, and targets can change drug access or inhibitor binding through local structural variation.
+  </p></div>
+</div>
+<div class="note">
+  The strongest structural question is usually mechanistic:
+  <b>which structural change best explains the phenotype?</b>
+</div>
+
+  </div>
+</section>
+
+<section id="hierarchy" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">2) Protein structure hierarchy and amino-acid chemistry</h2>
+    <div class="tag">fundamentals</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Protein structure is commonly described at four levels: <b>primary</b> (sequence),
+  <b>secondary</b> (α-helices, β-sheets, turns), <b>tertiary</b> (one-chain fold),
+  and <b>quaternary</b> (multi-chain assembly).
+</p>
+<table>
+  <tr><th>Level</th><th>Meaning</th><th>Typical interpretation</th></tr>
+  <tr><td>Primary</td><td>Residue order</td><td>Mutation positions, motifs, signal peptides</td></tr>
+  <tr><td>Secondary</td><td>Local backbone pattern</td><td>Hydrogen bonding and Ramachandran preferences</td></tr>
+  <tr><td>Tertiary</td><td>Whole-chain fold</td><td>Core packing, loops, domains, pockets</td></tr>
+  <tr><td>Quaternary</td><td>Assembly</td><td>Interfaces, symmetry, allostery, cooperativity</td></tr>
+</table>
+<div class="eq">
+  Local backbone geometry is summarized by the torsion angles \( \phi \), \( \psi \), and \( \omega \).
+  Ramachandran-allowed regions correspond to sterically and energetically favorable conformations.
+</div>
+<div class="note">
+  A buried glycine-to-tryptophan substitution is usually more disruptive than an alanine-to-valine change on a solvent-exposed helix.
+</div>
+
+  </div>
+</section>
+
+<section id="experimental" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">3) Experimental structure methods and their caveats</h2>
+    <div class="tag">experiment</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Protein structures come from experiments as well as computation. The main experimental families are
+  <b>X-ray crystallography</b>, <b>cryo-EM</b>, and <b>NMR</b>.
+</p>
+<table>
+  <tr><th>Method</th><th>Strength</th><th>Common caveat</th></tr>
+  <tr><td>X-ray</td><td>Often very high atomic detail</td><td>Flexible loops may be missing; crystal packing can bias conformations</td></tr>
+  <tr><td>Cryo-EM</td><td>Excellent for large complexes</td><td>Local resolution may vary across the map</td></tr>
+  <tr><td>NMR</td><td>Ensemble view of smaller proteins</td><td>Often represented as multiple plausible conformers</td></tr>
+</table>
+<div class="eq">
+  In crystallography, the B-factor is often written as
+  \[
+    B = \frac{8\pi^2}{3}\langle u^2 \rangle
+  \]
+  where \( \langle u^2 \rangle \) is a mean-square displacement term.
+</div>
+<div class="note">
+  Missing coordinates do not necessarily mean the biology is absent. They often mean that region was too mobile or poorly resolved.
+</div>
+
+  </div>
+</section>
+
+<section id="files" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">4) Files, databases, and identifiers</h2>
+    <div class="tag">data</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  The most important coordinate formats are <b>PDBx/mmCIF</b> and legacy <b>PDB</b>.
+  mmCIF is the modern flexible standard. You also encounter predicted-model files, ranking JSON files,
+  and confidence outputs such as pLDDT and PAE.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Typical identifiers</h3><p>
+    PDB ID, chain ID, residue number, insertion code, model number, ligand name, and author numbering
+    versus canonical biological numbering.
+  </p></div>
+  <div class="box"><h3>Why numbering matters</h3><p>
+    Many mistakes come from mapping a mutation to the wrong residue index because file numbering and sequence numbering differ.
+  </p></div>
+</div>
+<details>
+  <summary>Annotated Python: download and parse an mmCIF file</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import os
+import requests
+from Bio.PDB import MMCIFParser
+
+pdb_id = &quot;4HHB&quot;
+url = f&quot;https://files.rcsb.org/download/{pdb_id}.cif&quot;
+out_file = f&quot;{pdb_id}.cif&quot;
+
+if not os.path.exists(out_file):
+    r = requests.get(url, timeout=60)
+    r.raise_for_status()
+    with open(out_file, &quot;wb&quot;) as fh:
+        fh.write(r.content)
+
+parser = MMCIFParser(QUIET=True)
+structure = parser.get_structure(pdb_id, out_file)
+
+print(&quot;Structure ID:&quot;, structure.id)
+for model in structure:
+    print(&quot;Model:&quot;, model.id)
+    for chain in model:
+        residues = [res for res in chain if res.id[0] == &quot; &quot;]
+        print(f&quot;Chain {chain.id}: {len(residues)} standard residues&quot;)
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="setup" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">5) Python environment and package setup</h2>
+    <div class="tag">practical</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Start with a small but flexible environment. Add heavyweight tools only when your workflow actually needs them.
+</p>
+<details open>
+  <summary>Annotated shell setup</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash"># Create a clean environment (conda/mamba recommended)
+mamba create -n protstruct python=3.11 -y
+mamba activate protstruct
+
+# Core Python packages for this course
+pip install biopython numpy scipy pandas matplotlib seaborn scikit-learn jupyter requests
+
+# Optional structure/trajectory/visualization packages
+pip install mdanalysis mdtraj py3Dmol nglview
+
+# Optional ML/prediction packages
+pip install torch fair-esm
+
+# External tools commonly used in practice
+# - Foldseek
+# - ColabFold
+# - FoldX
+# - AutoDock Vina
+# - OpenMM
+</code></pre>
+</div>
+
+</details>
+<div class="note">
+  A minimal teaching setup only needs Biopython, NumPy, SciPy, and Matplotlib.
+  MDAnalysis, py3Dmol, OpenMM, and protein-ML tools can be layered on later.
+</div>
+
+  </div>
+</section>
+
+<section id="geometry" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">6) Distances, angles, and dihedrals</h2>
+    <div class="tag">math + code</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Protein structure is fundamentally geometry in 3D. Distances, angles, and torsions are the building blocks
+  behind bond geometry, backbone conformation, residue contacts, and structure comparison.
+</p>
+<div class="eq">
+  <b>Distance:</b>
+  \[
+    d(\mathbf a, \mathbf b) = \sqrt{(a_x-b_x)^2 + (a_y-b_y)^2 + (a_z-b_z)^2}
+  \]
+</div>
+<div class="eq">
+  <b>Angle:</b>
+  \[
+    \theta = \cos^{-1}\left(\frac{\vec{u}\cdot\vec{v}}{\|\vec{u}\|\|\vec{v}\|}\right)
+  \]
+</div>
+<div class="eq">
+  <b>Dihedral:</b> the signed angle between two planes defined by four ordered points.
+  This is how backbone \( \phi \), \( \psi \), and side-chain \( \chi \) angles are computed.
+</div>
+<p>
+  Numerical intuition: if points A and B are at \( (0,0,0) \) and \( (1.5,0,0) \),
+  then the A–B distance is 1.5 Å. If A–B–C forms a right angle, then \( \theta = 90^\circ \).
+</p>
+<details open>
+  <summary>Annotated Python: geometry helper functions</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+
+def distance(a, b):
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    return np.linalg.norm(a - b)
+
+def angle(a, b, c):
+    ba = np.asarray(a, float) - np.asarray(b, float)
+    bc = np.asarray(c, float) - np.asarray(b, float)
+    cosang = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    cosang = np.clip(cosang, -1.0, 1.0)
+    return np.degrees(np.arccos(cosang))
+
+def dihedral(p0, p1, p2, p3):
+    p0, p1, p2, p3 = map(lambda x: np.asarray(x, float), (p0, p1, p2, p3))
+    b0 = -(p1 - p0)
+    b1 = p2 - p1
+    b2 = p3 - p2
+    b1 /= np.linalg.norm(b1)
+    v = b0 - np.dot(b0, b1) * b1
+    w = b2 - np.dot(b2, b1) * b1
+    x = np.dot(v, w)
+    y = np.dot(np.cross(b1, v), w)
+    return np.degrees(np.arctan2(y, x))
+
+A = [0.0, 0.0, 0.0]
+B = [1.5, 0.0, 0.0]
+C = [1.5, 1.5, 0.0]
+D = [2.2, 1.9, 1.1]
+
+print(&quot;Distance A-B:&quot;, round(distance(A, B), 3), &quot;Å&quot;)
+print(&quot;Angle A-B-C:&quot;, round(angle(A, B, C), 3), &quot;degrees&quot;)
+print(&quot;Dihedral A-B-C-D:&quot;, round(dihedral(A, B, C, D), 3), &quot;degrees&quot;)
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="contacts" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">7) Contact maps and local packing</h2>
+    <div class="tag">analysis</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  A contact map turns a 3D structure into a 2D matrix. Off-diagonal contacts often reveal long-range interactions,
+  domain interfaces, and β-sheet patterns.
+</p>
+<div class="eq">
+  \[
+    C_{ij} =
+    \begin{cases}
+      1 & \text{if } \|\mathbf x_i - \mathbf x_j\| < r_c \\
+      0 & \text{otherwise}
+    \end{cases}
+  \]
+</div>
+<div class="grid2">
+  <div class="box"><h3>Why it helps</h3><p>
+    Contact maps are compact, easy to cluster, and useful for comparing variants or homologs.
+  </p></div>
+  <div class="box"><h3>Real-life use</h3><p>
+    If a mutation removes long-range packing between two regions, a contact map often shows the effect immediately.
+  </p></div>
+</div>
+<details>
+  <summary>Annotated Python: build a simple Cα contact map</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+import matplotlib.pyplot as plt
+from Bio.PDB import MMCIFParser
+
+pdb_file = &quot;4HHB.cif&quot;
+chain_id = &quot;A&quot;
+cutoff = 8.0
+
+parser = MMCIFParser(QUIET=True)
+structure = parser.get_structure(&quot;4HHB&quot;, pdb_file)
+chain = structure[0][chain_id]
+
+coords = []
+for res in chain:
+    if res.id[0] == &quot; &quot; and &quot;CA&quot; in res:
+        coords.append(res[&quot;CA&quot;].coord)
+
+coords = np.array(coords)
+dist = np.sqrt(((coords[:, None, :] - coords[None, :, :]) ** 2).sum(axis=2))
+contacts = (dist &lt; cutoff).astype(int)
+
+plt.figure(figsize=(6, 5))
+plt.imshow(contacts, origin=&quot;lower&quot;, interpolation=&quot;nearest&quot;)
+plt.title(f&quot;Cα contact map: 4HHB chain {chain_id}&quot;)
+plt.xlabel(&quot;Residue index&quot;)
+plt.ylabel(&quot;Residue index&quot;)
+plt.tight_layout()
+plt.show()
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="rmsd" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">8) Optimal superposition and RMSD</h2>
+    <div class="tag">comparison</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Two structures cannot be compared directly in raw coordinates because they may be shifted or rotated.
+  First superpose them optimally. Then compute RMSD.
+</p>
+<div class="eq">
+  \[
+    \mathrm{RMSD} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\|\mathbf x_i - \mathbf y_i\|^2}
+  \]
+</div>
+<div class="eq">
+  The Kabsch algorithm finds the rotation matrix that minimizes the squared error between matched atoms.
+</div>
+<div class="note">
+  RMSD is intuitive but sensitive to outliers. One flexible loop or hinge motion can inflate it even when the global fold is conserved.
+</div>
+<details open>
+  <summary>Annotated Python: Kabsch alignment and RMSD</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+
+def kabsch(P, Q):
+    P = np.asarray(P, float)
+    Q = np.asarray(Q, float)
+    Pc = P - P.mean(axis=0)
+    Qc = Q - Q.mean(axis=0)
+    C = Pc.T @ Qc
+    V, S, Wt = np.linalg.svd(C)
+    d = np.sign(np.linalg.det(V @ Wt))
+    D = np.diag([1.0, 1.0, d])
+    U = V @ D @ Wt
+    P_rot = Pc @ U
+    rmsd = np.sqrt(np.mean(np.sum((P_rot - Qc) ** 2, axis=1)))
+    return U, P.mean(axis=0), Q.mean(axis=0), rmsd
+
+P = np.array([[0,0,0],[1,0,0],[0,1,0],[0,0,1]], dtype=float)
+R = np.array([[0,-1,0],[1,0,0],[0,0,1]], dtype=float)
+t = np.array([5.0, 2.0, -1.0])
+Q = P @ R.T + t
+
+U, centroid_P, centroid_Q, rmsd = kabsch(P, Q)
+print(&quot;RMSD after optimal superposition:&quot;, rmsd)
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="tmscore" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">9) TM-score and structural alignment</h2>
+    <div class="tag">advanced comparison</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  TM-score was designed to capture global topological similarity in a way that is less dominated by local outliers
+  and less size-dependent than RMSD.
+</p>
+<div class="eq">
+  A common form is
+  \[
+    \mathrm{TM\text{-}score}
+    = \max \left[
+      \frac{1}{L_\text{target}}
+      \sum_{i=1}^{L_\text{aligned}}
+      \frac{1}{1 + (d_i / d_0(L_\text{target}))^2}
+    \right]
+  \]
+</div>
+<table>
+  <tr><th>Metric</th><th>Best use</th><th>Main weakness</th></tr>
+  <tr><td>RMSD</td><td>Local matched-atom comparison</td><td>Dominated by outliers</td></tr>
+  <tr><td>TM-score</td><td>Global fold similarity</td><td>Needs a structural alignment</td></tr>
+  <tr><td>Coverage</td><td>How much actually aligns</td><td>High coverage does not guarantee high-quality local geometry</td></tr>
+</table>
+
+  </div>
+</section>
+
+<section id="secondary" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">10) Secondary structure, exposure, and domains</h2>
+    <div class="tag">interpretation</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Beyond coordinates, you usually want to know whether a residue sits in a helix, sheet, loop,
+  buried core, solvent-exposed surface, or chain interface.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Secondary structure</h3><p>
+    Helices and sheets arise from repeating local hydrogen-bond patterns.
+    Many functionally critical regions, however, are irregular loops.
+  </p></div>
+  <div class="box"><h3>Solvent exposure</h3><p>
+    Buried substitutions often affect stability more strongly than surface substitutions,
+    while exposed substitutions may alter interaction specificity.
+  </p></div>
+</div>
+<div class="note">
+  A useful triage rule for variants is: buried + drastic physicochemical change + high-confidence region deserves close attention.
+</div>
+
+  </div>
+</section>
+
+<section id="visualize" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">11) Notebook visualization</h2>
+    <div class="tag">Jupyter</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Before any advanced analysis, open the structure and look at it.
+  Check the fold, termini, missing loops, ligands, metal ions, chains, and mutation site.
+</p>
+<details>
+  <summary>Annotated Python: visualize a structure in a notebook</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import py3Dmol
+
+pdb_text = open(&quot;4HHB.cif&quot;).read()
+
+view = py3Dmol.view(width=800, height=500)
+view.addModel(pdb_text, &quot;cif&quot;)
+view.setStyle({&quot;cartoon&quot;: {&quot;color&quot;: &quot;spectrum&quot;}})
+view.setStyle({&quot;resn&quot;: &quot;HEM&quot;}, {&quot;stick&quot;: {&quot;colorscheme&quot;: &quot;greenCarbon&quot;}})
+view.addStyle({&quot;chain&quot;: &quot;A&quot;, &quot;resi&quot;: &quot;58,63,92&quot;}, {&quot;stick&quot;: {&quot;colorscheme&quot;: &quot;orangeCarbon&quot;}})
+view.zoomTo()
+view.show()
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="homology" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">12) Homology modeling logic</h2>
+    <div class="tag">classic workflow</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Classical modeling follows the logic:
+  <b>template search → sequence alignment → model building → validation</b>.
+  Even in the era of end-to-end deep predictors, this mindset still matters.
+</p>
+<table>
+  <tr><th>Step</th><th>Why it matters</th><th>Typical failure</th></tr>
+  <tr><td>Template search</td><td>Gets the right fold/state</td><td>Wrong conformational state or distant template</td></tr>
+  <tr><td>Alignment</td><td>Defines residue correspondence</td><td>Bad gap placement near functional loops</td></tr>
+  <tr><td>Modeling</td><td>Places backbone and side chains</td><td>Clashes or unrealistic loops</td></tr>
+  <tr><td>Validation</td><td>Rejects poor geometry</td><td>Using the model without quality checks</td></tr>
+</table>
+
+  </div>
+</section>
+
+<section id="alphafold" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">13) AlphaFold-style prediction and confidence</h2>
+    <div class="tag">prediction</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Modern predictors produce one or more structures plus confidence information.
+  The key skill is learning which regions are reliable and which are not.
+</p>
+<div class="grid2">
+  <div class="box"><h3>pLDDT</h3><p>
+    Per-residue confidence. High values often indicate reliable local geometry;
+    low values often indicate flexible, disordered, or uncertain regions.
+  </p></div>
+  <div class="box"><h3>PAE</h3><p>
+    Pairwise or domain-level uncertainty. A model can have good local geometry but uncertain inter-domain placement.
+  </p></div>
+</div>
+<div class="note">
+  Do not treat the whole model as uniformly trustworthy. Evaluate confidence region by region.
+</div>
+
+  </div>
+</section>
+
+<section id="colabfold" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">14) Practical batch prediction with ColabFold</h2>
+    <div class="tag">pipeline</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  ColabFold is popular because it makes AlphaFold-style prediction easier to run for single targets
+  and small batches. The output is only the starting point: always inspect ranking, pLDDT, and PAE.
+</p>
+<details open>
+  <summary>Annotated shell: ColabFold batch run</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+FASTA=&quot;targets.fasta&quot;
+OUTDIR=&quot;colabfold_out&quot;
+mkdir -p &quot;${OUTDIR}&quot;
+
+colabfold_batch \
+  --amber \
+  --num-recycle 3 \
+  --num-models 5 \
+  &quot;${FASTA}&quot; \
+  &quot;${OUTDIR}&quot;
+
+echo &quot;Inspect ranked models, pLDDT, and PAE before drawing conclusions.&quot;
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="esmfold" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">15) ESMFold and protein language models</h2>
+    <div class="tag">fast prediction</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Protein language models learn statistical patterns directly from large sequence corpora.
+  ESMFold is a good example of fast single-sequence structure prediction.
+</p>
+<details>
+  <summary>Annotated Python: predict with ESMFold</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import torch
+import esm
+
+sequence = &quot;MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGE&quot;
+
+model = esm.pretrained.esmfold_v1()
+model = model.eval().cuda()
+model.set_chunk_size(128)
+
+with torch.no_grad():
+    pdb_string = model.infer_pdb(sequence)
+
+with open(&quot;esmfold_prediction.pdb&quot;, &quot;w&quot;) as fh:
+    fh.write(pdb_string)
+</code></pre>
+</div>
+
+</details>
+<details>
+  <summary>Annotated Python: summarize pLDDT from a predicted PDB</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from Bio.PDB import PDBParser
+import numpy as np
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure(&quot;pred&quot;, &quot;esmfold_prediction.pdb&quot;)
+
+plddt_values = []
+for model in structure:
+    for chain in model:
+        for res in chain:
+            if res.id[0] == &quot; &quot; and &quot;CA&quot; in res:
+                plddt_values.append(res[&quot;CA&quot;].bfactor)
+
+plddt_values = np.array(plddt_values)
+print(&quot;Mean pLDDT:&quot;, round(plddt_values.mean(), 2))
+print(&quot;Low-confidence residues (&lt;70):&quot;, int((plddt_values &lt; 70).sum()))
+</code></pre>
+</div>
+
+</details>
+<div class="note">
+  Fast prediction is not the same as guaranteed correctness. Confidence, biology, and comparison still matter.
+</div>
+
+  </div>
+</section>
+
+<section id="complexes" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">16) Complexes, interfaces, ligands, and uncertainty</h2>
+    <div class="tag">complex biology</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Monomers are usually easier than complexes. Once you add protein-protein interfaces, nucleic acids,
+  ligands, ions, or membrane context, several plausible states may exist.
+</p>
+<table>
+  <tr><th>Question</th><th>What to check</th></tr>
+  <tr><td>Does this dimer look real?</td><td>Interface confidence, buried area, conservation, experimental support</td></tr>
+  <tr><td>Does this mutation alter binding?</td><td>Interface chemistry, side-chain packing, electrostatics, ΔΔG</td></tr>
+  <tr><td>Is this ligand pose believable?</td><td>Pocket geometry, catalytic residues, known SAR, protonation</td></tr>
+</table>
+
+  </div>
+</section>
+
+<section id="mutations" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">17) Mutation analysis and ΔΔG</h2>
+    <div class="tag">variants</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  A common computational question is whether a mutation changes structural stability.
+  The standard quantity is <b>ΔΔG</b>.
+</p>
+<div class="eq">
+  \[
+    \Delta\Delta G = \Delta G_{\text{mutant}} - \Delta G_{\text{wild type}}
+  \]
+</div>
+<p>
+  Positive ΔΔG is often interpreted as destabilizing, but always confirm the software sign convention.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Interpretation</h3><p>
+    Buried mutations that increase steric clash or bury charge often raise predicted destabilization.
+  </p></div>
+  <div class="box"><h3>Caveat</h3><p>
+    Not every harmful mutation acts through folding stability. Some primarily disrupt binding, catalysis, or dynamics.
+  </p></div>
+</div>
+<details>
+  <summary>Annotated shell: FoldX mutation workflow</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+PDB=&quot;input_structure.pdb&quot;
+MUT=&quot;A123V&quot;
+CHAIN=&quot;A&quot;
+
+echo &quot;${CHAIN}${MUT};&quot; &gt; individual_list.txt
+foldx --command=RepairPDB --pdb=&quot;${PDB}&quot;
+foldx --command=BuildModel \
+      --pdb=&quot;${PDB%.pdb}_Repair.pdb&quot; \
+      --mutant-file=individual_list.txt \
+      --numberOfRuns=5
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="docking" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">18) Docking basics</h2>
+    <div class="tag">ligands</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Docking proposes ligand poses and approximate scores. It is best used for hypothesis generation and ranking,
+  not as stand-alone proof.
+</p>
+<div class="note">
+  Never trust a docking score without checking chemistry, contact pattern, pose plausibility, and known biology.
+</div>
+<details>
+  <summary>Annotated shell: minimal AutoDock Vina workflow</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+vina \
+  --receptor receptor.pdbqt \
+  --ligand ligand.pdbqt \
+  --center_x 12.0 --center_y 18.5 --center_z -4.0 \
+  --size_x 20 --size_y 20 --size_z 20 \
+  --exhaustiveness 16 \
+  --out docked_ligand.pdbqt \
+  --log vina.log
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="mdintro" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">19) Molecular dynamics fundamentals</h2>
+    <div class="tag">simulation</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  MD simulates atomic motion through time under a force field. It is useful when one static structure is not enough:
+  pocket opening, loop motion, domain shifts, or mutation-dependent flexibility.
+</p>
+<div class="eq">
+  <b>Lennard–Jones:</b>
+  \[
+    V_{LJ}(r) = 4\epsilon \left[\left(\frac{\sigma}{r}\right)^{12} - \left(\frac{\sigma}{r}\right)^6\right]
+  \]
+</div>
+<div class="eq">
+  <b>Coulomb:</b>
+  \[
+    V_{elec}(r) = \frac{k q_i q_j}{\varepsilon r}
+  \]
+</div>
+<div class="eq">
+  Conformations are sampled approximately with Boltzmann weighting:
+  \[
+    p_i \propto e^{-E_i / (k_B T)}
+  \]
+</div>
+<details>
+  <summary>Annotated Python: minimal OpenMM setup</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from openmm.app import *
+from openmm import *
+from openmm.unit import *
+
+pdb = PDBFile(&quot;input_structure.pdb&quot;)
+forcefield = ForceField(&quot;amber14-all.xml&quot;, &quot;amber14/tip3pfb.xml&quot;)
+
+modeller = Modeller(pdb.topology, pdb.positions)
+modeller.addHydrogens(forcefield)
+modeller.addSolvent(forcefield, padding=1.0*nanometer)
+
+system = forcefield.createSystem(
+    modeller.topology,
+    nonbondedMethod=PME,
+    nonbondedCutoff=1.0*nanometer,
+    constraints=HBonds
+)
+
+integrator = LangevinMiddleIntegrator(300*kelvin, 1/picosecond, 0.004*picoseconds)
+simulation = Simulation(modeller.topology, system, integrator)
+simulation.context.setPositions(modeller.positions)
+simulation.minimizeEnergy()
+simulation.reporters.append(DCDReporter(&quot;traj.dcd&quot;, 1000))
+simulation.step(25000)
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="mdanalysis" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">20) RMSD and RMSF on trajectories</h2>
+    <div class="tag">simulation analysis</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  After a trajectory, the first questions are: did the system drift, and which residues are flexible?
+  RMSD and RMSF are standard first-pass answers.
+</p>
+<div class="eq">
+  \[
+    \mathrm{RMSF}_i = \sqrt{\left\langle \|\mathbf x_i(t) - \langle \mathbf x_i \rangle\|^2 \right\rangle_t}
+  \]
+</div>
+<details>
+  <summary>Annotated Python: RMSD and RMSF with MDAnalysis</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import MDAnalysis as mda
+from MDAnalysis.analysis import rms
+from MDAnalysis.analysis.rms import RMSF
+import matplotlib.pyplot as plt
+
+u = mda.Universe(&quot;final.pdb&quot;, &quot;traj.dcd&quot;)
+R = rms.RMSD(u, u, select=&quot;protein and backbone&quot;, ref_frame=0)
+R.run()
+
+plt.figure(figsize=(6, 4))
+plt.plot(R.results.rmsd[:, 1], R.results.rmsd[:, 2])
+plt.xlabel(&quot;Frame&quot;)
+plt.ylabel(&quot;Backbone RMSD (Å)&quot;)
+plt.tight_layout()
+plt.show()
+
+protein = u.select_atoms(&quot;protein and name CA&quot;)
+rmsf = RMSF(protein).run()
+
+plt.figure(figsize=(7, 4))
+plt.plot(protein.resids, rmsf.results.rmsf)
+plt.xlabel(&quot;Residue number&quot;)
+plt.ylabel(&quot;Cα RMSF (Å)&quot;)
+plt.tight_layout()
+plt.show()
+</code></pre>
+</div>
+
+</details>
+<div class="note">
+  A rising RMSD is not automatically “bad.” The protein may have moved to another stable state rather than unfolded.
+</div>
+
+  </div>
+</section>
+
+<section id="foldseek" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">21) Structure search at scale with Foldseek</h2>
+    <div class="tag">large-scale comparison</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Structure search can recover relationships that sequence similarity alone misses.
+  It is especially useful for remote homologs, fold validation, and large-scale clustering.
+</p>
+<details>
+  <summary>Annotated shell: Foldseek easy-search</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+QUERY_DIR=&quot;queries&quot;
+TARGET_DB=&quot;targetDB&quot;
+TMPDIR=&quot;tmp&quot;
+OUT=&quot;foldseek_hits.tsv&quot;
+
+mkdir -p &quot;${TMPDIR}&quot;
+
+foldseek easy-search \
+  &quot;${QUERY_DIR}&quot; \
+  &quot;${TARGET_DB}&quot; \
+  &quot;${OUT}&quot; \
+  &quot;${TMPDIR}&quot; \
+  --format-output &quot;query,target,evalue,bits,qcov,tcov,alntmscore,qtmscore,ttmscore&quot;
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="clustering" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">22) Pairwise similarity matrices and clustering</h2>
+    <div class="tag">family view</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Once you have pairwise TM-scores or Foldseek-based similarities, turn them into a matrix and cluster them.
+  This is often the clearest summary when comparing many homologs or many mutant structures.
+</p>
+<div class="eq">
+  A simple distance transformation is
+  \[
+    D_{ij} = 1 - S_{ij}
+  \]
+  where \( S_{ij} \) is a similarity measure such as TM-score.
+</div>
+<details>
+  <summary>Annotated Python: clustered heatmap from a similarity matrix</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+proteins = [&quot;WT&quot;, &quot;Mut1&quot;, &quot;Mut2&quot;, &quot;HomologA&quot;, &quot;HomologB&quot;]
+tm = np.array([
+    [1.00, 0.93, 0.89, 0.55, 0.51],
+    [0.93, 1.00, 0.87, 0.53, 0.50],
+    [0.89, 0.87, 1.00, 0.57, 0.54],
+    [0.55, 0.53, 0.57, 1.00, 0.84],
+    [0.51, 0.50, 0.54, 0.84, 1.00],
+])
+
+df = pd.DataFrame(tm, index=proteins, columns=proteins)
+sns.clustermap(df, cmap=&quot;viridis&quot;, annot=True, fmt=&quot;.2f&quot;)
+plt.show()
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="cases" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">23) Real-life case-study logic</h2>
+    <div class="tag">application</div>
+  </div>
+  <div class="card-body">
+    
+<div class="grid2">
+  <div class="box"><h3>p53-style variant</h3><p>
+    Ask whether the mutation destabilizes the fold, disrupts DNA contact, or changes dynamics.
+  </p></div>
+  <div class="box"><h3>AMR porin / enzyme</h3><p>
+    Ask whether the mutation changes pore size, electrostatics, catalytic geometry, or inhibitor binding.
+  </p></div>
+  <div class="box"><h3>Receptor-binding domain</h3><p>
+    Ask whether the mutation is interfacial, second-shell, or allosteric.
+  </p></div>
+  <div class="box"><h3>General rule</h3><p>
+    Use structure to formulate a mechanism, then test it with confidence metrics, comparison, and if possible phenotype data.
+  </p></div>
+</div>
+
+  </div>
+</section>
+
+<section id="pipeline" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">24) End-to-end FASTA → report pipeline</h2>
+    <div class="tag">end-to-end</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  This is a practical skeleton for a reproducible project that starts from sequence and ends with a summary report.
+</p>
+<details open>
+  <summary>Annotated shell: capstone pipeline template</summary>
+
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+TARGET_FASTA=&quot;target.fasta&quot;
+OUTDIR=&quot;protein_structure_project&quot;
+PRED_DIR=&quot;${OUTDIR}/predictions&quot;
+CMP_DIR=&quot;${OUTDIR}/comparison&quot;
+MUT_DIR=&quot;${OUTDIR}/mutations&quot;
+DOCK_DIR=&quot;${OUTDIR}/docking&quot;
+MD_DIR=&quot;${OUTDIR}/md&quot;
+mkdir -p &quot;${PRED_DIR}&quot; &quot;${CMP_DIR}&quot; &quot;${MUT_DIR}&quot; &quot;${DOCK_DIR}&quot; &quot;${MD_DIR}&quot;
+
+echo &quot;[1/7] Predict structure with ColabFold&quot;
+colabfold_batch --num-recycle 3 &quot;${TARGET_FASTA}&quot; &quot;${PRED_DIR}&quot;
+
+echo &quot;[2/7] Summarize confidence&quot;
+python parse_plddt.py &quot;${PRED_DIR}&quot; &gt; &quot;${PRED_DIR}/confidence_summary.tsv&quot;
+
+echo &quot;[3/7] Search structural neighbors&quot;
+foldseek easy-search &quot;${PRED_DIR}&quot; targetDB &quot;${CMP_DIR}/foldseek_hits.tsv&quot; &quot;${CMP_DIR}/tmp&quot;
+
+echo &quot;[4/7] Optional: analyze mutations with FoldX&quot;
+# bash run_foldx_scan.sh &quot;${PRED_DIR}/best_model.pdb&quot; mutations.tsv &quot;${MUT_DIR}&quot;
+
+echo &quot;[5/7] Optional: dock ligand&quot;
+# bash run_vina.sh receptor.pdbqt ligand.pdbqt &quot;${DOCK_DIR}&quot;
+
+echo &quot;[6/7] Optional: short OpenMM simulation&quot;
+# python run_openmm.py &quot;${PRED_DIR}/best_model.pdb&quot; &quot;${MD_DIR}&quot;
+
+echo &quot;[7/7] Create final report&quot;
+python build_report.py --prediction-dir &quot;${PRED_DIR}&quot; --comparison-tsv &quot;${CMP_DIR}/foldseek_hits.tsv&quot; --out &quot;${OUTDIR}/final_report.html&quot;
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+<section id="pitfalls" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">25) Common pitfalls and how to avoid them</h2>
+    <div class="tag">quality control</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Pitfall</th><th>Why it happens</th><th>How to avoid it</th></tr>
+  <tr><td>Trusting all predicted residues equally</td><td>Confidence varies by region</td><td>Read pLDDT and PAE carefully</td></tr>
+  <tr><td>Wrong residue mapping</td><td>Numbering mismatches</td><td>Build explicit correspondence tables</td></tr>
+  <tr><td>Overinterpreting docking</td><td>Scores are approximate</td><td>Inspect chemistry and literature support</td></tr>
+  <tr><td>Running MD on a bad starting model</td><td>Geometry/protonation problems</td><td>Validate the input before simulation</td></tr>
+  <tr><td>Ignoring biological context</td><td>Model state differs from experiment</td><td>Cross-check oligomer state, ligand state, membrane context</td></tr>
+</table>
+
+  </div>
+</section>
+
+<section id="next" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">26) What to do next</h2>
+    <div class="tag">next steps</div>
+  </div>
+  <div class="card-body">
+    
+<ol>
+  <li>Choose one familiar protein and parse an mmCIF structure.</li>
+  <li>Measure a few distances, make a contact map, and visualize the fold.</li>
+  <li>Predict a homolog with ColabFold or ESMFold.</li>
+  <li>Compare structures with RMSD/TM-style logic and search neighbors with Foldseek.</li>
+  <li>Map a mutation set, estimate ΔΔG, and build a short report.</li>
+</ol>
+<div class="note">
+  The strongest projects move from “what is the fold?” to “which structural change explains the phenotype?”
+</div>
+
+  </div>
+</section>
+  </div>
+</main>
+
+<footer>
+  Built as a standalone teaching page for GitHub Pages or local browsing.
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const items = [...document.querySelectorAll('.searchable')];
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase().trim();
+    for (const item of items) {
+      const txt = item.innerText.toLowerCase();
+      item.style.display = txt.includes(q) ? '' : 'none';
+    }
+  });
+
+  document.getElementById('expandAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = true);
+  });
+  document.getElementById('collapseAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = false);
+  });
+  document.getElementById('copyLink').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('copyLink');
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    } catch (e) {
+      alert('Could not copy the link from this browser.');
+    }
+  });
+
+  function copyCode(btn) {
+    const code = btn.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    });
+  }
+</script>
+</body>
+</html>
