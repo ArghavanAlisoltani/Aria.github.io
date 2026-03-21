@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QM/MM for Proteins — Beginner to Advanced Course</title>
+  <meta name="description" content="A detailed standalone HTML course on QM/MM for proteins with formulas, annotated code, practical pipelines, and Pseudomonas aeruginosa case studies." />
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1; --warn:#ffd166;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1500px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(24px, 4vw, 38px);}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.7; font-size:15px; max-width:1320px;}
+    .kicker{color:var(--accent2); font-weight:900; text-transform:uppercase; font-size:12px; margin-top:12px;}
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; justify-content:space-between;}
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.04); color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:800;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1500px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 370px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start; height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{font-size:13px; margin:6px 8px 10px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase;}
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px; color:var(--text);
+      border:1px solid transparent; font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border); background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04); white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.75; font-size:14.6px;}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .grid3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.8px; line-height:1.65}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em; background: rgba(0,0,0,.25);
+      border:1px solid var(--border); padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{cursor:pointer; font-weight:900; color:var(--text); list-style:none; user-select:none;}
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.22); overflow-x:auto;
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto; padding:14px 12px 12px; position: relative;
+    }
+    .codeblock code{font-family: var(--mono); font-size:12.5px; line-height:1.55; white-space: pre; display:block;}
+    .copy-btn{
+      position:absolute; top:10px; right:10px; padding:6px 10px; border-radius:10px;
+      border:1px solid var(--border); background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9); padding: 10px 12px;
+      background: rgba(122,162,255,.08); border-radius: 12px; margin-top: 12px;
+    }
+    .warn{
+      border-left: 4px solid rgba(255,209,102,.95); padding: 10px 12px;
+      background: rgba(255,209,102,.10); border-radius: 12px; margin-top: 12px;
+    }
+    table{
+      width:100%; border-collapse:collapse; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.18); margin-top:10px; overflow:hidden;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.48;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    footer{max-width:1500px; margin:0 auto 30px; padding:0 18px; color:var(--muted);}
+    @media (max-width:1160px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2, .grid3{grid-template-columns:1fr}
+    }
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <h1>QM/MM for Proteins — Beginner to Advanced</h1>
+    <p class="subtitle">
+      A very detailed standalone HTML course in the same general teaching style as your previous pages:
+      dark theme, sticky navigation, search, collapsible annotated code, MathJax formulas, practical pipelines,
+      and real teaching examples centered on <b><i>Pseudomonas aeruginosa</i></b>.
+    </p>
+    <div class="kicker">Course focus</div>
+    <p class="subtitle">
+      Learn the theory, setup, and practical workflow of enzyme QM/MM with three anchor case studies:
+      <b>AmpC</b>, <b>LasB</b>, and <b>PchB</b>.
+    </p>
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter sections (e.g., AmpC, LasB, QM region, electrostatic embedding, ORCA, OpenMM)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+<a href="#overview">0) Course overview</a>
+<a href="#why">1) Why QM/MM exists</a>
+<a href="#organism">2) Why Pseudomonas aeruginosa is a strong teaching system</a>
+<a href="#math">3) Core QM/MM mathematics</a>
+<a href="#numerical">4) Small numerical example</a>
+<a href="#questions">5) What types of questions QM/MM answers</a>
+<a href="#region">6) Choosing the QM region</a>
+<a href="#boundary">7) Boundaries, link atoms, and frozen atoms</a>
+<a href="#prep">8) Preparing the structure before QM/MM</a>
+<a href="#autoselect">9) Automatic first-pass QM-region selection</a>
+<a href="#software">10) Core software patterns</a>
+<a href="#levels">11) Choosing the level of theory</a>
+<a href="#ampc">12) Case study A: AmpC beta-lactamase</a>
+<a href="#ampcpipe">13) AmpC pipeline template</a>
+<a href="#lasb">14) Case study B: LasB elastase</a>
+<a href="#pchb">15) Case study C: PchB</a>
+<a href="#proton">16) Protonation states, tautomers, and waters</a>
+<a href="#mm">17) Why MM equilibration comes before QM/MM</a>
+<a href="#openmm">18) Annotated MM preparation code</a>
+<a href="#engines">19) Templates for production QM/MM engines</a>
+<a href="#scan">20) Reaction coordinates and barrier scans</a>
+<a href="#ensemble">21) Ensemble thinking and free-energy logic</a>
+<a href="#mutants">22) Matched mutant and inhibitor comparisons</a>
+<a href="#analysis">23) Summarizing many QM/MM jobs</a>
+<a href="#validation">24) Validation and controls</a>
+<a href="#pitfalls">25) Common failure modes</a>
+<a href="#project">26) A realistic project idea in Pseudomonas aeruginosa</a>
+<a href="#workflow">27) End-to-end workflow template</a>
+<a href="#deliverables">28) What strong deliverables look like</a>
+<a href="#next">29) What to do next</a>
+    </div>
+  </nav>
+  <div class="content">
+
+<section id="overview" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">0) Course overview</h2>
+    <div class="tag">start here</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  This is a very detailed beginner-to-advanced course on
+  <b>QM/MM for proteins</b> in the same general format as your previous HTML pages.
+</p>
+<p>
+  Your message said <i>Pseudomonas aerogenosa</i>. In this course I use the correct name:
+  <b><i>Pseudomonas aeruginosa</i></b>.
+</p>
+<p>
+  The course is centered on three real teaching targets from that organism:
+  <b>AmpC beta-lactamase</b>, <b>LasB elastase</b>, and <b>PchB</b>.
+  That gives you examples in antibiotic resistance, virulence, and unusual enzyme catalysis.
+</p>
+<div class="grid3">
+  <div class="box"><h3>What you learn</h3><p>
+    Theory, setup, region selection, protonation, link atoms, reaction scans, interpretation, and project design.
+  </p></div>
+  <div class="box"><h3>What you code</h3><p>
+    Annotated Python for structure parsing, QM-region selection, toy electrostatic embedding,
+    plotting reaction coordinates, and summarizing multiple QM/MM jobs.
+  </p></div>
+  <div class="box"><h3>What you pipeline</h3><p>
+    MM preparation, snapshot extraction, QM/MM input generation, energy summarization,
+    and capstone project organization.
+  </p></div>
+</div>
+<div class="note">
+  The hardest part of QM/MM is usually not typing the input file. It is choosing the right biological question
+  and the right QM region.
+</div>
+
+  </div>
+</section>
+
+
+<section id="why" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">1) Why QM/MM exists</h2>
+    <div class="tag">concept</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Molecular mechanics is fast and good for large systems, but it does not naturally describe
+  bond breaking, bond formation, proton transfer, or charge rearrangement.
+  Pure quantum chemistry describes chemistry but is too expensive for whole solvated proteins.
+  QM/MM combines them: the active region is quantum and the environment is classical.
+</p>
+<div class="eq">\[E_{\mathrm{total}} = E_{\mathrm{QM}} + E_{\mathrm{MM}} + E_{\mathrm{QM/MM}}\]</div>
+<ul>
+  <li><b>E_QM</b>: quantum energy of the active region</li>
+  <li><b>E_MM</b>: classical energy of the environment</li>
+  <li><b>E_QM/MM</b>: coupling between them</li>
+</ul>
+<div class="grid2">
+  <div class="box"><h3>Good for MM only</h3><p>
+    Relaxation, conformational sampling, RMSD, contact patterns, and many structural questions.
+  </p></div>
+  <div class="box"><h3>Good for QM/MM</h3><p>
+    Serine attack, deacylation, proton transfer, metal activation of water, transition states,
+    covalent inhibitors, and catalytic barrier comparisons.
+  </p></div>
+</div>
+
+  </div>
+</section>
+
+
+<section id="organism" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">2) Why Pseudomonas aeruginosa is a strong teaching system</h2>
+    <div class="tag">organism</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  This organism is especially useful for teaching because it has clinically relevant resistance enzymes,
+  strong virulence factors, and available structural examples.
+</p>
+<table>
+  <tr><th>Target</th><th>Biology</th><th>Why QM/MM helps</th></tr>
+  <tr><td>AmpC</td><td>Beta-lactam resistance enzyme</td><td>Covalent chemistry and proton transfer are central</td></tr>
+  <tr><td>LasB</td><td>Zinc metalloprotease virulence factor</td><td>Metal-centered activation and inhibitor geometry matter</td></tr>
+  <tr><td>PchB</td><td>Pyochelin-pathway enzyme</td><td>Transition-state stabilization and substrate preorganization matter</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="math" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">3) Core QM/MM mathematics</h2>
+    <div class="tag">theory</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Different QM/MM methods mainly differ in how the MM environment enters the QM calculation.
+  The most common ideas are mechanical embedding, electrostatic embedding, and polarizable embedding.
+</p>
+<div class="eq">\[E_{\mathrm{QM/MM}}^{\mathrm{mech}} \approx E_{\mathrm{vdW}} + E_{\mathrm{bonded}} + E_{\mathrm{Coul}}^{\mathrm{MM-form}}\]</div>
+<p>
+  In mechanical embedding, the QM wavefunction does not directly feel MM charges during the SCF.
+</p>
+<div class="eq">\[\hat{H}^{\mathrm{elec\ emb}} = \hat{H}_{\mathrm{QM}} - \sum_{i \in e^-}\sum_{A \in MM}\frac{q_A}{|\mathbf r_i-\mathbf R_A|} + \sum_{\alpha \in QM\ nuclei}\sum_{A \in MM}\frac{Z_\alpha q_A}{|\mathbf R_\alpha-\mathbf R_A|}\]</div>
+<p>
+  In electrostatic embedding, MM charges directly perturb the QM Hamiltonian.
+  This is the most intuitive model for enzyme electrostatics.
+</p>
+<div class="eq">\[\Delta G^\ddagger = -RT \ln\left(\frac{k h}{k_B T}\right)\]</div>
+<p>
+  This equation connects rate constants to activation free energies.
+</p>
+
+  </div>
+</section>
+
+
+<section id="numerical" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">4) Small numerical example</h2>
+    <div class="tag">worked example</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Before production software, it helps to understand the sign logic of the electrostatic term.
+  A positively charged environment site stabilizes negative charge in the QM region, and vice versa.
+</p>
+<div class="eq">\[E_{\mathrm{Coul}} = \sum_{i \in QM}\sum_{j \in MM} \frac{k_e q_i q_j}{r_{ij}}\]</div>
+<details open>
+  <summary>Annotated Python: toy electrostatic interaction</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python"># Toy electrostatic embedding example
+import numpy as np
+
+qm_xyz = np.array([
+    [0.0, 0.0, 0.0],
+    [1.3, 0.0, 0.0],
+])
+qm_q = np.array([-0.4, 0.3])
+
+mm_xyz = np.array([
+    [ 2.5, 0.0, 0.0],
+    [-1.5, 0.8, 0.0],
+    [ 0.6, 2.0, 0.0],
+])
+mm_q = np.array([+1.0, -0.7, +0.4])
+
+k_e = 332.06371  # kcal*Å/(mol*e^2)
+
+energy = 0.0
+for i, qi in enumerate(qm_q):
+    for j, qj in enumerate(mm_q):
+        r = np.linalg.norm(qm_xyz[i] - mm_xyz[j])
+        term = k_e * qi * qj / r
+        energy += term
+        print(f&quot;QM atom {i+1} vs MM charge {j+1}: r={r:5.2f} Å  contribution={term:8.3f} kcal/mol&quot;)
+
+print(f&quot;Total toy QM/MM electrostatic interaction = {energy:.3f} kcal/mol&quot;)</code></pre>
+</div>
+
+</details>
+
+<div class="note">
+  This script is pedagogical. Real electrostatic embedding lets the QM electron density respond to the environment.
+</div>
+
+  </div>
+</section>
+
+
+<section id="questions" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">5) What types of questions QM/MM answers</h2>
+    <div class="tag">project design</div>
+  </div>
+  <div class="card-body">
+    
+<ul>
+  <li>What is the most plausible catalytic pathway?</li>
+  <li>Which step is rate-limiting under a given model?</li>
+  <li>Which residue donates or accepts the key proton?</li>
+  <li>Why does a mutation or inhibitor change reactivity?</li>
+  <li>How does a metal center activate a water or substrate?</li>
+</ul>
+<table>
+  <tr><th>Question</th><th>Usual setup</th></tr>
+  <tr><td>Serine attack geometry</td><td>QM/MM optimization and distance-based scan</td></tr>
+  <tr><td>Metal-assisted hydrolysis</td><td>Metal plus first-shell ligands in QM</td></tr>
+  <tr><td>Mutation effect</td><td>Matched WT vs mutant protocol across comparable snapshots</td></tr>
+  <tr><td>Inhibitor comparison</td><td>Same enzyme state, same QM region, same reaction coordinate</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="region" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">6) Choosing the QM region</h2>
+    <div class="tag">critical choice</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  The QM region is the most important modeling decision.
+  Too small, and you miss key proton shuttles or polarization.
+  Too large, and calculations become slow and difficult to converge.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Usually include</h3><p>
+    Reacting atoms, catalytic residues that make or break bonds, catalytic waters,
+    metal ions and first-shell ligands when the metal is central to the chemistry.
+  </p></div>
+  <div class="box"><h3>Usually leave in MM</h3><p>
+    Distal scaffold residues, bulk solvent, and residues that only provide general packing unless they strongly affect the mechanism.
+  </p></div>
+</div>
+<table>
+  <tr><th>System</th><th>Good starting QM region</th><th>Common mistake</th></tr>
+  <tr><td>AmpC</td><td>Reactive ligand atoms plus catalytic Ser/Lys/Tyr and catalytic water if needed</td><td>Leaving out the actual proton shuttle</td></tr>
+  <tr><td>LasB</td><td>Zn, first-shell ligands, attacking water, scissile bond fragment</td><td>Keeping first-shell Zn ligands outside QM</td></tr>
+  <tr><td>PchB</td><td>Substrate and the residues that compress/orient it</td><td>Ignoring the conformational control residues</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="boundary" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">7) Boundaries, link atoms, and frozen atoms</h2>
+    <div class="tag">setup</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  If a covalent bond crosses the QM/MM boundary, the QM fragment is usually capped by a link atom, often hydrogen.
+</p>
+<div class="eq">\[\mathbf R_{\mathrm{link}} = \mathbf R_{\mathrm{QM\ boundary}} + \lambda\left(\mathbf R_{\mathrm{MM\ partner}} - \mathbf R_{\mathrm{QM\ boundary}}\right)\]</div>
+<div class="grid2">
+  <div class="box"><h3>Where to cut</h3><p>
+    Prefer simple single bonds away from the chemistry.
+    Avoid cutting through conjugated or strongly polarized regions.
+  </p></div>
+  <div class="box"><h3>Why freeze atoms</h3><p>
+    Early restrained or frozen optimization can keep the whole protein from collapsing while the active site settles.
+  </p></div>
+</div>
+<div class="warn">
+  Boundary sensitivity is real. If the mechanism changes when you move the cut by one bond, the original setup may be fragile.
+</div>
+
+  </div>
+</section>
+
+
+<section id="prep" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">8) Preparing the structure before QM/MM</h2>
+    <div class="tag">structure prep</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Most bad QM/MM results start with bad structure preparation:
+  wrong protonation states, missing atoms, wrong ligand tautomer, bad metal geometry,
+  or a crystal state that does not match the biological question.
+</p>
+<ol>
+  <li>Choose the correct state: apo, substrate-bound, inhibitor-bound, mutant, or product-like</li>
+  <li>Repair atoms and inspect alternate conformers</li>
+  <li>Assign protonation states and tautomers</li>
+  <li>Keep mechanistically relevant waters</li>
+  <li>Do short MM relaxation before extracting snapshots</li>
+</ol>
+
+<details >
+  <summary>Annotated Python: inspect residues around a ligand</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from Bio.PDB import PDBParser, NeighborSearch, Selection
+
+pdb_file = &quot;ampc_complex.pdb&quot;
+ligand_resname = &quot;AVI&quot;
+chain_id = &quot;A&quot;
+distance_cutoff = 5.0
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure(&quot;ampc&quot;, pdb_file)
+model = structure[0]
+
+all_atoms = Selection.unfold_entities(model, &quot;A&quot;)
+ns = NeighborSearch(all_atoms)
+
+ligand_atoms = []
+for residue in model[chain_id]:
+    if residue.get_resname().strip() == ligand_resname:
+        ligand_atoms.extend(list(residue.get_atoms()))
+
+if not ligand_atoms:
+    raise ValueError(&quot;Ligand not found&quot;)
+
+neighbor_residues = set()
+for atom in ligand_atoms:
+    for hit in ns.search(atom.coord, distance_cutoff, level=&quot;A&quot;):
+        neighbor_residues.add(hit.get_parent())
+
+for residue in sorted(neighbor_residues, key=lambda r: (r.get_parent().id, r.id[1], r.id[2])):
+    print(residue.get_parent().id, residue.get_resname(), residue.id[1])</code></pre>
+</div>
+
+</details>
+
+<div class="note">
+  Distance-based extraction is only the first pass. Chemistry still decides the final QM region.
+</div>
+
+  </div>
+</section>
+
+
+<section id="autoselect" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">9) Automatic first-pass QM-region selection</h2>
+    <div class="tag">annotated code</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  You can automate the first draft of the QM region, but you should always manually refine it.
+</p>
+
+<details >
+  <summary>Annotated Python: generate a candidate QM region</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from Bio.PDB import PDBParser, NeighborSearch, Selection
+
+pdb_file = &quot;lasb_complex.pdb&quot;
+ligand_resname = &quot;INH&quot;
+chain_id = &quot;A&quot;
+cutoff = 4.5
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure(&quot;target&quot;, pdb_file)
+model = structure[0]
+
+all_atoms = Selection.unfold_entities(model, &quot;A&quot;)
+ns = NeighborSearch(all_atoms)
+
+ligand_atoms = []
+for residue in model[chain_id]:
+    if residue.get_resname().strip() == ligand_resname:
+        ligand_atoms.extend(list(residue.get_atoms()))
+
+qm_candidates = set()
+for atom in ligand_atoms:
+    hits = ns.search(atom.coord, cutoff, level=&quot;R&quot;)
+    for residue in hits:
+        qm_candidates.add(residue)
+
+for residue in sorted(qm_candidates, key=lambda r: (r.get_parent().id, r.id[1])):
+    print(f&quot;{residue.get_parent().id}:{residue.get_resname()}:{residue.id[1]}&quot;)
+
+print(&quot;\nManual review:&quot;)
+print(&quot;1) keep reacting atoms&quot;)
+print(&quot;2) keep proton shuttles&quot;)
+print(&quot;3) keep metals and first-shell ligands&quot;)
+print(&quot;4) remove irrelevant neighbors that are only close in space&quot;)</code></pre>
+</div>
+
+</details>
+
+<div class="grid2">
+  <div class="box"><h3>Good automation</h3><p>
+    Reproducibility, logging, comparing multiple snapshots, and avoiding missed catalytic waters.
+  </p></div>
+  <div class="box"><h3>Good manual review</h3><p>
+    Chemistry-aware inclusion of proton shuttles, metal ligands, and residues that control substrate compression.
+  </p></div>
+</div>
+
+  </div>
+</section>
+
+
+<section id="software" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">10) Core software patterns</h2>
+    <div class="tag">software</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  The usual pattern is:
+  prepare the structure, equilibrate with MM, extract snapshots, then run QM/MM single points,
+  optimizations, or scans.
+</p>
+<table>
+  <tr><th>Need</th><th>Examples</th><th>Main idea</th></tr>
+  <tr><td>Structure prep</td><td>Biopython, PDBFixer, pdb4amber</td><td>Make the system chemically coherent</td></tr>
+  <tr><td>MM relaxation</td><td>AMBER, OpenMM, GROMACS</td><td>Do not start from a strained crystal directly unless justified</td></tr>
+  <tr><td>QM engine</td><td>ORCA, PySCF, QUICK and related tools</td><td>Choose a level of theory that fits the chemistry and budget</td></tr>
+  <tr><td>Analysis</td><td>Python, pandas, matplotlib, MDAnalysis</td><td>Automate energy tables and plots</td></tr>
+</table>
+
+<details >
+  <summary>Annotated Python: a tiny PySCF electrostatic-embedding example</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from pyscf import gto, dft, qmmm
+import numpy as np
+
+mol = gto.Mole()
+mol.atom = &#x27;&#x27;&#x27;
+C   0.000  0.000  0.000
+O   1.220  0.000  0.000
+N  -1.100  0.000  0.000
+H  -1.500  0.900  0.000
+H  -1.500 -0.900  0.000
+H   0.000  1.000  0.000
+&#x27;&#x27;&#x27;
+mol.basis = &quot;6-31g*&quot;
+mol.charge = 0
+mol.spin = 0
+mol.build()
+
+mm_coords = np.array([
+    [ 2.5,  0.0,  0.0],
+    [-2.2,  1.5,  0.0],
+    [ 0.3, -2.0,  0.0],
+])
+mm_charges = np.array([+1.0, -0.7, +0.4])
+
+mf = dft.RKS(mol)
+mf.xc = &quot;b3lyp&quot;
+mf = qmmm.mm_charge(mf, mm_coords, mm_charges)
+
+energy = mf.kernel()
+print(&quot;Embedded QM energy (Hartree):&quot;, energy)
+
+grad = mf.nuc_grad_method().kernel()
+print(&quot;Gradient shape:&quot;, grad.shape)</code></pre>
+</div>
+
+</details>
+
+<div class="warn">
+  A toy PySCF script is great for learning. Production protein QM/MM usually relies on a much larger MM-prepared system.
+</div>
+
+  </div>
+</section>
+
+
+<section id="levels" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">11) Choosing the level of theory</h2>
+    <div class="tag">accuracy vs cost</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Method family</th><th>Pros</th><th>Cons</th><th>Good use</th></tr>
+  <tr><td>Semiempirical or xTB-like</td><td>Fast</td><td>May miss difficult electronic effects</td><td>Prescreening many snapshots</td></tr>
+  <tr><td>DFT</td><td>Common compromise</td><td>Still expensive</td><td>Most enzyme mechanism work</td></tr>
+  <tr><td>Higher-level benchmark on reduced models</td><td>More rigorous spot checks</td><td>Costly</td><td>Selected benchmark states</td></tr>
+</table>
+<div class="note">
+  Many enzyme studies gain more from using a solid method on multiple relevant snapshots than from using a very expensive method on one arbitrary structure.
+</div>
+
+  </div>
+</section>
+
+
+<section id="ampc" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">12) Case study A: AmpC beta-lactamase</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  AmpC is a near-perfect first teaching example because the chemistry involves covalent steps and proton transfer.
+  The question is not just whether a ligand binds, but which catalytic step it blocks or destabilizes.
+</p>
+<div class="grid2">
+  <div class="box"><h3>Biological question</h3><p>
+    Why does inhibitor A suppress hydrolysis better than inhibitor B?
+  </p></div>
+  <div class="box"><h3>QM/MM question</h3><p>
+    Does it distort the attack geometry, destabilize the reactive charge distribution,
+    or raise the barrier for acylation or deacylation?
+  </p></div>
+</div>
+<div class="eq">\[\Delta E_{\mathrm{barrier}} = E_{\mathrm{TS}} - E_{\mathrm{reactant}}\]</div>
+<p>
+  Even a simple matched-state barrier comparison can be informative when the states are prepared consistently.
+</p>
+
+  </div>
+</section>
+
+
+<section id="ampcpipe" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">13) AmpC pipeline template</h2>
+    <div class="tag">pipeline</div>
+  </div>
+  <div class="card-body">
+    
+<details open>
+  <summary>Annotated shell: reproducible AmpC project skeleton</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT=&quot;ampc_qmmm&quot;
+mkdir -p ${PROJECT}/{00_raw,01_prep,02_mm,03_snapshots,04_qmmm,05_analysis,logs}
+
+cp ampc_inhibitor_complex.pdb ${PROJECT}/00_raw/
+
+echo &quot;[1/5] Clean structure&quot;
+cp ${PROJECT}/00_raw/ampc_inhibitor_complex.pdb ${PROJECT}/01_prep/ampc_clean.pdb
+
+echo &quot;[2/5] Build MM system&quot;
+# tleap -f build_ampc.leap &gt; logs/tleap.log
+
+echo &quot;[3/5] Run short MM relaxation&quot;
+# pmemd.cuda -O -i min.in -p ampc.prmtop -c ampc.inpcrd -r min.rst -o min.out
+# pmemd.cuda -O -i eq.in  -p ampc.prmtop -c min.rst     -r eq.rst  -x eq.nc -o eq.out
+
+echo &quot;[4/5] Extract snapshots&quot;
+# cpptraj -p ampc.prmtop -i extract_snapshots.in &gt; logs/cpptraj.log
+
+echo &quot;[5/5] Prepare and run QM/MM&quot;
+for snap in ${PROJECT}/03_snapshots/*.pdb; do
+    base=$(basename &quot;${snap}&quot; .pdb)
+    mkdir -p ${PROJECT}/04_qmmm/${base}
+    cp &quot;${snap}&quot; ${PROJECT}/04_qmmm/${base}/
+done</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+
+<section id="lasb" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">14) Case study B: LasB elastase</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  LasB is a zinc metalloprotease and a useful teaching model for metal-centered QM/MM.
+  The metal ion and its immediate ligands often need to be in the QM region.
+</p>
+<table>
+  <tr><th>Do include in QM</th><th>Why</th></tr>
+  <tr><td>Zn and first-shell ligands</td><td>Electronic redistribution near the metal matters</td></tr>
+  <tr><td>Attacking water or hydroxide</td><td>Its activation state is part of the chemistry</td></tr>
+  <tr><td>Scissile bond fragment or key inhibitor atoms</td><td>This is where the chemistry happens</td></tr>
+</table>
+<div class="warn">
+  A common mistake is to treat a metal site almost entirely as MM and expect reliable catalytic chemistry.
+</div>
+
+  </div>
+</section>
+
+
+<section id="pchb" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">15) Case study C: PchB</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  PchB is useful because it shows QM/MM is not only about hydrolysis.
+  It is also about conformational preorganization and transition-state stabilization.
+</p>
+<p>
+  The key question can be:
+  which residues shape the substrate into the reactive conformation,
+  and how much of the catalytic effect comes from electrostatics versus geometry?
+</p>
+
+  </div>
+</section>
+
+
+<section id="proton" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">16) Protonation states, tautomers, and waters</h2>
+    <div class="tag">chemical setup</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Question</th><th>Why it matters</th><th>Practical response</th></tr>
+  <tr><td>Which histidine tautomer?</td><td>Changes hydrogen-bond direction</td><td>Inspect local network and test alternatives</td></tr>
+  <tr><td>Water or hydroxide?</td><td>Can change the whole mechanism</td><td>Use metal context, nearby residues, and literature guidance</td></tr>
+  <tr><td>Ligand protonation?</td><td>Changes both binding and reactivity</td><td>Generate explicit protomer alternatives</td></tr>
+</table>
+<div class="warn">
+  Never claim a mechanism is established if you tested only one arbitrary protonation state.
+</div>
+
+  </div>
+</section>
+
+
+<section id="mm" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">17) Why MM equilibration comes before QM/MM</h2>
+    <div class="tag">workflow</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Crystal coordinates are not automatically ready for reaction chemistry.
+  Side chains may be strained, waters may be incomplete, and a repaired structure often needs local relaxation.
+</p>
+<ol>
+  <li>Build and protonate the MM system</li>
+  <li>Minimize</li>
+  <li>Equilibrate gently</li>
+  <li>Inspect active-site geometry</li>
+  <li>Extract one or more representative snapshots</li>
+</ol>
+<div class="grid2">
+  <div class="box"><h3>Why multiple snapshots help</h3><p>
+    Enzymes fluctuate. A single structure can be misleading.
+  </p></div>
+  <div class="box"><h3>What to monitor</h3><p>
+    Attack distance, proton-transfer distance, key H-bonds, metal coordination,
+    and whether the ligand remains catalytically plausible.
+  </p></div>
+</div>
+
+  </div>
+</section>
+
+
+<section id="openmm" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">18) Annotated MM preparation code</h2>
+    <div class="tag">annotated code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>Annotated Python: OpenMM equilibration before snapshot extraction</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from openmm.app import AmberPrmtopFile, AmberInpcrdFile, Simulation, PME, HBonds, PDBFile
+from openmm import LangevinMiddleIntegrator, MonteCarloBarostat, unit
+from openmm import Platform
+
+prmtop = AmberPrmtopFile(&quot;system.prmtop&quot;)
+inpcrd = AmberInpcrdFile(&quot;system.inpcrd&quot;)
+
+system = prmtop.createSystem(
+    nonbondedMethod=PME,
+    nonbondedCutoff=1.0 * unit.nanometer,
+    constraints=HBonds
+)
+
+system.addForce(MonteCarloBarostat(1.0 * unit.atmosphere, 300 * unit.kelvin, 25))
+
+integrator = LangevinMiddleIntegrator(
+    300 * unit.kelvin,
+    1.0 / unit.picosecond,
+    0.004 * unit.picoseconds
+)
+
+platform = Platform.getPlatformByName(&quot;CPU&quot;)
+sim = Simulation(prmtop.topology, system, integrator, platform)
+sim.context.setPositions(inpcrd.positions)
+
+if inpcrd.boxVectors is not None:
+    sim.context.setPeriodicBoxVectors(*inpcrd.boxVectors)
+
+sim.minimizeEnergy(maxIterations=1000)
+sim.step(25000)
+
+state = sim.context.getState(getPositions=True)
+with open(&quot;equilibrated.pdb&quot;, &quot;w&quot;) as handle:
+    PDBFile.writeFile(sim.topology, state.getPositions(), handle)</code></pre>
+</div>
+
+</details>
+
+<p>
+  This is still MM, not QM/MM. It is the preparation stage that gives better starting snapshots.
+</p>
+
+  </div>
+</section>
+
+
+<section id="engines" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">19) Templates for production QM/MM engines</h2>
+    <div class="tag">templates</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>Template: ORCA-style QM/MM input skeleton</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="text">! B3LYP D4 def2-SVP TightSCF Opt
+%pal
+  nprocs 8
+end
+
+%qmmm
+  QMAtoms { 1:35 102:118 250 }
+  Charge_Total 0
+  Mult_Total 1
+end
+
+* xyzfile 0 1 snapshot_qmmm.xyz</code></pre>
+</div>
+
+</details>
+
+<details >
+  <summary>Template: AMBER-style QM/MM control block</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="text">QMMM optimization
+ &amp;cntrl
+  imin=1, maxcyc=1000, ntmin=1,
+  ifqnt=1,
+  ntb=0, cut=12.0,
+  ntpr=50,
+ /
+ &amp;qmmm
+  qmmask=&#x27;:64,67,150,315|:LIG|:WAT@O,H1,H2&#x27;,
+  qmcharge=0,
+  qm_theory=&#x27;EXTERN&#x27;,
+  qmmm_int=1,
+  qm_ewald=1,
+ /
+</code></pre>
+</div>
+
+</details>
+
+<p>
+  Exact keywords depend on version and interface. The purpose here is to show the shape of a real job and how the QM region is documented.
+</p>
+
+  </div>
+</section>
+
+
+<section id="scan" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">20) Reaction coordinates and barrier scans</h2>
+    <div class="tag">reaction path</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  A simple constrained scan is often the first mechanistic test.
+  You define a coordinate, optimize around it, and inspect the relative energy profile.
+</p>
+<table>
+  <tr><th>Reaction type</th><th>Useful coordinate</th></tr>
+  <tr><td>Nucleophilic attack</td><td>Difference of forming and breaking bond lengths</td></tr>
+  <tr><td>Proton transfer</td><td>Difference of donor-H and H-acceptor distances</td></tr>
+  <tr><td>Metal-assisted hydrolysis</td><td>Water-to-substrate or proton-transfer coordinate</td></tr>
+</table>
+<div class="eq">\[\xi = d_1 - d_2\]</div>
+<details >
+  <summary>Annotated Python: plot a QM/MM reaction scan</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(&quot;reaction_scan.tsv&quot;, sep=&quot;\t&quot;)
+df[&quot;rel_kcal&quot;] = df[&quot;energy_kcal&quot;] - df[&quot;energy_kcal&quot;].iloc[0]
+
+plt.figure(figsize=(7, 4.5))
+plt.plot(df[&quot;coordinate&quot;], df[&quot;rel_kcal&quot;], marker=&quot;o&quot;)
+plt.xlabel(&quot;Reaction coordinate&quot;)
+plt.ylabel(&quot;Relative energy (kcal/mol)&quot;)
+plt.title(&quot;QM/MM reaction scan&quot;)
+plt.tight_layout()
+plt.show()
+
+ts_idx = df[&quot;rel_kcal&quot;].idxmax()
+print(df.loc[ts_idx])</code></pre>
+</div>
+
+</details>
+
+<div class="warn">
+  A scan is a mechanistic hypothesis tool. It is not automatically a minimum free-energy path.
+</div>
+
+  </div>
+</section>
+
+
+<section id="ensemble" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">21) Ensemble thinking and free-energy logic</h2>
+    <div class="tag">advanced</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  One optimized structure rarely tells the full biological story.
+  Different snapshots can give different local geometries and therefore different barriers.
+</p>
+<div class="eq">\[\Delta G(\xi) = -k_B T \ln P(\xi) + C\]</div>
+<div class="grid2">
+  <div class="box"><h3>Better practice</h3><p>
+    Use several representative snapshots from MM and apply a matched QM/MM protocol.
+  </p></div>
+  <div class="box"><h3>When to go beyond scans</h3><p>
+    When the claim depends on a true free-energy difference rather than a single potential-energy path.
+  </p></div>
+</div>
+
+  </div>
+</section>
+
+
+<section id="mutants" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">22) Matched mutant and inhibitor comparisons</h2>
+    <div class="tag">study design</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Good comparison</th><th>Weak comparison</th></tr>
+  <tr><td>Same coordinate, same region, same protonation workflow</td><td>Different setups for each system</td></tr>
+  <tr><td>Multiple snapshots per condition</td><td>One structure per condition</td></tr>
+  <tr><td>Explicit geometry checks</td><td>Only reporting one barrier number</td></tr>
+</table>
+<ul>
+  <li>Track attack distance, proton-transfer distance, and critical H-bonds.</li>
+  <li>Check whether the mutation changes the ensemble before claiming direct chemical change.</li>
+  <li>Use the same analysis script across WT, mutants, and inhibitors.</li>
+</ul>
+
+  </div>
+</section>
+
+
+<section id="analysis" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">23) Summarizing many QM/MM jobs</h2>
+    <div class="tag">analysis</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Do not inspect dozens of folders by hand. Separate calculation from summarization.
+</p>
+
+<details >
+  <summary>Annotated Python: summarize energies and key geometries</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import pandas as pd
+
+df = pd.read_csv(&quot;qmmm_summary.tsv&quot;, sep=&quot;\t&quot;)
+
+HARTREE_TO_KCAL = 627.509474
+if &quot;energy_hartree&quot; in df.columns:
+    df[&quot;energy_kcal&quot;] = df[&quot;energy_hartree&quot;] * HARTREE_TO_KCAL
+
+if {&quot;system&quot;, &quot;state&quot;, &quot;energy_kcal&quot;}.issubset(df.columns):
+    ref = (
+        df[df[&quot;state&quot;] == &quot;reactant&quot;]
+        .groupby(&quot;system&quot;)[&quot;energy_kcal&quot;]
+        .min()
+        .rename(&quot;ref_kcal&quot;)
+    )
+    df = df.join(ref, on=&quot;system&quot;)
+    df[&quot;rel_kcal&quot;] = df[&quot;energy_kcal&quot;] - df[&quot;ref_kcal&quot;]
+
+summary = df.groupby(&quot;system&quot;).agg(
+    n_snapshots=(&quot;snapshot&quot;, &quot;nunique&quot;),
+    min_rel=(&quot;rel_kcal&quot;, &quot;min&quot;),
+    mean_attack=(&quot;attack_dist&quot;, &quot;mean&quot;),
+    mean_pt=(&quot;pt_dist&quot;, &quot;mean&quot;),
+)
+print(summary)</code></pre>
+</div>
+
+</details>
+
+<p>
+  A strong summary table usually includes the system name, snapshot ID, key distances,
+  relative energies, and the main mechanistic interpretation.
+</p>
+
+  </div>
+</section>
+
+
+<section id="validation" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">24) Validation and controls</h2>
+    <div class="tag">rigor</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Control</th><th>Why it matters</th></tr>
+  <tr><td>Alternative protonation states</td><td>Tests whether the conclusion is setup-specific</td></tr>
+  <tr><td>Alternative QM-region size</td><td>Tests boundary sensitivity</td></tr>
+  <tr><td>Multiple snapshots</td><td>Tests conformational robustness</td></tr>
+  <tr><td>Comparison to mutational or kinetic data</td><td>Connects the model to experiment</td></tr>
+  <tr><td>Inspection of key geometries</td><td>Prevents overinterpreting a chemically absurd structure</td></tr>
+</table>
+<div class="note">
+  The most convincing claim is usually a stable trend across controlled setups, not one exact barrier value.
+</div>
+
+  </div>
+</section>
+
+
+<section id="pitfalls" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">25) Common failure modes</h2>
+    <div class="tag">troubleshooting</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Problem</th><th>Likely cause</th><th>Response</th></tr>
+  <tr><td>SCF does not converge</td><td>Bad geometry or difficult electronic state</td><td>Pre-optimize and simplify first</td></tr>
+  <tr><td>Metal site distorts</td><td>Wrong protonation or incomplete QM region</td><td>Expand region and inspect first-shell ligands</td></tr>
+  <tr><td>Barrier looks absurd</td><td>Wrong coordinate or missing chemistry</td><td>Revisit reactant model and region choice</td></tr>
+  <tr><td>Runs disagree strongly</td><td>Snapshot dependence</td><td>Use an ensemble approach</td></tr>
+  <tr><td>Boundary artifacts</td><td>Poor cut placement</td><td>Move the boundary and compare</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="project" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">26) A realistic project idea in Pseudomonas aeruginosa</h2>
+    <div class="tag">capstone</div>
+  </div>
+  <div class="card-body">
+    
+<div class="grid2">
+  <div class="box"><h3>Project title</h3><p>
+    QM/MM comparison of inhibitor-dependent catalytic suppression in Pseudomonas aeruginosa AmpC.
+  </p></div>
+  <div class="box"><h3>Main idea</h3><p>
+    The strongest inhibitor is not only the one that binds. It is the one that most strongly disrupts the catalytic step.
+  </p></div>
+</div>
+<ol>
+  <li>Select two relevant inhibitor or substrate states</li>
+  <li>Prepare and equilibrate both with matched MM workflows</li>
+  <li>Extract several active-site snapshots</li>
+  <li>Define the same QM region logic across all systems</li>
+  <li>Run the same constrained scan for each snapshot</li>
+  <li>Summarize attack geometry, proton-transfer geometry, and barrier-like maxima</li>
+</ol>
+<div class="warn">
+  A small, well-controlled comparison is usually better than a huge unfocused screen.
+</div>
+
+  </div>
+</section>
+
+
+<section id="workflow" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">27) End-to-end workflow template</h2>
+    <div class="tag">end-to-end</div>
+  </div>
+  <div class="card-body">
+    
+<details open>
+  <summary>Annotated shell: full teaching-style project skeleton</summary>
+  
+<div class="codeblock">
+  <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT=&quot;pa_qmmm_course_project&quot;
+mkdir -p ${PROJECT}/{00_structures,01_prep,02_mm,03_snapshots,04_regions,05_qmmm_inputs,06_qmmm_runs,07_tables,08_figures,09_report,logs}
+
+echo &quot;[1/8] Curate structures&quot;
+echo &quot;[2/8] Prepare and protonate&quot;
+# python scripts/prepare_structure.py --in input.pdb --out prepared.pdb
+
+echo &quot;[3/8] Build and relax MM system&quot;
+# tleap -f build.leap &gt; logs/tleap.log
+# pmemd.cuda -O -i min.in -p system.prmtop -c system.inpcrd -r min.rst -o min.out
+# pmemd.cuda -O -i eq.in  -p system.prmtop -c min.rst -r eq.rst -x eq.nc -o eq.out
+
+echo &quot;[4/8] Extract representative snapshots&quot;
+# cpptraj -p system.prmtop -i extract_snapshots.in &gt; logs/cpptraj.log
+
+echo &quot;[5/8] Select first-pass QM region&quot;
+# python scripts/select_qm_region.py --pdb snap01.pdb --ligand LIG --out snap01_region.txt
+
+echo &quot;[6/8] Generate QM/MM inputs&quot;
+# python scripts/make_qmmm_inputs.py --snapdir 03_snapshots --outdir 05_qmmm_inputs
+
+echo &quot;[7/8] Summarize outputs&quot;
+# python scripts/summarize_qmmm.py --indir 06_qmmm_runs --out 07_tables/qmmm_summary.tsv
+
+echo &quot;[8/8] Build report&quot;
+# python scripts/build_report.py --table 07_tables/qmmm_summary.tsv --out 09_report/final_report.html
+</code></pre>
+</div>
+
+</details>
+
+  </div>
+</section>
+
+
+<section id="deliverables" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">28) What strong deliverables look like</h2>
+    <div class="tag">communication</div>
+  </div>
+  <div class="card-body">
+    
+<ul>
+  <li>A one-sentence biological question</li>
+  <li>A figure that shows the QM region on the active site</li>
+  <li>A table of protonation states or alternatives tested</li>
+  <li>A reaction-coordinate diagram with consistent labels</li>
+  <li>A summary table across snapshots and conditions</li>
+  <li>A limitations paragraph describing what was not sampled</li>
+</ul>
+
+  </div>
+</section>
+
+
+<section id="next" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">29) What to do next</h2>
+    <div class="tag">next steps</div>
+  </div>
+  <div class="card-body">
+    
+<ol>
+  <li>Practice on a toy QM/MM example</li>
+  <li>Move to one prepared AmpC or LasB structure</li>
+  <li>Automate active-site extraction and region logging</li>
+  <li>Build one matched WT-versus-inhibitor or WT-versus-mutant comparison</li>
+  <li>Add multiple snapshots and a standard summary table</li>
+</ol>
+<div class="warn">
+  The best beginner path is one enzyme, one step, one coordinate, and one reproducible folder structure.
+</div>
+
+  </div>
+</section>
+
+  </div>
+</main>
+
+<footer>
+  Built as a standalone teaching page for local browsing or GitHub Pages.
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const items = [...document.querySelectorAll('.searchable')];
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase().trim();
+    for (const item of items) {
+      const txt = item.innerText.toLowerCase();
+      item.style.display = txt.includes(q) ? '' : 'none';
+    }
+  });
+
+  document.getElementById('expandAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = true);
+  });
+  document.getElementById('collapseAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = false);
+  });
+  document.getElementById('copyLink').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('copyLink');
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    } catch (e) {
+      alert('Could not copy the link from this browser.');
+    }
+  });
+
+  function copyCode(btn) {
+    const code = btn.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    });
+  }
+</script>
+</body>
+</html>
