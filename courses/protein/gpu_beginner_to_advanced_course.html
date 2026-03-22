@@ -1,0 +1,2003 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Beginner → Advanced GPU Course (Hardware, Optimization, and Scientific Workflows)</title>
+  <meta name="description" content="A full beginner-to-advanced GPU course with hardware concepts, GPU types, precision, performance modeling, PyTorch optimization, profiling, distributed training, inference, and scientific computing examples." />
+
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#08111d; --panel:#101b2e; --panel2:#0d1627;
+      --text:#e9f1ff; --muted:#b1c2e8;
+      --accent:#79a8ff; --accent2:#6ff0cf;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 650px at 15% 0%, rgba(121,168,255,.18), transparent 58%),
+        radial-gradient(900px 520px at 92% 10%, rgba(111,240,207,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1280px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(121,168,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1160px;}
+    .kicker{
+      color:var(--accent2); font-weight:900; letter-spacing:.35px;
+      text-transform:uppercase; font-size:12px; margin-top:12px;
+    }
+    .top-actions{
+      display:flex; flex-wrap:wrap; gap:10px; margin-top:14px;
+      align-items:center; justify-content:space-between;
+    }
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,241,255,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:800; white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1280px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 340px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start;
+      height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(16,27,46,.58);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{
+      font-size:13px; margin:6px 8px 10px; color:var(--muted);
+      letter-spacing:.4px; text-transform:uppercase;
+    }
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px;
+      color:var(--text); border:1px solid transparent;
+      font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(16,27,46,.46);
+      backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border);
+      background: rgba(13,22,39,.60);
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.68; font-size:14.5px;}
+    .muted{color:var(--muted)}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em;
+      background: rgba(0,0,0,.25); border:1px solid var(--border);
+      padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{
+      cursor:pointer; font-weight:900; color:var(--text);
+      list-style:none; user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.22);
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.34); overflow:auto;
+      padding: 14px 12px 12px; position: relative;
+    }
+    .codeblock code{
+      font-family: var(--mono); font-size:12.6px; line-height:1.55;
+      white-space: pre; display:block;
+    }
+    .copy-btn{
+      position:absolute; top:10px; right:10px;
+      padding:6px 10px; border-radius:10px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px; user-select:none;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(121,168,255,.9);
+      padding: 10px 12px; background: rgba(121,168,255,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid rgba(111,240,207,.9);
+      padding: 10px 12px; background: rgba(111,240,207,.08);
+      border-radius: 12px; margin-top: 10px;
+    }
+    table{
+      width:100%; border-collapse:collapse; overflow:hidden;
+      border:1px solid var(--border); border-radius:14px;
+      background: rgba(0,0,0,.18); margin-top:10px;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.45;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    @media (max-width:1100px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <h1>Beginner → Advanced GPU Course</h1>
+    <p class="subtitle">
+      A practical end-to-end course on <b>GPU hardware</b>, <b>different types of GPUs</b>, <b>memory and precision</b>,
+      <b>PyTorch optimization</b>, <b>profiling</b>, <b>distributed training</b>, <b>inference</b>, and
+      <b>real scientific workflows</b>. Every major section includes formulas, numerical examples, or annotated code.
+    </p>
+
+    <div class="kicker">Suggested local setup</div>
+    <p class="subtitle">
+      For the Python examples: <code class="inline">pip install torch numpy</code>.
+      For MD examples: <code class="inline">pip install openmm</code>.
+      Some code blocks need an actual GPU; others run fine on CPU as learning exercises.
+    </p>
+
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter topics (e.g., tensor core, occupancy, BF16, DDP, roofline, OpenMM, ESM)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#symbols">0) Symbols cheat sheet</a>
+<a href="#big-picture">1) What a GPU is</a>
+<a href="#gpu-types">2) Different types of GPUs</a>
+<a href="#anatomy">3) GPU anatomy</a>
+<a href="#memory-hierarchy">4) Memory hierarchy</a>
+<a href="#performance-model">5) Throughput + roofline</a>
+<a href="#precision">6) Precision types</a>
+<a href="#software-stacks">7) Software stacks</a>
+<a href="#setup">8) Setup + verification</a>
+<a href="#torch-basics">9) PyTorch basics on GPU</a>
+<a href="#memory-estimation">10) VRAM estimation</a>
+<a href="#kernel-basics">11) Kernels + occupancy</a>
+<a href="#matmul">12) Matrix multiplication</a>
+<a href="#convolution">13) Convolution</a>
+<a href="#profiling">14) Profiling</a>
+<a href="#memory-optimization">15) Memory optimization</a>
+<a href="#amp">16) Mixed precision</a>
+<a href="#grad-accum">17) Gradient accumulation</a>
+<a href="#dataloader">18) Data pipeline optimization</a>
+<a href="#multi-gpu">19) Multi-GPU + distributed</a>
+<a href="#inference">20) Inference optimization</a>
+<a href="#bio-workloads">21) Scientific workloads</a>
+<a href="#protein-pipeline">22) Protein-ML pipeline</a>
+<a href="#md-pipeline">23) MD pipeline</a>
+<a href="#runtime-choice">24) Runtime choice</a>
+<a href="#troubleshooting">25) Troubleshooting</a>
+<a href="#benchmarking-playbook">26) Benchmarking playbook</a>
+<a href="#hands-on">27) Mini projects</a>
+<a href="#references">28) Reference links</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    
+    <section id="symbols" class="card topic" data-keywords="symbols notation flops bytes bandwidth latency tflops vram amp bf16 fp16 fp32 occupancy">
+      <div class="card-header">
+        <h2 class="card-title">0) Symbols + notation cheat sheet</h2>
+        <span class="tag">Foundations</span>
+      </div>
+      <div class="card-body">
+        
+<p class="muted">
+Use this page like a course, reference, and optimization checklist. The formulas are intentionally practical rather than overly theoretical.
+</p>
+<div class="grid2">
+  <div class="box">
+    <h3>Core quantities</h3>
+    <p>
+      \(N\) = number of elements, \(b\) = bytes per element, \(B\) = bandwidth, \(T\) = time,
+      \(F\) = floating-point operations, \(P\) = throughput, \(M\) = memory capacity.
+    </p>
+  </div>
+  <div class="box">
+    <h3>Precision shorthand</h3>
+    <p>
+      FP64 = 8 bytes, FP32 = 4 bytes, BF16 = 2 bytes, FP16 = 2 bytes, INT8 = 1 byte, INT4 = 0.5 byte.
+    </p>
+  </div>
+</div>
+
+<div class="eq">
+  <b>Useful formulas</b><br/>
+  \[
+  P=\frac{F}{T}, \qquad
+  \text{Arithmetic intensity}=\frac{F}{\text{Bytes moved}}, \qquad
+  \text{Memory footprint}=N \cdot b
+  \]
+  \[
+  \text{Speedup}=\frac{T_{\text{old}}}{T_{\text{new}}}, \qquad
+  \text{Efficiency}=\frac{\text{speedup}}{\text{number of devices}}
+  \]
+</div>
+
+<div class="note">
+  A GPU job is fast when you keep many cores busy, move data efficiently, and avoid doing frequent small transfers between host memory and device memory.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="big-picture" class="card topic" data-keywords="gpu basics cpu vs gpu accelerator parallelism throughput latency">
+      <div class="card-header">
+        <h2 class="card-title">1) What a GPU is, and when you should use one</h2>
+        <span class="tag">Beginner</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A <b>GPU</b> is a throughput-oriented processor designed to execute many similar operations in parallel.
+A <b>CPU</b> is optimized for low-latency, branch-heavy, sequential, and general-purpose tasks.
+For deep learning, matrix multiplication, convolutions, attention, particle simulations, and many imaging workloads,
+GPUs often outperform CPUs by a large margin because those tasks can be expressed as massive parallel math.
+</p>
+
+<div class="grid2">
+  <div class="box">
+    <h3>Use a GPU when</h3>
+    <p>
+      You have large tensors, batched matrix operations, repeated simulation steps, or many independent samples.
+      Examples: training ESM, running OpenMM on long systems, image segmentation, large batched embeddings.
+    </p>
+  </div>
+  <div class="box">
+    <h3>Do not assume a GPU helps</h3>
+    <p>
+      If your job is tiny, dominated by file I/O, Python loops, string parsing, irregular branching, or CPU-only software like many classic docking pipelines, the GPU may sit mostly idle.
+    </p>
+  </div>
+</div>
+
+<div class="eq">
+  <b>Amdahl-style reminder</b><br/>
+  \[
+  \text{Overall speedup} \le \frac{1}{(1-f)+\frac{f}{s}}
+  \]
+  where \(f\) is the fraction of work accelerated and \(s\) is the speedup of that part.
+</div>
+
+<p>
+If only 70% of your pipeline is GPU-accelerated and that part becomes 20× faster, the whole pipeline speedup is
+\[
+\frac{1}{0.3+0.7/20}\approx 2.99
+\]
+rather than 20×. This is why data loading, preprocessing, and logging matter.
+</p>
+
+      </div>
+    </section>
+    
+
+    <section id="gpu-types" class="card topic" data-keywords="types consumer workstation datacenter nvidia amd intel tpu npu t4 l4 a100 h100">
+      <div class="card-header">
+        <h2 class="card-title">2) Different types of GPUs and accelerators</h2>
+        <span class="tag">Landscape</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Not all accelerators are built for the same purpose. The biggest practical distinctions are <b>consumer vs workstation vs datacenter</b>,
+<b>graphics-oriented vs compute-oriented</b>, and <b>GPU vs TPU/NPU</b>.
+</p>
+
+<table>
+  <tr><th>Category</th><th>Typical goal</th><th>Examples</th><th>What you care about</th></tr>
+  <tr><td>Consumer GPU</td><td>Gaming + creator workflows</td><td>RTX-class cards</td><td>Good price/performance, variable VRAM, excellent for local experiments</td></tr>
+  <tr><td>Workstation GPU</td><td>Professional visualization + compute</td><td>RTX Pro / Radeon Pro</td><td>Drivers, ECC options, stability, larger memory tiers</td></tr>
+  <tr><td>Datacenter GPU</td><td>Training, inference, HPC</td><td>T4, L4, A100, H100, Blackwell-class, AMD Instinct</td><td>VRAM, bandwidth, interconnects, tensor performance, virtualization</td></tr>
+  <tr><td>TPU</td><td>Large-scale ML matrix math</td><td>v5e, v6e</td><td>Excellent for TPU-friendly stacks, less universal than CUDA</td></tr>
+  <tr><td>NPU / AI accelerator</td><td>Edge or laptop inference</td><td>On-device AI blocks</td><td>Low power inference, not general GPU replacement</td></tr>
+</table>
+
+<div class="grid2">
+  <div class="box">
+    <h3>NVIDIA ecosystem</h3>
+    <p>
+      Most mature for PyTorch/CUDA, many tutorials, strong profiler tooling, and broad support in structural biology and ML pipelines.
+    </p>
+  </div>
+  <div class="box">
+    <h3>AMD ecosystem</h3>
+    <p>
+      Strong HPC/AI push via ROCm and Instinct GPUs. Very relevant in clusters and increasingly usable for PyTorch, but compatibility still needs checking for your exact software stack.
+    </p>
+  </div>
+</div>
+
+<div class="ok">
+  Practical rule: for most beginner-to-intermediate scientific Python workflows, <b>NVIDIA + CUDA</b> is the path of least resistance.
+  For large clusters and open-platform work, also learn <b>ROCm</b> and basic <b>SYCL/OpenCL</b> vocabulary.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="anatomy" class="card topic" data-keywords="sm warp wavefront tensor cores streaming multiprocessor compute units vram">
+      <div class="card-header">
+        <h2 class="card-title">3) GPU anatomy: SMs, warps, tensor cores, and VRAM</h2>
+        <span class="tag">Architecture</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A modern GPU is not one giant core. It is a collection of many compute units. On NVIDIA these are often discussed as
+<b>Streaming Multiprocessors (SMs)</b>. Work is launched as many threads, grouped into <b>blocks</b>, which are then executed on SMs.
+Threads are scheduled in small groups called <b>warps</b> on NVIDIA (typically 32 threads).
+AMD uses analogous concepts such as <b>compute units</b> and <b>wavefronts</b>.
+</p>
+
+<div class="eq">
+  \[
+  \text{Grid} \rightarrow \text{blocks} \rightarrow \text{threads}
+  \]
+</div>
+
+<div class="grid2">
+  <div class="box">
+    <h3>Execution view</h3>
+    <p>
+      Kernel launch → many blocks → blocks assigned to SMs → threads in each block execute cooperatively using registers and shared memory.
+    </p>
+  </div>
+  <div class="box">
+    <h3>Data view</h3>
+    <p>
+      Tensors live in device global memory (VRAM). Fast on-chip storage includes registers and shared memory. The art of optimization is feeding compute units fast enough.
+    </p>
+  </div>
+</div>
+
+<p>
+<b>Tensor cores</b> are specialized units that accelerate matrix-like operations, especially at reduced precision such as FP16 or BF16.
+They matter enormously for deep learning. A lot of modern optimization advice is really about restructuring your workload so tensor-core-friendly kernels can be used.
+</p>
+
+      </div>
+    </section>
+    
+
+    <section id="memory-hierarchy" class="card topic" data-keywords="memory hierarchy registers shared memory l2 global memory cache coalescing pinned memory">
+      <div class="card-header">
+        <h2 class="card-title">4) Memory hierarchy: registers, shared memory, L2, and global memory</h2>
+        <span class="tag">Architecture</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Most GPU performance problems are memory problems in disguise.
+The closer storage is to the compute unit, the faster and smaller it is.
+</p>
+
+<table>
+  <tr><th>Layer</th><th>Fast?</th><th>Small or large?</th><th>Typical use</th></tr>
+  <tr><td>Registers</td><td>Fastest</td><td>Tiny</td><td>Per-thread temporary values</td></tr>
+  <tr><td>Shared memory / local data store</td><td>Very fast</td><td>Small</td><td>Reuse within a block; tiling</td></tr>
+  <tr><td>L2 cache</td><td>Fast</td><td>Medium</td><td>Device-wide cache</td></tr>
+  <tr><td>Global memory (VRAM)</td><td>Slowest on device</td><td>Large</td><td>Main tensor storage</td></tr>
+  <tr><td>Host RAM</td><td>Much slower to reach from GPU</td><td>Large</td><td>CPU-side storage and data loading</td></tr>
+</table>
+
+<div class="eq">
+  \[
+  T_{\text{transfer}} \approx \frac{\text{bytes moved}}{\text{bandwidth}}
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> If a batch requires moving 6 GB from host to device and your effective transfer bandwidth is 12 GB/s,
+then the transfer alone costs roughly
+\[
+T \approx \frac{6}{12}=0.5 \text{ s}.
+\]
+If compute itself is only 0.2 s, data transfer is your bottleneck.
+</p>
+
+<div class="note">
+  This is why pinned memory, prefetching, asynchronous copies, larger batches, and keeping tensors on-device across multiple steps are often more valuable than fancy kernel tweaks.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="performance-model" class="card topic" data-keywords="roofline arithmetic intensity bandwidth flops throughput bottleneck compute bound memory bound">
+      <div class="card-header">
+        <h2 class="card-title">5) Throughput, bandwidth, arithmetic intensity, and the roofline idea</h2>
+        <span class="tag">Performance model</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A simple performance model helps you reason before you profile. Many kernels are either:
+<b>memory bound</b> (limited by bytes moved) or <b>compute bound</b> (limited by available arithmetic throughput).
+</p>
+
+<div class="eq">
+  \[
+  \text{Arithmetic intensity} = \frac{\text{FLOPs}}{\text{Bytes moved}}
+  \]
+  \[
+  T_{\text{compute}} \approx \frac{\text{FLOPs}}{\text{Peak FLOP/s}}, \qquad
+  T_{\text{memory}} \approx \frac{\text{Bytes}}{\text{Bandwidth}}
+  \]
+</div>
+
+<p>
+The rough runtime lower bound is controlled by the slower side. If memory time dominates, optimize memory movement. If compute time dominates,
+optimize math kernels, precision, and tensor-core usage.
+</p>
+
+<p>
+<b>Numerical example.</b> Suppose a kernel does \(2\times10^{12}\) FLOPs and moves \(2\times10^{11}\) bytes.
+Its arithmetic intensity is
+\[
+\frac{2\times10^{12}}{2\times10^{11}}=10 \text{ FLOPs/byte}.
+\]
+If your effective memory roof corresponds to 6 FLOPs/byte for that device, the kernel is likely memory-limited.
+</p>
+
+<details>
+  <summary>Annotated Python helper: classify a kernel with a rough roofline calculation</summary>
+  <div class="codeblock" data-src="code-roofline"></div>
+</details>
+
+      </div>
+    </section>
+    
+
+    <section id="precision" class="card topic" data-keywords="precision fp64 fp32 tf32 bf16 fp16 int8 int4 tensor cores mixed precision quantization">
+      <div class="card-header">
+        <h2 class="card-title">6) Precision types: FP64, FP32, TF32, BF16, FP16, INT8, INT4</h2>
+        <span class="tag">Numerics</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Precision affects <b>speed</b>, <b>memory</b>, and sometimes <b>numerical stability</b>. In practice:
+FP32 is the classic default, BF16 and FP16 are common for training, and INT8/INT4 are common for inference or quantized training research.
+</p>
+
+<table>
+  <tr><th>Type</th><th>Bytes</th><th>Typical use</th><th>Main caution</th></tr>
+  <tr><td>FP64</td><td>8</td><td>Scientific computing, some HPC</td><td>Heavy memory and lower throughput on many GPUs</td></tr>
+  <tr><td>FP32</td><td>4</td><td>Safe default</td><td>Twice the memory of BF16/FP16</td></tr>
+  <tr><td>BF16</td><td>2</td><td>Training, especially modern accelerators</td><td>Good dynamic range but lower mantissa precision than FP32</td></tr>
+  <tr><td>FP16</td><td>2</td><td>Training and inference</td><td>Can underflow/overflow more easily; loss scaling often used</td></tr>
+  <tr><td>INT8</td><td>1</td><td>Inference quantization</td><td>Calibration and accuracy checks matter</td></tr>
+  <tr><td>INT4</td><td>0.5</td><td>Very compressed inference</td><td>Higher risk of accuracy loss</td></tr>
+</table>
+
+<div class="eq">
+  \[
+  \text{Memory reduction from FP32 to BF16} = \frac{4-2}{4}=50\%
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> A 7-billion-parameter model stored as FP32 weights needs about
+\[
+7\times10^9 \cdot 4 \approx 28 \text{ GB}
+\]
+just for weights. In BF16 that becomes about 14 GB. That difference can decide whether the model fits.
+</p>
+
+<details>
+  <summary>Annotated Python helper: estimate tensor memory at different precisions</summary>
+  <div class="codeblock" data-src="code-precision-memory"></div>
+</details>
+
+      </div>
+    </section>
+    
+
+    <section id="software-stacks" class="card topic" data-keywords="cuda rocm sycl opencl pytorch jax tensorflow xla hip">
+      <div class="card-header">
+        <h2 class="card-title">7) Software stacks: CUDA, ROCm, SYCL, OpenCL, PyTorch, JAX, TensorFlow</h2>
+        <span class="tag">Software stack</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A GPU is only useful if your software stack can talk to it.
+</p>
+
+<div class="grid2">
+  <div class="box">
+    <h3>CUDA</h3>
+    <p>
+      NVIDIA’s programming platform and ecosystem. Most scientific deep learning tutorials, extension libraries, and profiling tools are CUDA-first.
+    </p>
+  </div>
+  <div class="box">
+    <h3>ROCm / HIP</h3>
+    <p>
+      AMD’s open software stack for GPU compute. Increasingly important in HPC and large clusters, with PyTorch and other framework support for many workloads.
+    </p>
+  </div>
+  <div class="box">
+    <h3>SYCL / oneAPI</h3>
+    <p>
+      A cross-platform C++ model for heterogeneous programming. Important if you care about portability beyond a single vendor.
+    </p>
+  </div>
+  <div class="box">
+    <h3>OpenCL</h3>
+    <p>
+      A long-standing open standard for heterogeneous compute. Less dominant in ML tutorials than CUDA, but still conceptually important.
+    </p>
+  </div>
+</div>
+
+<p>
+At the framework level, <b>PyTorch</b>, <b>JAX</b>, and <b>TensorFlow</b> hide most low-level kernel management.
+That is why many scientists can be productive without writing CUDA kernels directly.
+But to optimize well, you still need to understand the hardware model underneath.
+</p>
+
+<div class="ok">
+  Beginner recommendation: learn <b>PyTorch device management + profiling + mixed precision</b> first.
+  Then learn how those concepts map to lower-level CUDA/HIP ideas.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="setup" class="card topic" data-keywords="setup install cuda rocm conda pytorch nvidia-smi rocminfo verify device">
+      <div class="card-header">
+        <h2 class="card-title">8) Environment setup and verifying that your GPU is actually being used</h2>
+        <span class="tag">Setup</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A lot of “GPU is slow” problems are really “I am accidentally running on CPU” problems.
+Always verify your environment before benchmarking.
+</p>
+
+<details open>
+  <summary>Quick setup checklist</summary>
+  <ol>
+    <li>Install the right driver stack for your machine or cluster.</li>
+    <li>Install a framework build that matches that stack.</li>
+    <li>Verify device visibility.</li>
+    <li>Run a small tensor operation on the GPU and check timing and memory allocation.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>Annotated Python: detect devices and print useful properties</summary>
+  <div class="codeblock" data-src="code-verify-gpu"></div>
+</details>
+
+<details>
+  <summary>Minimal shell commands you should know</summary>
+  <div class="codeblock" data-src="code-shell-checks"></div>
+</details>
+
+<div class="note">
+  In notebook services, the runtime picker may show options like T4, L4, A100, H100, v5e TPU, or v6e TPU.
+  That menu affects both what code path you can use and what memory ceiling you have.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="torch-basics" class="card topic" data-keywords="pytorch cuda synchronize timing device autocast benchmark">
+      <div class="card-header">
+        <h2 class="card-title">9) First principles in PyTorch: tensors, devices, synchronization, and timing</h2>
+        <span class="tag">Hands-on</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+In PyTorch, you move data and models to a device. Timing must be done carefully because GPU launches are asynchronous.
+If you time without synchronization, you may benchmark the queueing of work rather than the work itself.
+</p>
+
+<div class="eq">
+  \[
+  \text{Measured time} \approx \text{launch overhead only}
+  \]
+  if you forget to synchronize around a GPU benchmark.
+</div>
+
+<details open>
+  <summary>Annotated Python: correct CPU vs GPU matrix multiplication benchmark</summary>
+  <div class="codeblock" data-src="code-matmul-benchmark"></div>
+</details>
+
+<p>
+<b>Numerical example.</b> If a GPU kernel launch returns in 0.0003 s but the synchronized end-to-end operation takes 0.045 s,
+the true kernel time is the latter. This is one of the most common beginner mistakes.
+</p>
+
+      </div>
+    </section>
+    
+
+    <section id="memory-estimation" class="card topic" data-keywords="vram memory estimation parameters gradients optimizer states activations checkpointing">
+      <div class="card-header">
+        <h2 class="card-title">10) Estimating VRAM before you crash: parameters, gradients, optimizer states, activations</h2>
+        <span class="tag">Planning</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+The easiest way to waste time on a GPU cluster is to launch a job that cannot fit.
+Estimate memory before training.
+</p>
+
+<div class="eq">
+  \[
+  \text{Weights memory} \approx N_{\theta}\cdot b
+  \]
+  \[
+  \text{Training memory} \approx \text{weights}+\text{gradients}+\text{optimizer states}+\text{activations}
+  \]
+</div>
+
+<p>
+For Adam-like optimizers, optimizer states can be roughly 2× parameter storage, sometimes more depending on implementation and master copies.
+This is why training usually needs much more memory than inference.
+</p>
+
+<p>
+<b>Numerical example.</b> Suppose a model has 800 million parameters in BF16:
+\[
+800\times10^6 \cdot 2 \approx 1.6 \text{ GB}
+\]
+for the raw weights. Gradients add about another 1.6 GB. Adam states can add roughly 3.2 GB more.
+Before counting activations, you are already near 6.4 GB.
+</p>
+
+<details>
+  <summary>Annotated Python: estimate training memory under different assumptions</summary>
+  <div class="codeblock" data-src="code-vram-estimator"></div>
+</details>
+
+      </div>
+    </section>
+    
+
+    <section id="kernel-basics" class="card topic" data-keywords="kernel occupancy thread block grid sm warp tiny workloads underutilization">
+      <div class="card-header">
+        <h2 class="card-title">11) Kernel launches, occupancy, and why tiny workloads underuse a GPU</h2>
+        <span class="tag">Optimization</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A <b>kernel</b> is device code launched across many threads. Good kernels expose enough parallel work to keep many SMs busy.
+Bad kernels are too small, too branchy, or too memory-stalled.
+</p>
+
+<div class="eq">
+  \[
+  \text{Occupancy} \approx \frac{\text{active warps on an SM}}{\text{maximum supported warps on that SM}}
+  \]
+</div>
+
+<p>
+Occupancy is not the same as performance, but low occupancy can be a symptom of limited parallelism, excessive register use, or block-size choices that prevent good scheduling.
+</p>
+
+<p>
+<b>Numerical example.</b> If an SM can host 64 warps but your kernel configuration allows only 24 active warps, then
+\[
+\text{occupancy}\approx \frac{24}{64}=37.5\%.
+\]
+That does not automatically mean the kernel is bad, but it is a sign to inspect launch configuration and register pressure.
+</p>
+
+<div class="note">
+  Scientists often encounter this when processing one sequence at a time, one image at a time, or very small matrices.
+  Batching is frequently the simplest fix.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="matmul" class="card topic" data-keywords="matrix multiplication gemm flops tensor cores tiling benchmarking">
+      <div class="card-header">
+        <h2 class="card-title">12) Matrix multiplication: the central GPU workload</h2>
+        <span class="tag">Core workload</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+If you understand matrix multiplication, you understand much of modern GPU computing.
+Linear layers, attention projections, embeddings, many graph operations, and even some simulation kernels reduce to GEMM-like patterns.
+</p>
+
+<div class="eq">
+  \[
+  C_{m\times n}=A_{m\times k}B_{k\times n}
+  \]
+  requires roughly
+  \[
+  2mnk
+  \]
+  floating-point operations.
+</div>
+
+<p>
+<b>Numerical example.</b> For \(m=n=k=4096\),
+\[
+2\cdot 4096^3 \approx 1.37\times10^{11}\ \text{FLOPs}.
+\]
+If that multiply takes 0.01 s, the achieved throughput is roughly
+\[
+1.37\times10^{13}\ \text{FLOP/s}=13.7\ \text{TFLOP/s}.
+\]
+</p>
+
+<details>
+  <summary>Annotated Python: measure GEMM throughput and report effective TFLOP/s</summary>
+  <div class="codeblock" data-src="code-gemm-throughput"></div>
+</details>
+
+<div class="ok">
+  Many optimization tricks—mixed precision, kernel fusion, better batching, and layout tuning—ultimately exist to make your code behave more like large efficient matrix multiplications.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="convolution" class="card topic" data-keywords="convolution cnn stride padding output shape receptive field">
+      <div class="card-header">
+        <h2 class="card-title">13) Convolution: why CNN workloads behave differently from plain GEMM</h2>
+        <span class="tag">Deep learning</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Convolution reuses small kernels across spatial positions. Frameworks often lower convolutions to matrix multiplication internally or use specialized kernels.
+</p>
+
+<div class="eq">
+  \[
+  H_{\text{out}}=\left\lfloor \frac{H+2P-K}{S}\right\rfloor +1,\qquad
+  W_{\text{out}}=\left\lfloor \frac{W+2P-K}{S}\right\rfloor +1
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> Input \(224\times224\), kernel \(3\times3\), stride \(1\), padding \(1\):
+\[
+H_{\text{out}}=W_{\text{out}}=224.
+\]
+With stride \(2\), the spatial map roughly halves.
+</p>
+
+<details>
+  <summary>Annotated Python: compute convolution output shapes and activation sizes</summary>
+  <div class="codeblock" data-src="code-conv-shape"></div>
+</details>
+
+<div class="note">
+  For microscopy and medical imaging, activation memory often dominates. Large feature maps are one reason segmentation models can exhaust VRAM quickly even when parameter counts look modest.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="profiling" class="card topic" data-keywords="profiling torch profiler nsight bottleneck memory trace kernels">
+      <div class="card-header">
+        <h2 class="card-title">14) Profiling before guessing: PyTorch profiler, kernel traces, and bottleneck hunting</h2>
+        <span class="tag">Profiling</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Never optimize blind. The right sequence is:
+<b>measure → identify bottleneck → change one thing → re-measure</b>.
+</p>
+
+<div class="grid2">
+  <div class="box">
+    <h3>What to profile</h3>
+    <p>
+      Operator times, kernel traces, host-to-device copies, memory peaks, GPU utilization, data-loader stalls, and synchronization hotspots.
+    </p>
+  </div>
+  <div class="box">
+    <h3>Typical surprises</h3>
+    <p>
+      Tiny kernels launched too often, excessive <code class="inline">.cpu()</code>/<code class="inline">.numpy()</code> calls, augmentation on the critical path, and hidden synchronization.
+    </p>
+  </div>
+</div>
+
+<details open>
+  <summary>Annotated Python: collect a basic PyTorch profile</summary>
+  <div class="codeblock" data-src="code-profiler"></div>
+</details>
+
+<div class="ok">
+  A strong workflow is: first use framework-level profiling, then use device-level tools if needed.
+  For many scientists, framework profiling already explains most practical slowdowns.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="memory-optimization" class="card topic" data-keywords="memory optimization pinned memory batch size checkpointing fusion contiguous coalescing">
+      <div class="card-header">
+        <h2 class="card-title">15) Memory optimization patterns that matter in practice</h2>
+        <span class="tag">Optimization</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+When GPU jobs fail or run slowly, these are the highest-yield levers:
+</p>
+
+<ol>
+  <li><b>Use a larger but still safe batch size</b> to better saturate the device.</li>
+  <li><b>Reduce precision</b> where appropriate.</li>
+  <li><b>Use gradient checkpointing</b> to trade compute for memory.</li>
+  <li><b>Fuse operations</b> or use compiled paths so fewer kernels move data back and forth.</li>
+  <li><b>Avoid repeated host-device transfers</b>.</li>
+  <li><b>Use pinned memory and non-blocking transfers</b> in the input pipeline.</li>
+</ol>
+
+<div class="eq">
+  \[
+  \text{Activation checkpointing: memory}\downarrow,\quad \text{extra recomputation}\uparrow
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> If checkpointing cuts activation storage from 10 GB to 4 GB but adds 20% more compute,
+it may be worth it if the alternative is an out-of-memory failure.
+</p>
+
+      </div>
+    </section>
+    
+
+    <section id="amp" class="card topic" data-keywords="automatic mixed precision amp autocast gradscaler bf16 fp16 loss scaling">
+      <div class="card-header">
+        <h2 class="card-title">16) Mixed precision training, loss scaling, and stable fast training</h2>
+        <span class="tag">Training optimization</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Automatic mixed precision (AMP) lets frameworks use lower precision for many operations while preserving accuracy where needed.
+This often improves speed and reduces memory.
+</p>
+
+<div class="eq">
+  \[
+  \tilde{L}=sL
+  \]
+</div>
+
+<p>
+In FP16 training, a scale factor \(s\) may be used so tiny gradients do not underflow during backpropagation.
+BF16 often needs less babysitting because it keeps a wider exponent range.
+</p>
+
+<details open>
+  <summary>Annotated PyTorch: one training step with AMP</summary>
+  <div class="codeblock" data-src="code-amp-train"></div>
+</details>
+
+<div class="note">
+  In modern practice, BF16 is often the most comfortable reduced-precision choice on supported hardware.
+  But you still need validation checks because “faster” is useless if the model silently degrades.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="grad-accum" class="card topic" data-keywords="gradient accumulation checkpointing effective batch size microbatch">
+      <div class="card-header">
+        <h2 class="card-title">17) Gradient accumulation, checkpointing, and fitting bigger models than your VRAM allows</h2>
+        <span class="tag">Training optimization</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+If the full batch does not fit, split it into microbatches, backpropagate each, and update after accumulating gradients.
+</p>
+
+<div class="eq">
+  \[
+  \text{Effective batch size}=
+  \text{microbatch size}\times
+  \text{accumulation steps}\times
+  \text{number of devices}
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> If you can fit only 2 samples per GPU, use 8 accumulation steps on 4 GPUs:
+\[
+2\times 8\times 4=64
+\]
+effective batch size.
+</p>
+
+<details>
+  <summary>Annotated PyTorch: gradient accumulation loop</summary>
+  <div class="codeblock" data-src="code-grad-accum"></div>
+</details>
+
+<div class="ok">
+  This is extremely useful for protein models, long-sequence transformers, and 3D imaging workloads.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="dataloader" class="card topic" data-keywords="dataloader pinned memory workers prefetch augmentation io bottleneck">
+      <div class="card-header">
+        <h2 class="card-title">18) Data pipeline optimization: the GPU is only as fast as the input pipeline</h2>
+        <span class="tag">Pipeline</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+One of the most common real-world bottlenecks is not the model—it is the input pipeline.
+If the GPU waits for the next batch, utilization drops even if the model is efficient.
+</p>
+
+<table>
+  <tr><th>Symptom</th><th>Likely cause</th><th>Typical fix</th></tr>
+  <tr><td>Low GPU utilization, bursty timeline</td><td>Slow data loading</td><td>Increase workers, cache, prefetch, faster storage</td></tr>
+  <tr><td>Long host-to-device copy times</td><td>Non-pinned memory or too many tiny copies</td><td>Pinned memory, larger batches, non-blocking copies</td></tr>
+  <tr><td>CPU saturated</td><td>Heavy Python augmentations</td><td>Vectorize, move transforms earlier, use compiled transforms</td></tr>
+</table>
+
+<details>
+  <summary>Annotated PyTorch: data loader settings worth testing</summary>
+  <div class="codeblock" data-src="code-dataloader"></div>
+</details>
+
+<div class="note">
+  For genomics and structural biology, compressed file formats, parsing FASTA/PDB/mmCIF on the fly, and repeated random access to small files can all become hidden bottlenecks.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="multi-gpu" class="card topic" data-keywords="ddp distributed data parallel fsdp model parallel allreduce nvlink pcie">
+      <div class="card-header">
+        <h2 class="card-title">19) Multi-GPU and distributed training: DDP, sharding, and communication costs</h2>
+        <span class="tag">Advanced scaling</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Once one GPU is full or too slow, you scale out. The simplest scaling pattern is
+<b>data parallelism</b>: each GPU processes a different batch slice, then gradients are synchronized.
+</p>
+
+<div class="eq">
+  \[
+  T_{\text{step}} \approx T_{\text{forward/backward}} + T_{\text{communication}}
+  \]
+</div>
+
+<p>
+Communication is why scaling is never perfectly linear.
+Interconnects such as NVLink and topology choices matter. If communication dominates, more GPUs may yield disappointing gains.
+</p>
+
+<div class="grid2">
+  <div class="box">
+    <h3>DDP</h3>
+    <p>
+      Best first choice when the model fits on one GPU and you want to scale training across several GPUs.
+    </p>
+  </div>
+  <div class="box">
+    <h3>FSDP / sharded approaches</h3>
+    <p>
+      Useful when the model itself is too large for one GPU. Parameters, gradients, and optimizer states are sharded across devices.
+    </p>
+  </div>
+</div>
+
+<details>
+  <summary>Minimal DDP launch template</summary>
+  <div class="codeblock" data-src="code-ddp-template"></div>
+</details>
+
+<div class="note">
+  If your model fits on one GPU, fix single-GPU efficiency first. Scaling a bad one-GPU setup to eight GPUs usually just wastes money faster.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="inference" class="card topic" data-keywords="inference torch compile quantization serving latency throughput batch size">
+      <div class="card-header">
+        <h2 class="card-title">20) Inference optimization: batch sizing, compilation, quantization, and serving</h2>
+        <span class="tag">Inference</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Training optimization and inference optimization are related but not identical. For inference you often care about:
+<b>latency</b>, <b>throughput</b>, <b>memory footprint</b>, and <b>cost per request</b>.
+</p>
+
+<div class="eq">
+  \[
+  \text{Latency} = \text{time per request}, \qquad
+  \text{Throughput} = \text{requests or samples per second}
+  \]
+</div>
+
+<p>
+Higher batch sizes usually improve throughput but worsen latency. Quantization and compiled graphs can improve both, depending on the workload.
+</p>
+
+<details>
+  <summary>Annotated PyTorch: using <code class="inline">torch.compile</code> for a simple model</summary>
+  <div class="codeblock" data-src="code-compile-model"></div>
+</details>
+
+<details>
+  <summary>Annotated Python: simple affine quantization math</summary>
+  <div class="codeblock" data-src="code-quantization"></div>
+</details>
+
+<div class="ok">
+  For large embedding services, best practice is usually to benchmark several batch sizes and plot the latency-throughput tradeoff instead of guessing.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="bio-workloads" class="card topic" data-keywords="bioinformatics protein structure alphafold esm md docking openmm cryoem microscopy">
+      <div class="card-header">
+        <h2 class="card-title">21) Real-life scientific workloads: which hardware for docking, MD, AlphaFold, ESM, and imaging?</h2>
+        <span class="tag">Applications</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Different scientific tasks stress hardware differently. There is no single best device for all workloads.
+</p>
+
+<table>
+  <tr><th>Workload</th><th>Usually prefers</th><th>Main reason</th></tr>
+  <tr><td>Classical docking (many standard tools)</td><td>CPU or CPU-heavy workflow</td><td>Many mature packages are CPU-oriented</td></tr>
+  <tr><td>Molecular dynamics</td><td>GPU</td><td>Many repeated force calculations benefit from throughput</td></tr>
+  <tr><td>AlphaFold / ColabFold style prediction</td><td>GPU</td><td>Large neural-network inference and memory demands</td></tr>
+  <tr><td>ESM / protein language models</td><td>GPU</td><td>Transformer inference or fine-tuning</td></tr>
+  <tr><td>3D image segmentation</td><td>GPU with generous VRAM</td><td>Large activations and convolutions</td></tr>
+  <tr><td>Parsing metadata / ETL / classic scripts</td><td>CPU</td><td>I/O and branching dominate</td></tr>
+</table>
+
+<div class="grid2">
+  <div class="box">
+    <h3>Protein LLM example</h3>
+    <p>
+      If you batch similar-length sequences and keep them on-device, the GPU is excellent. If you process one short sequence at a time with lots of Python overhead, it will underperform.
+    </p>
+  </div>
+  <div class="box">
+    <h3>MD example</h3>
+    <p>
+      A modern GPU can accelerate many time steps dramatically, but performance still depends on system size, cutoff settings, PME choices, and how the simulation package is built.
+    </p>
+  </div>
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="protein-pipeline" class="card topic" data-keywords="protein ml esm embeddings fasta batching fine tuning gpu pipeline">
+      <div class="card-header">
+        <h2 class="card-title">22) End-to-end protein-ML GPU pipeline: from FASTA to embeddings to fine-tuning</h2>
+        <span class="tag">Pipeline</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Here is a realistic GPU-aware pipeline for a protein sequence project:
+</p>
+
+<ol>
+  <li>Read FASTA and metadata on CPU.</li>
+  <li>Bucket sequences by length to reduce padding waste.</li>
+  <li>Move padded batches to GPU.</li>
+  <li>Extract embeddings or train a classifier with AMP.</li>
+  <li>Profile sequence-length distribution and batch-size scaling.</li>
+  <li>Save embeddings or checkpoints asynchronously when possible.</li>
+</ol>
+
+<div class="eq">
+  \[
+  \text{Padding waste} = 1-\frac{\sum_i L_i}{B\cdot L_{\max}}
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> Suppose a batch has sequence lengths \([120,118,117,30]\). If you pad to \(L_{\max}=120\) with batch size \(B=4\),
+total allocated positions are \(4\cdot120=480\), while useful positions are \(385\). Waste is
+\[
+1-\frac{385}{480}\approx 19.8\%.
+\]
+Bucketing by length reduces this waste and often increases throughput.
+</p>
+
+<details>
+  <summary>Annotated Python: simple sequence bucketing and device transfer pattern</summary>
+  <div class="codeblock" data-src="code-protein-batching"></div>
+</details>
+
+      </div>
+    </section>
+    
+
+    <section id="md-pipeline" class="card topic" data-keywords="md openmm gpu pipeline pme cutoff timestep precision">
+      <div class="card-header">
+        <h2 class="card-title">23) End-to-end MD GPU pipeline: setup, simulate, monitor, and optimize</h2>
+        <span class="tag">Pipeline</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A practical GPU-first MD pipeline might look like:
+</p>
+
+<ol>
+  <li>Prepare structure and force field files on CPU.</li>
+  <li>Build the system and choose integrator settings.</li>
+  <li>Select CUDA or HIP platform.</li>
+  <li>Benchmark a short equilibration run.</li>
+  <li>Record ns/day or steps/s, not just wall-clock for one step.</li>
+  <li>Tune output frequency, precision mode, and system setup choices.</li>
+</ol>
+
+<div class="note">
+  Writing trajectories too often can dominate runtime. Performance tuning is not only about kernels; it is also about not doing unnecessary I/O.
+</div>
+
+<details>
+  <summary>Annotated Python: check OpenMM platform selection and basic simulation skeleton</summary>
+  <div class="codeblock" data-src="code-openmm-check"></div>
+</details>
+
+      </div>
+    </section>
+    
+
+    <section id="runtime-choice" class="card topic" data-keywords="cpu t4 l4 a100 h100 tpu runtime selection cloud notebook">
+      <div class="card-header">
+        <h2 class="card-title">24) Choosing among CPU, T4, L4, A100, H100, and TPU-style options</h2>
+        <span class="tag">Runtime selection</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+When a cloud or notebook runtime gives you several options, think about four things:
+<b>compatibility</b>, <b>VRAM</b>, <b>throughput</b>, and <b>cost</b>.
+</p>
+
+<table>
+  <tr><th>If your task is...</th><th>Usually start with...</th><th>Why</th></tr>
+  <tr><td>Classic docking or CPU-only tools</td><td>CPU</td><td>No benefit from a GPU if the software path is CPU-based</td></tr>
+  <tr><td>Small-to-medium DL experiments</td><td>T4 or L4</td><td>Good entry options</td></tr>
+  <tr><td>Protein transformers / AlphaFold / heavier MD</td><td>L4, A100, or H100</td><td>Need stronger throughput and more VRAM</td></tr>
+  <tr><td>Large-scale training</td><td>A100, H100, or large-cluster alternative</td><td>Better headroom and scaling</td></tr>
+  <tr><td>TPU-ready JAX/XLA workflows</td><td>TPU</td><td>Excellent when your code path matches the platform</td></tr>
+</table>
+
+<div class="ok">
+  If you are unsure, the best first benchmark is a tiny representative run on each available device, measuring:
+  <b>time per step</b>, <b>max memory</b>, and <b>cost per useful sample</b>.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="troubleshooting" class="card topic" data-keywords="oom idle low utilization fragmentation synchronization out of memory troubleshooting">
+      <div class="card-header">
+        <h2 class="card-title">25) Troubleshooting: why the GPU is slow, idle, or out of memory</h2>
+        <span class="tag">Troubleshooting</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+These are the most common symptoms and interpretations:
+</p>
+
+<table>
+  <tr><th>Symptom</th><th>Common explanation</th><th>High-yield actions</th></tr>
+  <tr><td>GPU memory full</td><td>Batch too large, activations too big, optimizer heavy</td><td>Lower batch, AMP, checkpointing, shorter sequences, smaller crop</td></tr>
+  <tr><td>GPU utilization low</td><td>Input pipeline or CPU bottleneck</td><td>Increase workers, pin memory, cache, bucket by length, profile</td></tr>
+  <tr><td>GPU slower than CPU</td><td>Tiny workload or frequent host-device syncs</td><td>Batch more, avoid <code class="inline">.item()</code> in tight loops, reduce transfers</td></tr>
+  <tr><td>Unstable loss with FP16</td><td>Numerical issues</td><td>Use GradScaler, try BF16, inspect learning rate</td></tr>
+  <tr><td>Scaling across GPUs is poor</td><td>Communication overhead</td><td>Larger per-GPU batch, gradient accumulation, inspect topology, reduce sync frequency if appropriate</td></tr>
+</table>
+
+<div class="note">
+  The worst habit in optimization is changing five things at once. Change one knob, record the result, and keep a benchmark notebook or TSV log.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="benchmarking-playbook" class="card topic" data-keywords="benchmarking methodology warmup synchronize throughput latency reproducibility">
+      <div class="card-header">
+        <h2 class="card-title">26) Benchmarking playbook: how to compare devices honestly</h2>
+        <span class="tag">Methodology</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+A good GPU benchmark is:
+</p>
+<ol>
+  <li>Representative of your real workload.</li>
+  <li>Warm-started so initialization overhead does not dominate.</li>
+  <li>Synchronized for accurate timing.</li>
+  <li>Repeated several times.</li>
+  <li>Reported with both performance and memory numbers.</li>
+</ol>
+
+<div class="eq">
+  \[
+  \text{Median speedup} = \frac{\text{median CPU time}}{\text{median accelerator time}}
+  \]
+</div>
+
+<p>
+<b>Numerical example.</b> Suppose step times on a GPU are 0.42, 0.40, 0.41, 0.95, 0.40 s.
+The median is 0.41 s and is more trustworthy than the mean because the 0.95 s run may reflect a transient stall.
+</p>
+
+      </div>
+    </section>
+    
+
+    <section id="hands-on" class="card topic" data-keywords="exercises projects homework gpu pytorch profiling optimization">
+      <div class="card-header">
+        <h2 class="card-title">27) Hands-on mini projects and exercises</h2>
+        <span class="tag">Practice</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+Use these as checkpoints to turn the course into skill:
+</p>
+
+<ol>
+  <li>Benchmark CPU vs GPU matrix multiplication for several sizes and plot where the GPU becomes worthwhile.</li>
+  <li>Profile a small CNN and identify whether it is data-loader-limited or compute-limited.</li>
+  <li>Fit a transformer batch by combining AMP, length bucketing, and gradient accumulation.</li>
+  <li>Compare two cloud runtimes using cost per processed sequence rather than just raw speed.</li>
+  <li>Take one of your own protein or imaging pipelines and write down the time split between I/O, preprocessing, model compute, and post-processing.</li>
+</ol>
+
+<div class="ok">
+  If you can explain <b>why</b> a benchmark changed—not just that it changed—you are moving from beginner to advanced GPU usage.
+</div>
+
+      </div>
+    </section>
+    
+
+    <section id="references" class="card topic" data-keywords="references cuda rocm pytorch tpu openmm oneapi opencl">
+      <div class="card-header">
+        <h2 class="card-title">28) Reference links for continued study</h2>
+        <span class="tag">References</span>
+      </div>
+      <div class="card-body">
+        
+<p>
+These are the primary families of resources this course is designed to align with:
+</p>
+<ul>
+  <li><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/" target="_blank" rel="noopener">NVIDIA CUDA Programming Guide</a></li>
+  <li><a href="https://www.nvidia.com/en-us/data-center/tensor-cores/" target="_blank" rel="noopener">NVIDIA Tensor Cores</a></li>
+  <li><a href="https://www.nvidia.com/en-us/data-center/ampere-architecture/" target="_blank" rel="noopener">NVIDIA Ampere Architecture</a></li>
+  <li><a href="https://www.nvidia.com/en-us/data-center/technologies/hopper-architecture/" target="_blank" rel="noopener">NVIDIA Hopper Architecture</a></li>
+  <li><a href="https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/" target="_blank" rel="noopener">NVIDIA Blackwell Architecture</a></li>
+  <li><a href="https://rocm.docs.amd.com/" target="_blank" rel="noopener">AMD ROCm Documentation</a></li>
+  <li><a href="https://docs.cloud.google.com/tpu/docs/intro-to-tpu" target="_blank" rel="noopener">Google Cloud TPU Overview</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/amp.html" target="_blank" rel="noopener">PyTorch AMP</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/profiler.html" target="_blank" rel="noopener">PyTorch Profiler</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html" target="_blank" rel="noopener">PyTorch DistributedDataParallel</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/generated/torch.compile.html" target="_blank" rel="noopener">PyTorch torch.compile</a></li>
+  <li><a href="https://www.khronos.org/opencl/" target="_blank" rel="noopener">Khronos OpenCL</a></li>
+  <li><a href="https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2025-0/overview.html" target="_blank" rel="noopener">Intel oneAPI Programming Guide</a></li>
+  <li><a href="https://docs.openmm.org/latest/userguide/" target="_blank" rel="noopener">OpenMM User Guide</a></li>
+</ul>
+<p class="muted">
+  Hardware generations and cloud offerings evolve quickly. Use the conceptual sections of this page as durable knowledge, and verify exact product availability and framework support in current documentation before major deployments.
+</p>
+
+      </div>
+    </section>
+    
+  </div>
+</main>
+
+<script type="text/plain" id="code-roofline">
+
+import math
+
+def classify_kernel(flops, bytes_moved, peak_tflops=60.0, bandwidth_gbps=900.0):
+    # Convert device peaks into base units
+    peak_flops = peak_tflops * 1e12
+    bandwidth = bandwidth_gbps * 1e9
+
+    # Arithmetic intensity tells us how much math we do per byte moved
+    ai = flops / bytes_moved
+
+    # Two idealized lower bounds
+    t_compute = flops / peak_flops
+    t_memory = bytes_moved / bandwidth
+
+    bottleneck = "compute-bound" if t_compute > t_memory else "memory-bound"
+    return {
+        "arithmetic_intensity_flops_per_byte": ai,
+        "compute_time_s_lower_bound": t_compute,
+        "memory_time_s_lower_bound": t_memory,
+        "dominant_limit": bottleneck,
+    }
+
+example = classify_kernel(
+    flops=2e12,         # 2 tera-FLOPs of work
+    bytes_moved=2e11,   # 200 GB moved
+    peak_tflops=60.0,
+    bandwidth_gbps=900.0,
+)
+for k, v in example.items():
+    print(f"{k}: {v}")
+
+</script>
+
+<script type="text/plain" id="code-precision-memory">
+
+def tensor_bytes(num_elements, dtype="fp32"):
+    bytes_per = {
+        "fp64": 8,
+        "fp32": 4,
+        "bf16": 2,
+        "fp16": 2,
+        "int8": 1,
+        "int4": 0.5,
+    }[dtype.lower()]
+    return num_elements * bytes_per
+
+num_params = 7_000_000_000  # 7 billion parameters
+for dtype in ["fp32", "bf16", "fp16", "int8"]:
+    gb = tensor_bytes(num_params, dtype) / 1e9
+    print(f"{dtype:>4} -> ~{gb:,.1f} GB for weights only")
+
+</script>
+
+<script type="text/plain" id="code-verify-gpu">
+
+import platform
+import torch
+
+print("Python platform:", platform.platform())
+print("PyTorch version:", torch.__version__)
+
+print("\nCUDA available?", torch.cuda.is_available())
+if torch.cuda.is_available():
+    count = torch.cuda.device_count()
+    print("CUDA device count:", count)
+    for i in range(count):
+        props = torch.cuda.get_device_properties(i)
+        print(f"\nDevice {i}: {props.name}")
+        print("  Total memory (GB):", round(props.total_memory / 1e9, 2))
+        print("  Multiprocessors:", props.multi_processor_count)
+        print("  Compute capability:", f"{props.major}.{props.minor}")
+
+    # Allocate a tiny tensor so you verify actual runtime use
+    x = torch.randn(1024, 1024, device="cuda")
+    y = x @ x
+    torch.cuda.synchronize()
+    print("\nTiny GPU matmul finished. Tensor device:", y.device)
+else:
+    print("No CUDA GPU visible to PyTorch.")
+
+</script>
+
+<script type="text/plain" id="code-shell-checks">
+
+# NVIDIA
+nvidia-smi
+
+# AMD ROCm
+rocminfo
+rocm-smi
+
+# PyTorch package / environment sanity
+python - <<'PY'
+import torch
+print("torch:", torch.__version__)
+print("cuda available:", torch.cuda.is_available())
+print("cuda device count:", torch.cuda.device_count())
+PY
+
+</script>
+
+<script type="text/plain" id="code-matmul-benchmark">
+
+import time
+import torch
+
+def bench(device, n=4096, repeats=5):
+    a = torch.randn(n, n, device=device)
+    b = torch.randn(n, n, device=device)
+
+    # Warm-up is important so setup/compilation overhead does not dominate
+    for _ in range(3):
+        c = a @ b
+    if device == "cuda":
+        torch.cuda.synchronize()
+
+    times = []
+    for _ in range(repeats):
+        t0 = time.perf_counter()
+        c = a @ b
+        if device == "cuda":
+            torch.cuda.synchronize()
+        t1 = time.perf_counter()
+        times.append(t1 - t0)
+
+    return min(times), sum(times) / len(times)
+
+cpu_best, cpu_mean = bench("cpu", n=2048)
+print(f"CPU best={cpu_best:.4f}s mean={cpu_mean:.4f}s")
+
+if torch.cuda.is_available():
+    gpu_best, gpu_mean = bench("cuda", n=4096)
+    print(f"GPU best={gpu_best:.4f}s mean={gpu_mean:.4f}s")
+else:
+    print("No CUDA GPU available")
+
+</script>
+
+<script type="text/plain" id="code-vram-estimator">
+
+def estimate_training_memory(
+    params,
+    weight_bytes=2,      # BF16/FP16 weights
+    grad_bytes=2,
+    optimizer_multiplier=2.0,   # rough Adam-style states relative to weight bytes
+    activation_gb=4.0,
+):
+    weights_gb = params * weight_bytes / 1e9
+    grads_gb = params * grad_bytes / 1e9
+    opt_gb = params * weight_bytes * optimizer_multiplier / 1e9
+    total_gb = weights_gb + grads_gb + opt_gb + activation_gb
+    return {
+        "weights_gb": weights_gb,
+        "grads_gb": grads_gb,
+        "optimizer_states_gb": opt_gb,
+        "activations_gb": activation_gb,
+        "total_gb": total_gb,
+    }
+
+report = estimate_training_memory(
+    params=800_000_000,   # 800M parameters
+    weight_bytes=2,
+    grad_bytes=2,
+    optimizer_multiplier=2.0,
+    activation_gb=6.0,
+)
+
+for k, v in report.items():
+    print(f"{k}: {v:.2f} GB")
+
+</script>
+
+<script type="text/plain" id="code-gemm-throughput">
+
+import time
+import torch
+
+def gemm_tflops(n=4096, repeats=5, device="cuda"):
+    a = torch.randn(n, n, device=device)
+    b = torch.randn(n, n, device=device)
+
+    # Warm-up
+    for _ in range(3):
+        c = a @ b
+    if device == "cuda":
+        torch.cuda.synchronize()
+
+    best = float("inf")
+    for _ in range(repeats):
+        t0 = time.perf_counter()
+        c = a @ b
+        if device == "cuda":
+            torch.cuda.synchronize()
+        t1 = time.perf_counter()
+        best = min(best, t1 - t0)
+
+    flops = 2 * (n ** 3)
+    tflops = flops / best / 1e12
+    return best, tflops
+
+if torch.cuda.is_available():
+    t, p = gemm_tflops(n=4096, device="cuda")
+    print(f"Best time: {t:.4f} s")
+    print(f"Achieved throughput: {p:.2f} TFLOP/s")
+else:
+    print("No CUDA GPU available")
+
+</script>
+
+<script type="text/plain" id="code-conv-shape">
+
+def conv2d_out(h, w, kernel=3, stride=1, padding=0):
+    out_h = ((h + 2 * padding - kernel) // stride) + 1
+    out_w = ((w + 2 * padding - kernel) // stride) + 1
+    return out_h, out_w
+
+# Example: classic image size
+h, w = 224, 224
+for stride in [1, 2]:
+    out = conv2d_out(h, w, kernel=3, stride=stride, padding=1)
+    print(f"stride={stride} -> output shape {out}")
+
+# Estimate activation memory for a feature map
+batch, channels, out_h, out_w = 8, 64, 224, 224
+numel = batch * channels * out_h * out_w
+memory_mb = numel * 2 / 1e6   # BF16/FP16 activations -> 2 bytes each
+print(f"Feature map memory ~ {memory_mb:.1f} MB")
+
+</script>
+
+<script type="text/plain" id="code-profiler">
+
+import torch
+from torch import nn
+from torch.profiler import profile, ProfilerActivity
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = nn.Sequential(
+    nn.Linear(1024, 4096),
+    nn.ReLU(),
+    nn.Linear(4096, 1024),
+).to(device)
+
+x = torch.randn(256, 1024, device=device)
+
+with profile(
+    activities=[ProfilerActivity.CPU] + (
+        [ProfilerActivity.CUDA] if device == "cuda" else []
+    ),
+    record_shapes=True,
+    profile_memory=True,
+) as prof:
+    for _ in range(10):
+        y = model(x)
+        if device == "cuda":
+            torch.cuda.synchronize()
+
+print(prof.key_averages().table(sort_by="self_cuda_time_total" if device=="cuda" else "self_cpu_time_total", row_limit=10))
+
+</script>
+
+<script type="text/plain" id="code-amp-train">
+
+import torch
+from torch import nn
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+model = nn.Sequential(
+    nn.Linear(512, 2048),
+    nn.GELU(),
+    nn.Linear(2048, 10),
+).to(device)
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+criterion = nn.CrossEntropyLoss()
+
+# New AMP API in current PyTorch uses torch.autocast + torch.amp.GradScaler
+scaler = torch.amp.GradScaler(device_type="cuda", enabled=(device == "cuda"))
+
+x = torch.randn(64, 512, device=device)
+y = torch.randint(0, 10, (64,), device=device)
+
+optimizer.zero_grad(set_to_none=True)
+
+with torch.autocast(device_type=device if device != "cpu" else "cpu",
+                    dtype=torch.float16 if device == "cuda" else torch.bfloat16,
+                    enabled=(device in {"cuda", "cpu"})):
+    logits = model(x)
+    loss = criterion(logits, y)
+
+# If using FP16 on GPU, scaling helps guard against underflow
+scaler.scale(loss).backward()
+scaler.step(optimizer)
+scaler.update()
+
+print("Loss:", float(loss))
+
+</script>
+
+<script type="text/plain" id="code-grad-accum">
+
+import torch
+from torch import nn
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = nn.Sequential(nn.Linear(256, 1024), nn.ReLU(), nn.Linear(1024, 2)).to(device)
+opt = torch.optim.AdamW(model.parameters(), lr=1e-3)
+criterion = nn.CrossEntropyLoss()
+
+microbatch_size = 4
+accum_steps = 8
+
+opt.zero_grad(set_to_none=True)
+for step in range(accum_steps):
+    x = torch.randn(microbatch_size, 256, device=device)
+    y = torch.randint(0, 2, (microbatch_size,), device=device)
+
+    logits = model(x)
+    loss = criterion(logits, y) / accum_steps
+    loss.backward()
+
+# Optimizer update happens after gradients from all microbatches are accumulated
+opt.step()
+
+effective_batch = microbatch_size * accum_steps
+print("Effective batch size:", effective_batch)
+
+</script>
+
+<script type="text/plain" id="code-dataloader">
+
+from torch.utils.data import DataLoader, TensorDataset
+import torch
+
+# Synthetic example: replace with your own dataset
+x = torch.randn(5000, 512)
+y = torch.randint(0, 2, (5000,))
+ds = TensorDataset(x, y)
+
+loader = DataLoader(
+    ds,
+    batch_size=128,
+    shuffle=True,
+    num_workers=4,      # test 0, 2, 4, 8
+    pin_memory=True,    # often helps host->GPU transfer
+    persistent_workers=True,
+    prefetch_factor=2,
+)
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+for xb, yb in loader:
+    xb = xb.to(device, non_blocking=True)
+    yb = yb.to(device, non_blocking=True)
+    # training step would go here
+    break
+
+print("First batch moved to:", device)
+
+</script>
+
+<script type="text/plain" id="code-ddp-template">
+
+# Launch:
+# torchrun --standalone --nproc_per_node=4 train_ddp.py
+
+# --- train_ddp.py ---
+import os
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+def main():
+    dist.init_process_group(backend="nccl")
+    local_rank = int(os.environ["LOCAL_RANK"])
+    torch.cuda.set_device(local_rank)
+
+    model = torch.nn.Linear(1024, 2).cuda(local_rank)
+    model = DDP(model, device_ids=[local_rank])
+
+    x = torch.randn(64, 1024, device=local_rank)
+    y = model(x)
+    loss = y.sum()
+    loss.backward()
+
+    dist.destroy_process_group()
+
+if __name__ == "__main__":
+    main()
+
+</script>
+
+<script type="text/plain" id="code-compile-model">
+
+import time
+import torch
+from torch import nn
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+model = nn.Sequential(
+    nn.Linear(1024, 4096),
+    nn.GELU(),
+    nn.Linear(4096, 1024),
+).to(device)
+
+x = torch.randn(256, 1024, device=device)
+
+compiled_model = torch.compile(model) if hasattr(torch, "compile") else model
+
+# Warm-up
+for _ in range(5):
+    _ = compiled_model(x)
+if device == "cuda":
+    torch.cuda.synchronize()
+
+t0 = time.perf_counter()
+for _ in range(20):
+    _ = compiled_model(x)
+if device == "cuda":
+    torch.cuda.synchronize()
+t1 = time.perf_counter()
+
+print("Average compiled forward time:", (t1 - t0) / 20)
+
+</script>
+
+<script type="text/plain" id="code-quantization">
+
+import numpy as np
+
+# Affine quantization maps floating-point values to an integer range
+x = np.array([-1.2, -0.5, 0.0, 0.4, 1.7], dtype=np.float32)
+
+qmin, qmax = -128, 127
+xmin, xmax = x.min(), x.max()
+
+scale = (xmax - xmin) / (qmax - qmin)
+zero_point = np.round(qmin - xmin / scale).astype(np.int32)
+
+q = np.clip(np.round(x / scale + zero_point), qmin, qmax).astype(np.int8)
+x_reconstructed = (q.astype(np.float32) - zero_point) * scale
+
+print("Original:      ", x)
+print("Quantized int8:", q)
+print("Reconstructed: ", x_reconstructed)
+print("Absolute error:", np.abs(x - x_reconstructed))
+
+</script>
+
+<script type="text/plain" id="code-protein-batching">
+
+from collections import defaultdict
+
+# Example sequence lengths from a protein FASTA dataset
+lengths = [120, 118, 117, 30, 512, 490, 505, 40, 42, 39]
+
+# Simple bucketing by rounded length bins
+buckets = defaultdict(list)
+bin_size = 64
+for idx, L in enumerate(lengths):
+    key = (L // bin_size) * bin_size
+    buckets[key].append((idx, L))
+
+for key, items in sorted(buckets.items()):
+    max_len = max(L for _, L in items)
+    useful = sum(L for _, L in items)
+    allocated = len(items) * max_len
+    waste = 1 - useful / allocated
+    print(f"bucket {key:>3}: batch_size={len(items)} max_len={max_len} padding_waste={waste:.3f}")
+
+</script>
+
+<script type="text/plain" id="code-openmm-check">
+
+# Requires: pip install openmm
+from openmm import Platform
+from openmm.app import Simulation, PDBFile, ForceField
+from openmm import LangevinMiddleIntegrator
+from openmm.unit import kelvin, picosecond, femtoseconds
+
+print("Available OpenMM platforms:")
+for i in range(Platform.getNumPlatforms()):
+    print(" -", Platform.getPlatform(i).getName())
+
+# Skeleton only: uncomment when you have a prepared PDB
+# pdb = PDBFile("input.pdb")
+# ff = ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
+# system = ff.createSystem(pdb.topology)
+# integrator = LangevinMiddleIntegrator(300*kelvin, 1/picosecond, 2*femtoseconds)
+# platform = Platform.getPlatformByName("CUDA")  # or "HIP", "OpenCL", "CPU"
+# sim = Simulation(pdb.topology, system, integrator, platform)
+# sim.context.setPositions(pdb.positions)
+# print("Simulation context created on platform:", platform.getName())
+
+</script>
+
+<script>
+  function renderCodeblocks(){
+    document.querySelectorAll(".codeblock").forEach(el => {
+      const src = el.getAttribute("data-src");
+      const node = document.getElementById(src);
+      if(!node) return;
+      const text = node.textContent.replace(/^\n+|\n+$/g, "");
+      const pre = document.createElement("pre");
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+      const code = document.createElement("code");
+      code.textContent = text;
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(()=>btn.textContent=old, 900);
+        } catch(e) {
+          btn.textContent = "Copy failed";
+          setTimeout(()=>btn.textContent="Copy", 900);
+        }
+      });
+      pre.appendChild(btn);
+      pre.appendChild(code);
+      el.appendChild(pre);
+    });
+  }
+
+  function setupSearch(){
+    const input = document.getElementById("search");
+    const topics = () => Array.from(document.querySelectorAll(".topic"));
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      topics().forEach(t => {
+        const kw = (t.getAttribute("data-keywords") || "").toLowerCase();
+        const text = t.innerText.toLowerCase();
+        const show = !q || kw.includes(q) || text.includes(q);
+        t.style.display = show ? "" : "none";
+      });
+    });
+  }
+
+  function setupExpandCollapse(){
+    const allDetails = () => Array.from(document.querySelectorAll("details"));
+    document.getElementById("expandAll").addEventListener("click", () => allDetails().forEach(d => d.open = true));
+    document.getElementById("collapseAll").addEventListener("click", () => allDetails().forEach(d => d.open = false));
+  }
+
+  function setupCopyLink(){
+    const btn = document.getElementById("copyLink");
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        const old = btn.textContent;
+        btn.textContent = "Link copied!";
+        setTimeout(()=>btn.textContent=old, 900);
+      } catch(e) {
+        btn.textContent = "Copy failed";
+        setTimeout(()=>btn.textContent="Copy page link", 900);
+      }
+    });
+  }
+
+  function setupSmoothScroll(){
+    document.querySelectorAll(".toc a").forEach(a => {
+      a.addEventListener("click", (e) => {
+        const href = a.getAttribute("href");
+        if(!href || !href.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        target.scrollIntoView({behavior:"smooth", block:"start"});
+        history.pushState(null, "", href);
+      });
+    });
+  }
+
+  renderCodeblocks();
+  setupSearch();
+  setupExpandCollapse();
+  setupCopyLink();
+  setupSmoothScroll();
+</script>
+
+</body>
+</html>
