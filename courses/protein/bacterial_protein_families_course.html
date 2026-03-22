@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bacterial Protein Families — Structures, Functions, and Real Bioinformatics Code</title>
+  <meta name="description" content="A detailed standalone HTML course on bacterial protein families, structures, domains, localization, and practical code examples using UniProt, InterPro, RCSB PDB, HMMER, BLAST, and Biopython." />
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1; --warn:#ffd166;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1500px; margin:0 auto;}
+    .hero{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size: clamp(24px, 4vw, 38px);}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.7; font-size:15px; max-width:1320px;}
+    .kicker{color:var(--accent2); font-weight:900; text-transform:uppercase; font-size:12px; margin-top:12px;}
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; justify-content:space-between;}
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.04); color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background: rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:800;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{
+      max-width:1500px; margin:0 auto; padding:0 18px 48px;
+      display:grid; grid-template-columns: 380px 1fr; gap:14px;
+    }
+    nav{
+      position:sticky; top:14px; align-self:start; height: calc(100vh - 28px); overflow:auto;
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.55); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); padding:12px;
+    }
+    nav h2{font-size:13px; margin:6px 8px 10px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase;}
+    .toc a{
+      display:block; padding:8px 10px; border-radius:12px; color:var(--text);
+      border:1px solid transparent; font-size:14px; line-height:1.35;
+    }
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{
+      border:1px solid var(--border); border-radius:var(--radius);
+      background: rgba(17,26,51,.45); backdrop-filter: blur(10px);
+      box-shadow:var(--shadow); overflow:hidden;
+    }
+    .card-header{
+      padding:14px 16px; border-bottom:1px solid var(--border); background: rgba(15,23,48,.55);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{
+      font-size:12px; color:var(--muted); border:1px solid var(--border);
+      padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04); white-space:nowrap;
+    }
+    .card-body{padding:14px 16px 16px; line-height:1.75; font-size:14.6px;}
+    .grid2{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .grid3{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:12px; margin-top:10px;}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.8px; line-height:1.65}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{
+      font-family:var(--mono); font-size:.95em; background: rgba(0,0,0,.25);
+      border:1px solid var(--border); padding:2px 6px; border-radius:10px;
+    }
+    details{
+      border:1px solid var(--border); background: rgba(255,255,255,.03);
+      border-radius:14px; padding:10px 12px; margin:12px 0 0;
+    }
+    summary{cursor:pointer; font-weight:900; color:var(--text); list-style:none; user-select:none;}
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{
+      margin:10px 0 0; padding:10px 12px; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.22); overflow-x:auto;
+    }
+    .codeblock pre{
+      margin:10px 0 0; border-radius:14px; border:1px solid var(--border);
+      background: rgba(0,0,0,.32); overflow:auto; padding:14px 12px 12px; position: relative;
+    }
+    .codeblock code{font-family: var(--mono); font-size:12.5px; line-height:1.55; white-space: pre; display:block;}
+    .copy-btn{
+      position:absolute; top:10px; right:10px; padding:6px 10px; border-radius:10px;
+      border:1px solid var(--border); background: rgba(255,255,255,.06); color:var(--text);
+      cursor:pointer; font-weight:900; font-size:12px;
+    }
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{
+      border-left: 4px solid rgba(122,162,255,.9); padding: 10px 12px;
+      background: rgba(122,162,255,.08); border-radius: 12px; margin-top: 12px;
+    }
+    .warn{
+      border-left: 4px solid rgba(255,209,102,.95); padding: 10px 12px;
+      background: rgba(255,209,102,.10); border-radius: 12px; margin-top: 12px;
+    }
+    table{
+      width:100%; border-collapse:collapse; border:1px solid var(--border);
+      border-radius:14px; background: rgba(0,0,0,.18); margin-top:10px; overflow:hidden;
+    }
+    th, td{
+      text-align:left; padding:10px 10px; border-bottom:1px solid var(--border);
+      vertical-align:top; font-size:13.5px; line-height:1.48;
+    }
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    footer{max-width:1500px; margin:0 auto 30px; padding:0 18px; color:var(--muted);}
+    @media (max-width:1160px){
+      main{grid-template-columns:1fr}
+      nav{position:relative; height:auto}
+      .grid2, .grid3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <h1>Bacterial Protein Families — Structures, Functions, and Real Bioinformatics Code</h1>
+    <p class="subtitle">
+      A standalone beginner-to-advanced HTML course in the same teaching style as your attached page:
+      dark theme, sticky navigation, search, formula panels, collapsible annotated code, and practical pipelines.
+      The focus is on <b>how bacterial protein families are organized, what structural folds they use, where they localize, and how to analyze them with real code</b>.
+    </p>
+    <div class="kicker">Course focus</div>
+    <p class="subtitle">
+      Learn the difference between <b>protein family</b>, <b>domain</b>, <b>fold</b>, and <b>complex</b>;
+      explore major bacterial families such as <b>beta-lactamases, porins, efflux pumps, secretion systems,
+      pili, flagella, histidine kinases, transcription factors, chaperones, ATPases, PBPs, ribosomal proteins,
+      and metabolic enzyme superfamilies</b>; then move into real examples using <b>UniProt, InterPro/Pfam-style domain resources, RCSB PDB, BLAST, HMMER, and Biopython</b>.
+    </p>
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter sections (e.g., beta-lactamase, porin, ABC transporter, PDB, HMMER, histidine kinase, Pseudomonas)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc">
+      <a href="#overview">0) Course overview</a>
+      <a href="#language">1) Protein family, domain, fold, motif, and complex</a>
+      <a href="#cell">2) Where bacterial proteins live</a>
+      <a href="#structures">3) Major structural archetypes in bacteria</a>
+      <a href="#math">4) Useful formulas and quantitative ideas</a>
+      <a href="#atlas">5) Atlas of important bacterial protein families</a>
+      <a href="#enzymes">6) Enzyme superfamilies and catalytic logic</a>
+      <a href="#envelope">7) Cell-envelope and membrane proteins</a>
+      <a href="#transport">8) Transporter families</a>
+      <a href="#resistance">9) Antimicrobial resistance protein families</a>
+      <a href="#secretion">10) Secretion systems and virulence proteins</a>
+      <a href="#motility">11) Pili, fimbriae, flagella, and motility proteins</a>
+      <a href="#regulation">12) Regulatory and signaling families</a>
+      <a href="#proteostasis">13) Chaperones, proteases, and stress proteins</a>
+      <a href="#translation">14) Translation, replication, and housekeeping families</a>
+      <a href="#pseudomonas">15) A practical Pseudomonas aeruginosa family map</a>
+      <a href="#workflow">16) How to study a bacterial protein family</a>
+      <a href="#uniprot">17) Code: query UniProt</a>
+      <a href="#interpro">18) Code: domain annotation with InterPro / local HMMER</a>
+      <a href="#pdb">19) Code: search and inspect structures from PDB</a>
+      <a href="#biopython">20) Code: analyze residues around an active site or ligand</a>
+      <a href="#motifscan">21) Code: motif scan across FASTA files</a>
+      <a href="#counts">22) Code: summarize family counts across genomes</a>
+      <a href="#miniproject">23) Mini-project ideas with real outputs</a>
+      <a href="#pitfalls">24) Common interpretation mistakes</a>
+      <a href="#next">25) What to do next</a>
+    </div>
+  </nav>
+
+  <div class="content">
+
+<section id="overview" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">0) Course overview</h2>
+    <div class="tag">start here</div>
+  </div>
+  <div class="card-body">
+    <p>
+      This course teaches bacterial protein families from a structural-bioinformatics perspective.
+      Instead of memorizing isolated genes, you learn a reusable framework:
+      <b>family → domains → fold → localization → biochemical mechanism → biological role → computational analysis</b>.
+    </p>
+    <div class="grid3">
+      <div class="box"><h3>What you will learn</h3><p>
+        The major protein families that appear repeatedly across bacterial genomes and how their structures explain their functions.
+      </p></div>
+      <div class="box"><h3>What you will code</h3><p>
+        How to retrieve annotations from UniProt, search structures in PDB, inspect domains, parse PDB files, scan motifs, and summarize family abundance.
+      </p></div>
+      <div class="box"><h3>What you will build</h3><p>
+        A small but realistic workflow for taking a genome or proteome and turning it into a family-level structural and functional summary.
+      </p></div>
+    </div>
+    <div class="note">
+      The most important conceptual shift is this: the same biological function can be shared by many different proteins,
+      but the same <b>protein family</b> usually carries a conserved core architecture, conserved motifs, and conserved mechanism.
+    </div>
+  </div>
+</section>
+
+<section id="language" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">1) Protein family, domain, fold, motif, and complex</h2>
+    <div class="tag">core concepts</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
+      <tr><td>Protein family</td><td>Evolutionarily related proteins with shared sequence and function patterns</td><td>Class A beta-lactamases, LysR regulators, major facilitator transporters</td></tr>
+      <tr><td>Protein domain</td><td>A modular structural/functional unit inside a protein</td><td>Rossmann domain, HTH DNA-binding domain, peptidase M4 domain</td></tr>
+      <tr><td>Fold</td><td>Overall 3D arrangement of secondary structures</td><td>TIM barrel, beta-propeller, alpha-helical bundle, outer-membrane beta-barrel</td></tr>
+      <tr><td>Motif</td><td>Short conserved sequence or structural feature</td><td>HXH metal-binding motif, Walker A P-loop, SXXK in serine enzymes</td></tr>
+      <tr><td>Complex</td><td>Multi-subunit assembly</td><td>Ribosome, ATP synthase, BAM complex, RND efflux pump tripartite assembly</td></tr>
+    </table>
+    <div class="grid2">
+      <div class="box"><h3>Why this matters</h3><p>
+        A family tells you evolutionary context; a domain tells you modular function; a fold tells you structural constraints; a motif often points to mechanism.
+      </p></div>
+      <div class="box"><h3>Common beginner mistake</h3><p>
+        Treating a gene name, a protein family, and a domain as if they were interchangeable. They are related but not identical.
+      </p></div>
+    </div>
+  </div>
+</section>
+
+<section id="cell" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">2) Where bacterial proteins live</h2>
+    <div class="tag">localization</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Protein family classification becomes much easier when you first ask where the protein lives:
+      cytosol, inner membrane, periplasm, outer membrane, cell surface, extracellular medium, or a filament/needle/pilus assembly.
+    </p>
+    <table>
+      <tr><th>Location</th><th>Typical structural types</th><th>Typical families</th></tr>
+      <tr><td>Cytosol</td><td>Globular enzymes, ATPases, DNA/RNA-binding proteins</td><td>Mur enzymes, RecA, DnaK, ribosomal proteins, transcription factors</td></tr>
+      <tr><td>Inner membrane</td><td>Alpha-helical membrane proteins</td><td>ABC transporters, MFS pumps, histidine kinases, respiratory complexes</td></tr>
+      <tr><td>Periplasm</td><td>Soluble enzymes and binding proteins</td><td>PBPs, beta-lactamases, chaperones, substrate-binding proteins</td></tr>
+      <tr><td>Outer membrane (Gram-negative)</td><td>Beta-barrels and lipoprotein-associated complexes</td><td>Porins, TonB-dependent receptors, BamA, OmpA-like proteins</td></tr>
+      <tr><td>Surface / extracellular</td><td>Filaments, adhesins, secreted enzymes</td><td>Pili, flagellin, elastases, toxins, biofilm proteins</td></tr>
+    </table>
+    <div class="note">
+      In Gram-negative bacteria such as <i>Pseudomonas aeruginosa</i>, the distinction between
+      <b>inner-membrane alpha-helical proteins</b> and <b>outer-membrane beta-barrels</b> is one of the most useful structure-function rules in the field.
+    </div>
+  </div>
+</section>
+
+<section id="structures" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">3) Major structural archetypes in bacteria</h2>
+    <div class="tag">structure</div>
+  </div>
+  <div class="card-body">
+    <div class="grid3">
+      <div class="box"><h3>Alpha-helical membrane proteins</h3><p>
+        Found mainly in the cytoplasmic membrane. Typical for transporters, sensors, respiratory proteins, and signal transduction.
+      </p></div>
+      <div class="box"><h3>Outer-membrane beta-barrels</h3><p>
+        Common in Gram-negative bacteria. Used for porins, receptors, secretion-related proteins, and assembly factors.
+      </p></div>
+      <div class="box"><h3>Globular soluble enzymes</h3><p>
+        Typical in cytosol or periplasm. Often adopt Rossmann, TIM-barrel, alpha/beta hydrolase, or beta-sheet rich catalytic folds.
+      </p></div>
+      <div class="box"><h3>Filament proteins</h3><p>
+        Repeated subunits assemble into flagella, pili, secretion needles, and extracellular fibers.
+      </p></div>
+      <div class="box"><h3>Repeat proteins and scaffolds</h3><p>
+        Beta-propellers, HEAT/TPR-like repeats, or coiled coils often act as adaptors or assembly platforms.
+      </p></div>
+      <div class="box"><h3>Large multiprotein machines</h3><p>
+        Ribosome, ATP synthase, secretion systems, divisome, and cell-envelope biogenesis complexes.
+      </p></div>
+    </div>
+  </div>
+</section>
+
+<section id="math" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">4) Useful formulas and quantitative ideas</h2>
+    <div class="tag">math</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Structural and family analyses are built on a few simple quantitative ideas.
+    </p>
+    <div class="eq">\[\text{Sequence identity} = \frac{\text{number of identical aligned residues}}{\text{alignment length}} \times 100\]</div>
+    <p>
+      Sequence identity helps judge whether two proteins likely share a recent common ancestor, but family detection often works below obvious pairwise identity because profile models are more sensitive.
+    </p>
+    <div class="eq">\[S = \sum_i \log \frac{P(x_i \mid \text{family model})}{P(x_i \mid \text{background})}\]</div>
+    <p>
+      This is the logic behind profile-HMM scoring: residues that fit the family model raise the score.
+    </p>
+    <div class="eq">\[v = \frac{V_{\max}[S]}{K_M + [S]}\]</div>
+    <p>
+      When you compare enzyme families experimentally, Michaelis-Menten kinetics often links structure to catalytic performance.
+    </p>
+    <div class="eq">\[\text{RMSD} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left\|\mathbf r_i - \mathbf r_i' \right\|^2}\]</div>
+    <p>
+      RMSD is one of the classic structure-comparison measures, though it should be interpreted with care for multi-domain proteins or flexible proteins.
+    </p>
+  </div>
+</section>
+
+<section id="atlas" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">5) Atlas of important bacterial protein families</h2>
+    <div class="tag">family map</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr>
+        <th>Family / class</th><th>Typical localization</th><th>Common structural theme</th><th>Main function</th><th>Example genes or proteins</th>
+      </tr>
+      <tr><td>Beta-lactamases</td><td>Periplasm or secreted/periplasmic side</td><td>Serine hydrolase fold or metallo-enzyme fold</td><td>Antibiotic hydrolysis</td><td>AmpC, TEM, SHV, NDM, VIM</td></tr>
+      <tr><td>Penicillin-binding proteins (PBPs)</td><td>Periplasm / membrane-associated</td><td>Transpeptidase with conserved serine motifs</td><td>Peptidoglycan synthesis/remodeling</td><td>PBP1, PBP2, PBP3</td></tr>
+      <tr><td>Mur enzymes</td><td>Cytosol</td><td>Soluble enzymes, mixed alpha/beta folds</td><td>Peptidoglycan precursor synthesis</td><td>MurA–MurF</td></tr>
+      <tr><td>Porins</td><td>Outer membrane</td><td>Beta-barrel</td><td>Passive diffusion</td><td>OmpF, OprF, OprD</td></tr>
+      <tr><td>TonB-dependent receptors</td><td>Outer membrane</td><td>Large beta-barrel with plug domain</td><td>Uptake of siderophores and scarce nutrients</td><td>FpvA, FptA</td></tr>
+      <tr><td>RND transporters</td><td>Inner membrane plus periplasmic/outer membrane partners</td><td>Large alpha-helical transporter in tripartite assembly</td><td>Efflux of drugs and metabolites</td><td>MexB, AcrB</td></tr>
+      <tr><td>MFS transporters</td><td>Inner membrane</td><td>12 or 14 transmembrane helices</td><td>Secondary active transport</td><td>EmrD-like transporters</td></tr>
+      <tr><td>ABC transporters</td><td>Inner membrane</td><td>TMD + NBD with P-loop NTPase fold</td><td>ATP-driven transport</td><td>MacB, Opp, maltose transport systems</td></tr>
+      <tr><td>SMR/MATE pumps</td><td>Inner membrane</td><td>Compact helical transporters</td><td>Small-molecule efflux</td><td>NorM-like proteins</td></tr>
+      <tr><td>Type I secretion proteins</td><td>Envelope-spanning</td><td>ABC transporter + membrane fusion + outer channel</td><td>Direct export</td><td>HlyB/HlyD/TolC-like systems</td></tr>
+      <tr><td>Type II secretion proteins</td><td>Periplasm / envelope machine</td><td>Secretin + pseudopilus machinery</td><td>Export folded proteins</td><td>Gsp proteins</td></tr>
+      <tr><td>Type III secretion proteins</td><td>Needle complex</td><td>Large multicomponent injectisome</td><td>Inject effectors into host cells</td><td>Psc family, Exo effectors</td></tr>
+      <tr><td>Type IV secretion proteins</td><td>Envelope complex</td><td>ATPases + channel complex</td><td>Transfer DNA/proteins</td><td>VirB-like systems</td></tr>
+      <tr><td>Type VI secretion proteins</td><td>Cytoplasm to envelope machine</td><td>Phage-tail-like contractile assembly</td><td>Interbacterial competition / virulence</td><td>Hcp, VgrG, Tss proteins</td></tr>
+      <tr><td>Pilin / fimbrial proteins</td><td>Surface filaments</td><td>Polymerized pilin architecture</td><td>Attachment, twitching, DNA uptake</td><td>PilA, type IV pilins</td></tr>
+      <tr><td>Flagellar proteins</td><td>Filament / basal body / motor</td><td>Filament proteins plus rotary motor complex</td><td>Motility and sensing</td><td>FliC, MotA, FlhA, FliG</td></tr>
+      <tr><td>Lipoproteins</td><td>Membrane anchored</td><td>Very diverse soluble domains attached to lipid anchor</td><td>Scaffolding, signaling, transport support</td><td>BamD-like, Lol-pathway clients</td></tr>
+      <tr><td>BAM complex proteins</td><td>Outer membrane/periplasm</td><td>BamA beta-barrel + POTRA repeats</td><td>Assembly of outer membrane proteins</td><td>BamA–E</td></tr>
+      <tr><td>Autotransporters</td><td>Outer membrane / secreted passenger domain</td><td>C-terminal beta-barrel with passenger domain</td><td>Adhesion, proteolysis, virulence</td><td>Various AT proteins</td></tr>
+      <tr><td>Metalloproteases</td><td>Periplasm / secreted</td><td>Metal-binding catalytic domain</td><td>Protein degradation, tissue damage, nutrient acquisition</td><td>LasB, thermolysin-like proteins</td></tr>
+      <tr><td>Serine proteases</td><td>Periplasm / extracellular</td><td>Serine catalytic triad families</td><td>Proteolysis</td><td>HtrA-like proteins</td></tr>
+      <tr><td>Histidine kinases</td><td>Usually inner membrane</td><td>Sensor helices + DHp + CA ATP-binding domain</td><td>Signal sensing and phosphotransfer</td><td>GacS, PhoQ, EnvZ-like</td></tr>
+      <tr><td>Response regulators</td><td>Cytosol</td><td>Receiver domain + output domain</td><td>Transcriptional or enzymatic response</td><td>GacA, OmpR-like</td></tr>
+      <tr><td>LysR regulators</td><td>Cytosol / DNA-associated</td><td>N-terminal HTH + regulatory ligand-binding domain</td><td>Transcription regulation</td><td>OxyR, CatR-like</td></tr>
+      <tr><td>TetR / MarR / AraC regulators</td><td>Cytosol / DNA-associated</td><td>Compact helical DNA-binding regulators</td><td>Stress response, metabolism, AMR control</td><td>TetR, MarR, AraC family members</td></tr>
+      <tr><td>Sigma factors</td><td>Cytosol</td><td>RNA polymerase binding transcription factors</td><td>Promoter class selection</td><td>RpoD, RpoN, ECF sigmas</td></tr>
+      <tr><td>Chaperones</td><td>Cytosol/periplasm</td><td>Conserved ATP-dependent folds or holding domains</td><td>Protein folding</td><td>DnaK, GroEL, SurA, Skp</td></tr>
+      <tr><td>AAA+ ATPases</td><td>Many compartments</td><td>P-loop NTPase family</td><td>Remodeling, unfolding, transport, division</td><td>ClpX, MoxR-like, secretion ATPases</td></tr>
+      <tr><td>Clp/Lon proteases</td><td>Cytosol</td><td>ATPase + peptidase</td><td>Protein quality control</td><td>ClpXP, ClpAP, Lon</td></tr>
+      <tr><td>Ribosomal proteins</td><td>Cytosol</td><td>Small RNA-binding proteins</td><td>Translation</td><td>L and S family proteins</td></tr>
+      <tr><td>Translation factors</td><td>Cytosol</td><td>GTPase and RNA-binding folds</td><td>Initiation, elongation, recycling</td><td>EF-Tu, EF-G, IF2</td></tr>
+      <tr><td>DNA replication/repair proteins</td><td>Cytosol/nucleoid</td><td>ATPases, nuclease domains, helicases</td><td>Genome maintenance</td><td>DnaA, DnaB, RecA, MutS</td></tr>
+      <tr><td>Dehydrogenases</td><td>Cytosol / membrane-associated</td><td>Rossmann-like dinucleotide binding</td><td>Redox metabolism</td><td>Lactate dehydrogenase-like proteins</td></tr>
+      <tr><td>TIM-barrel enzymes</td><td>Cytosol/periplasm</td><td>(β/α)8 barrel</td><td>Wide enzyme diversity</td><td>TrpF-like, aldolase-like families</td></tr>
+      <tr><td>Beta-propeller proteins</td><td>Periplasm/surface/cytosol</td><td>Blade repeats around central axis</td><td>Binding, catalysis, scaffolding</td><td>Sialidases, receptor-associated proteins</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="enzymes" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">6) Enzyme superfamilies and catalytic logic</h2>
+    <div class="tag">enzymes</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Many bacterial proteins are enzymes, but different enzyme families solve chemistry with recurring structural logic.
+    </p>
+    <div class="grid2">
+      <div class="box"><h3>Rossmann-fold enzymes</h3><p>
+        Often bind NAD, NADP, or FAD. The fold is common in dehydrogenases and metabolic enzymes.
+      </p></div>
+      <div class="box"><h3>TIM-barrel enzymes</h3><p>
+        One of the most common enzyme scaffolds. Catalytic residues often cluster near the barrel mouth.
+      </p></div>
+      <div class="box"><h3>Alpha/beta hydrolases</h3><p>
+        Classic scaffold for lipases, esterases, and some serine enzymes. Often use a catalytic Ser-Asp/Glu-His triad.
+      </p></div>
+      <div class="box"><h3>Metalloenzymes</h3><p>
+        Use Zn, Fe, Mn, Mg, or other metals for hydrolysis, redox chemistry, and substrate positioning.
+      </p></div>
+    </div>
+    <div class="note">
+      A protein family can be recognized from sequence, but the mechanism often becomes much clearer after you identify
+      the catalytic fold and conserved residues.
+    </div>
+  </div>
+</section>
+
+<section id="envelope" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">7) Cell-envelope and membrane proteins</h2>
+    <div class="tag">cell biology</div>
+  </div>
+  <div class="card-body">
+    <p>
+      The bacterial envelope drives many of the most medically important protein families.
+    </p>
+    <table>
+      <tr><th>Family</th><th>Structural hallmark</th><th>Main role</th><th>Typical analysis clue</th></tr>
+      <tr><td>Porins</td><td>Outer-membrane beta-barrel</td><td>Passive diffusion channel</td><td>Signal peptide plus beta-barrel prediction and extracellular loops</td></tr>
+      <tr><td>OmpA-like proteins</td><td>Beta-barrel or periplasmic peptidoglycan-binding region</td><td>Envelope stability and interaction</td><td>Outer membrane location with conserved motifs</td></tr>
+      <tr><td>BamA</td><td>Beta-barrel with POTRA domains</td><td>Assembly of OMPs</td><td>Conserved essential outer-membrane biogenesis protein</td></tr>
+      <tr><td>Lipoproteins</td><td>N-terminal lipidation motif and anchor</td><td>Scaffolding, transport support, signaling</td><td>Lipoprotein signal peptide and L(A/V)(G/A)C-like cleavage context</td></tr>
+      <tr><td>PBPs</td><td>Serine transpeptidase domain</td><td>Cell wall synthesis</td><td>Conserved catalytic motifs such as SXXK</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="transport" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">8) Transporter families</h2>
+    <div class="tag">transport</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Transporters are a major family universe in bacterial proteomes.
+      They are often easiest to organize by <b>energy source</b>.
+    </p>
+    <table>
+      <tr><th>Transport family</th><th>Energy source</th><th>Structure</th><th>Example roles</th></tr>
+      <tr><td>ABC transporters</td><td>ATP hydrolysis</td><td>Nucleotide-binding domain plus transmembrane domain</td><td>Import/export of peptides, sugars, drugs, metals</td></tr>
+      <tr><td>MFS transporters</td><td>Ion gradients</td><td>Usually 12 or 14 TM helices</td><td>Uptake of metabolites, efflux of toxic compounds</td></tr>
+      <tr><td>RND pumps</td><td>Proton motive force</td><td>Large tripartite efflux systems in Gram-negatives</td><td>Multidrug resistance</td></tr>
+      <tr><td>MATE transporters</td><td>Na+ or H+ gradients</td><td>Helical membrane transporters</td><td>Drug efflux</td></tr>
+      <tr><td>PTS components</td><td>Phosphotransfer cascade</td><td>Multi-protein sugar transport system</td><td>Sugar uptake with simultaneous phosphorylation</td></tr>
+    </table>
+    <div class="warn">
+      Do not label every membrane protein as a transporter. Some are sensors, assembly factors, electron-transfer proteins, or motors.
+    </div>
+  </div>
+</section>
+
+<section id="resistance" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">9) Antimicrobial resistance protein families</h2>
+    <div class="tag">AMR</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>AMR family type</th><th>Mechanism</th><th>Examples</th><th>Structural idea</th></tr>
+      <tr><td>Drug-destroying enzymes</td><td>Hydrolysis or chemical modification</td><td>Beta-lactamases, aminoglycoside acetyltransferases, phosphotransferases</td><td>Enzyme active-site chemistry is central</td></tr>
+      <tr><td>Target-protecting or target-modifying proteins</td><td>Modify ribosome, DNA gyrase environment, or target site</td><td>rRNA methyltransferases, Qnr-like proteins</td><td>Often compact folded proteins or SAM-dependent enzymes</td></tr>
+      <tr><td>Efflux proteins</td><td>Actively pump drugs out</td><td>RND, MFS, ABC, MATE families</td><td>Membrane transport architecture dominates</td></tr>
+      <tr><td>Permeability determinants</td><td>Reduce uptake</td><td>Porin loss or porin mutation</td><td>Channel architecture changes substrate access</td></tr>
+    </table>
+    <p>
+      A good AMR analysis almost always needs more than one family type.
+      For example, a resistant strain might combine <b>porin changes + AmpC upregulation + efflux pump overexpression</b>.
+    </p>
+  </div>
+</section>
+
+<section id="secretion" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">10) Secretion systems and virulence proteins</h2>
+    <div class="tag">virulence</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Secretion systems are not single proteins but multi-protein families that assemble into machines.
+    </p>
+    <div class="grid2">
+      <div class="box"><h3>Type I</h3><p>
+        Direct one-step export across both membranes using an ABC transporter, membrane fusion protein, and outer-membrane channel.
+      </p></div>
+      <div class="box"><h3>Type II</h3><p>
+        Exports folded periplasmic proteins through a secretin-based system and pseudopilus machinery.
+      </p></div>
+      <div class="box"><h3>Type III</h3><p>
+        Injectisome-like nanomachine delivering effectors into host cells.
+      </p></div>
+      <div class="box"><h3>Type VI</h3><p>
+        Contractile phage-tail-like machine that delivers toxic effectors into neighboring cells.
+      </p></div>
+    </div>
+    <table>
+      <tr><th>Secreted effector/protein type</th><th>Typical structural clue</th><th>Biological role</th></tr>
+      <tr><td>Toxins and enzymes</td><td>Catalytic domains, repeat domains, secretion signals</td><td>Host damage or nutrient acquisition</td></tr>
+      <tr><td>Elastases and metalloproteases</td><td>Metal-binding catalytic motifs</td><td>Tissue breakdown and virulence</td></tr>
+      <tr><td>Phospholipases</td><td>Lipase/phospholipase catalytic motifs</td><td>Membrane disruption</td></tr>
+      <tr><td>Lectins and adhesins</td><td>Binding domains, beta-sandwiches, repeats</td><td>Attachment and biofilm formation</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="motility" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">11) Pili, fimbriae, flagella, and motility proteins</h2>
+    <div class="tag">surface systems</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Family / system</th><th>Main parts</th><th>Main function</th><th>Structural note</th></tr>
+      <tr><td>Flagellum</td><td>Filament, hook, basal body, stator, rotor</td><td>Swimming motility</td><td>Large multi-ring rotary nanomachine</td></tr>
+      <tr><td>Type IV pili</td><td>Pilin subunits, assembly ATPase, retraction ATPase, platform proteins</td><td>Twitching motility, adhesion, DNA uptake</td><td>Polymerizing/retracting filament system</td></tr>
+      <tr><td>Fimbriae</td><td>Adhesive fibers and chaperone/usher components in some bacteria</td><td>Attachment</td><td>Fiber-like assemblies with adhesive tips</td></tr>
+    </table>
+    <div class="note">
+      Filament systems are excellent reminders that protein families are not always best understood as isolated monomers.
+      Assembly state is part of the biology.
+    </div>
+  </div>
+</section>
+
+<section id="regulation" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">12) Regulatory and signaling families</h2>
+    <div class="tag">regulation</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Family</th><th>Domain architecture</th><th>Main role</th></tr>
+      <tr><td>Histidine kinases</td><td>Sensor region + DHp + catalytic ATP-binding domain</td><td>Environmental sensing and phosphotransfer</td></tr>
+      <tr><td>Response regulators</td><td>Receiver domain + DNA-binding or enzymatic output</td><td>Implement response</td></tr>
+      <tr><td>LysR regulators</td><td>N-terminal helix-turn-helix + C-terminal regulatory domain</td><td>Transcription control in metabolism, stress, virulence</td></tr>
+      <tr><td>TetR/MarR family regulators</td><td>Compact helical DNA-binding proteins</td><td>Stress response, efflux regulation, AMR</td></tr>
+      <tr><td>AraC/XylS family</td><td>DNA-binding domain plus variable regulatory region</td><td>Metabolic or virulence gene control</td></tr>
+      <tr><td>Sigma factors</td><td>RNAP-binding promoter recognition factors</td><td>Switch transcription programs</td></tr>
+    </table>
+    <div class="warn">
+      A protein can be “regulatory” without being a classical transcription factor. Sensor kinases, anti-sigma factors, small GTPases, and cyclic-di-GMP enzymes also shape regulation.
+    </div>
+  </div>
+</section>
+
+<section id="proteostasis" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">13) Chaperones, proteases, and stress proteins</h2>
+    <div class="tag">quality control</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Family</th><th>Main activity</th><th>Typical location</th><th>Structural idea</th></tr>
+      <tr><td>DnaK / Hsp70</td><td>ATP-dependent folding assistance</td><td>Cytosol</td><td>Nucleotide-binding domain + substrate-binding domain</td></tr>
+      <tr><td>GroEL/GroES</td><td>Chaperonin-assisted folding</td><td>Cytosol</td><td>Barrel-like oligomeric cage</td></tr>
+      <tr><td>Skp / SurA</td><td>Outer-membrane protein chaperoning</td><td>Periplasm</td><td>Holdase/folding helper proteins</td></tr>
+      <tr><td>Clp ATPases and proteases</td><td>Unfolding and degradation</td><td>Cytosol</td><td>AAA+ ATPases with peptidase partners</td></tr>
+      <tr><td>Lon protease</td><td>Proteolysis and quality control</td><td>Cytosol</td><td>ATPase-protease fusion</td></tr>
+      <tr><td>HtrA / DegP family</td><td>Protease/chaperone activity in envelope stress</td><td>Periplasm</td><td>Serine protease plus accessory domains</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="translation" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">14) Translation, replication, and housekeeping families</h2>
+    <div class="tag">housekeeping</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Not every important protein family is a virulence or AMR factor. Essential housekeeping families provide the baseline physiology that everything else depends on.
+    </p>
+    <ul>
+      <li><b>Ribosomal proteins</b>: small RNA-binding proteins that stabilize the ribosome and tune translation.</li>
+      <li><b>Translation factors</b>: EF-Tu, EF-G, IFs, RFs, all with recurring nucleotide-binding and factor-associated folds.</li>
+      <li><b>Replication proteins</b>: DnaA, DnaB, Pol III subunits, sliding clamps, ligases, primases.</li>
+      <li><b>Repair proteins</b>: RecA, MutS, Uvr proteins, nucleases, helicases.</li>
+      <li><b>Division proteins</b>: FtsZ tubulin-like GTPase, divisome-associated membrane factors, peptidoglycan remodeling proteins.</li>
+    </ul>
+    <div class="note">
+      If you want a clean benchmark set for protein family classification, housekeeping families are often easier to validate because they are widespread and well curated.
+    </div>
+  </div>
+</section>
+
+<section id="pseudomonas" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">15) A practical Pseudomonas aeruginosa family map</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    <p>
+      <i>P. aeruginosa</i> is especially useful because it combines porins, efflux pumps, secreted enzymes,
+      pili, flagella, secretion systems, and strong regulatory networks in one species.
+    </p>
+    <table>
+      <tr><th>Example protein or family</th><th>Family class</th><th>Localization</th><th>Why it matters</th></tr>
+      <tr><td>AmpC</td><td>Class C beta-lactamase</td><td>Periplasm</td><td>Beta-lactam resistance</td></tr>
+      <tr><td>OprD</td><td>Porin</td><td>Outer membrane</td><td>Carbapenem uptake/permeability</td></tr>
+      <tr><td>MexA/MexB/OprM</td><td>Tripartite RND efflux system</td><td>Envelope-spanning</td><td>Broad drug efflux</td></tr>
+      <tr><td>LasB</td><td>Secreted metalloprotease</td><td>Extracellular</td><td>Virulence and tissue damage</td></tr>
+      <tr><td>PilA</td><td>Type IV pilin</td><td>Surface filament</td><td>Attachment and twitching motility</td></tr>
+      <tr><td>FliC</td><td>Flagellin</td><td>Flagellar filament</td><td>Motility and host interaction</td></tr>
+      <tr><td>ExoS / ExoU / ExoT / ExoY</td><td>T3SS effectors</td><td>Injected effectors</td><td>Host manipulation</td></tr>
+      <tr><td>GacS/GacA</td><td>Two-component system</td><td>Membrane sensor + cytosolic regulator</td><td>Controls virulence and lifestyle switching</td></tr>
+      <tr><td>FpvA / FptA</td><td>TonB-dependent receptors</td><td>Outer membrane</td><td>Siderophore uptake</td></tr>
+      <tr><td>PchB</td><td>Metabolic/catalytic enzyme</td><td>Cytosol/periplasmic pathway context depending on annotation</td><td>Siderophore-related pathway biochemistry</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="workflow" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">16) How to study a bacterial protein family</h2>
+    <div class="tag">workflow</div>
+  </div>
+  <div class="card-body">
+    <ol>
+      <li>Start with a sequence or a set of sequences.</li>
+      <li>Find curated names and evidence in UniProt.</li>
+      <li>Find domains and family assignments with InterPro or profile-HMM tools.</li>
+      <li>Look for experimentally determined or predicted structures in PDB/AlphaFold-style resources.</li>
+      <li>Check localization: signal peptide, transmembrane helices, lipobox, or outer-membrane beta-barrel patterns.</li>
+      <li>Identify catalytic or binding motifs.</li>
+      <li>Compare presence/absence or variation across strains or species.</li>
+      <li>Link sequence variation to structure and phenotype.</li>
+    </ol>
+    <div class="note">
+      A strong family-level analysis is never “sequence only” or “structure only.” It combines sequence, domain architecture, localization, and phenotype.
+    </div>
+  </div>
+</section>
+
+<section id="uniprot" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">17) Code: query UniProt for bacterial proteins</h2>
+    <div class="tag">annotated code</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Use curated UniProt metadata to retrieve protein names, genes, evidence, and organism information.
+      The example below fetches reviewed entries for a bacterial gene family.
+    </p>
+    <details open>
+      <summary>Annotated Python: search UniProt and save a TSV</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import requests
+import pandas as pd
+
+# Search query:
+# - reviewed:true keeps Swiss-Prot entries only
+# - gene:ampC looks for entries annotated with ampC
+# - organism_name:"Pseudomonas aeruginosa" narrows to one species
+query = 'reviewed:true AND gene:ampC AND organism_name:"Pseudomonas aeruginosa"'
+
+# The UniProt REST API can return tabular fields directly.
+url = "https://rest.uniprot.org/uniprotkb/search"
+params = {
+    "query": query,
+    "format": "tsv",
+    "fields": ",".join([
+        "accession",
+        "id",
+        "protein_name",
+        "gene_names",
+        "organism_name",
+        "length",
+        "cc_function",
+        "ft_domain"
+    ]),
+    "size": 100
+}
+
+r = requests.get(url, params=params, timeout=60)
+r.raise_for_status()
+
+with open("uniprot_ampc_pao1.tsv", "w") as f:
+    f.write(r.text)
+
+df = pd.read_csv("uniprot_ampc_pao1.tsv", sep="\t")
+print(df.head())
+print("Rows:", len(df))</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Annotated curl example</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">curl -G "https://rest.uniprot.org/uniprotkb/search" \
+  --data-urlencode 'query=reviewed:true AND organism_name:"Pseudomonas aeruginosa" AND gene:mexB' \
+  --data-urlencode 'format=tsv' \
+  --data-urlencode 'fields=accession,id,protein_name,gene_names,organism_name,length' \
+  -o mexB_uniprot.tsv</code></pre>
+      </div>
+    </details>
+
+    <div class="note">
+      This is often the cleanest first step for building a family cheat sheet.
+    </div>
+  </div>
+</section>
+
+<section id="interpro" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">18) Code: domain annotation with InterPro and local HMMER</h2>
+    <div class="tag">domains</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Family analysis becomes much stronger when you move beyond pairwise BLAST and look at domains or profile matches.
+    </p>
+    <details open>
+      <summary>Annotated shell: local HMMER scan against a protein-family database</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash"># Example: hmmscan against a local HMM library of protein families/domains
+# Replace family_db.hmm with your downloaded HMM database.
+
+hmmscan \
+  --cpu 8 \
+  --domtblout sample.domtblout \
+  family_db.hmm \
+  proteins.faa > sample.hmmscan.log
+
+# The important file is sample.domtblout:
+# one line per domain hit with scores, e-values, and alignment coordinates.</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Annotated Python: parse hmmscan domtblout into a clean table</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import pandas as pd
+
+rows = []
+with open("sample.domtblout") as f:
+    for line in f:
+        if line.startswith("#") or not line.strip():
+            continue
+        parts = line.split()
+        rows.append({
+            "target_name": parts[0],     # family/domain model
+            "query_name": parts[3],      # protein sequence
+            "full_evalue": parts[6],
+            "full_score": parts[7],
+            "dom_evalue": parts[12],
+            "ali_start": parts[17],
+            "ali_end": parts[18],
+            "env_start": parts[19],
+            "env_end": parts[20]
+        })
+
+df = pd.DataFrame(rows)
+df["full_evalue"] = df["full_evalue"].astype(float)
+df["full_score"] = df["full_score"].astype(float)
+
+best = df.sort_values(["query_name", "full_evalue", "full_score"]).groupby("query_name").head(1)
+print(best.head())
+
+best.to_csv("best_family_calls.tsv", sep="\t", index=False)</code></pre>
+      </div>
+    </details>
+
+    <div class="warn">
+      One short motif hit is not always enough to call a full family. Look at whole-domain coverage, architecture, and biological plausibility.
+    </div>
+  </div>
+</section>
+
+<section id="pdb" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">19) Code: search and inspect structures from PDB</h2>
+    <div class="tag">structures</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Structure helps answer whether a family forms a channel, enzyme pocket, oligomer, or filament subunit.
+    </p>
+    <details open>
+      <summary>Annotated Python: search RCSB PDB for a protein name or gene</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import requests
+import json
+
+query = {
+    "query": {
+        "type": "terminal",
+        "service": "text",
+        "parameters": {
+            "attribute": "rcsb_entity_source_organism.rcsb_scientific_name",
+            "operator": "exact_match",
+            "value": "Pseudomonas aeruginosa"
+        }
+    },
+    "return_type": "entry",
+    "request_options": {"pager": {"start": 0, "rows": 10}}
+}
+
+# This example filters by organism only.
+# In practice, you can combine organism with text for a gene or protein name.
+r = requests.post("https://search.rcsb.org/rcsbsearch/v2/query", json=query, timeout=60)
+r.raise_for_status()
+data = r.json()
+
+ids = [x["identifier"] for x in data.get("result_set", [])]
+print(ids)</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Annotated Python: fetch metadata for a specific PDB entry</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import requests
+
+pdb_id = "1XYZ"  # replace with a real PDB ID you found
+url = f"https://data.rcsb.org/rest/v1/core/entry/{pdb_id}"
+
+r = requests.get(url, timeout=60)
+r.raise_for_status()
+entry = r.json()
+
+print("Title:", entry.get("struct", {}).get("title"))
+print("Experimental method:", entry.get("exptl", [{}])[0].get("method"))
+print("Resolution:",
+      entry.get("rcsb_entry_info", {}).get("resolution_combined"))</code></pre>
+      </div>
+    </details>
+
+    <div class="note">
+      Once you have a PDB entry, you can go deeper into chains, ligands, polymer entities, and assembly metadata.
+    </div>
+  </div>
+</section>
+
+<section id="biopython" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">20) Code: analyze residues around an active site or ligand</h2>
+    <div class="tag">structure parsing</div>
+  </div>
+  <div class="card-body">
+    <p>
+      One practical way to understand a protein family is to identify residues around a ligand, metal, or catalytic residue.
+    </p>
+    <details open>
+      <summary>Annotated Python: list residues near a ligand using Biopython</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from Bio.PDB import PDBParser, NeighborSearch, Selection
+
+pdb_file = "protein_complex.pdb"
+ligand_resname = "LIG"
+cutoff = 5.0
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("x", pdb_file)
+model = structure[0]
+
+all_atoms = Selection.unfold_entities(model, "A")
+ns = NeighborSearch(all_atoms)
+
+ligand_atoms = []
+for chain in model:
+    for residue in chain:
+        if residue.get_resname().strip() == ligand_resname:
+            ligand_atoms.extend(list(residue.get_atoms()))
+
+if not ligand_atoms:
+    raise ValueError("Ligand not found")
+
+nearby = set()
+for atom in ligand_atoms:
+    for hit in ns.search(atom.coord, cutoff, level="A"):
+        nearby.add(hit.get_parent())
+
+for residue in sorted(nearby, key=lambda r: (r.get_parent().id, r.id[1])):
+    print(residue.get_parent().id, residue.get_resname(), residue.id[1])</code></pre>
+      </div>
+    </details>
+
+    <p>
+      You can adapt this for metal ions, catalytic serines, or pore-lining residues in channels and porins.
+    </p>
+  </div>
+</section>
+
+<section id="motifscan" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">21) Code: motif scan across FASTA files</h2>
+    <div class="tag">motifs</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Many bacterial families have informative motifs. A simple motif scan is not a full classifier, but it can help triage candidates.
+    </p>
+    <details open>
+      <summary>Annotated Python: scan for simple family-related motifs</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import re
+from Bio import SeqIO
+
+# Example motifs:
+# Walker A / P-loop NTPase-like motif: [AGX4GKST]-style simplified as [AGX]XXXXGKS is too broad.
+# We use a common simplified regex below for teaching purposes.
+motifs = {
+    "P_loop_like": re.compile(r"[AGX][A-Z]{4}GK[ST]"),
+    "HXH_metal_binding": re.compile(r"H.AH"),   # teaching example only
+    "SXXK_serine_enzyme": re.compile(r"S..K")
+}
+
+for record in SeqIO.parse("proteins.faa", "fasta"):
+    seq = str(record.seq)
+    hits = []
+    for motif_name, pattern in motifs.items():
+        for m in pattern.finditer(seq):
+            hits.append((motif_name, m.start()+1, m.group()))
+    if hits:
+        print(record.id, hits)</code></pre>
+      </div>
+    </details>
+
+    <div class="warn">
+      Motifs alone can overcall families. Always combine motif hits with domain architecture, length, localization, and alignment evidence.
+    </div>
+  </div>
+</section>
+
+<section id="counts" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">22) Code: summarize family counts across genomes or isolates</h2>
+    <div class="tag">comparative genomics</div>
+  </div>
+  <div class="card-body">
+    <p>
+      Once you have family calls for each protein, you can summarize counts across isolates.
+      This is useful for pangenome-style questions and phenotype-linked family enrichment.
+    </p>
+    <details open>
+      <summary>Annotated Python: family count matrix from protein calls</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import pandas as pd
+
+# Example input columns:
+# isolate, protein_id, family
+df = pd.read_csv("protein_family_calls.tsv", sep="\t")
+
+count_table = (
+    df.groupby(["isolate", "family"])
+      .size()
+      .unstack(fill_value=0)
+      .reset_index()
+)
+
+print(count_table.head())
+count_table.to_csv("family_count_matrix.tsv", sep="\t", index=False)
+
+# Optional: find families enriched in resistant isolates
+meta = pd.read_csv("isolate_metadata.tsv", sep="\t")  # isolate, phenotype
+merged = count_table.merge(meta, on="isolate", how="left")
+print(merged.head())</code></pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>Annotated Python: simple heatmap of family abundance</summary>
+      <div class="codeblock">
+        <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("family_count_matrix.tsv", sep="\t")
+mat = df.set_index("isolate")
+
+plt.figure(figsize=(10, 6))
+plt.imshow(mat.values, aspect="auto")
+plt.xticks(range(mat.shape[1]), mat.columns, rotation=90)
+plt.yticks(range(mat.shape[0]), mat.index)
+plt.colorbar(label="count")
+plt.title("Protein family abundance across isolates")
+plt.tight_layout()
+plt.show()</code></pre>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="miniproject" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">23) Mini-project ideas with real outputs</h2>
+    <div class="tag">projects</div>
+  </div>
+  <div class="card-body">
+    <div class="grid2">
+      <div class="box"><h3>Project 1: AMR family map</h3><p>
+        Compare beta-lactamases, porins, and efflux pumps across isolates and connect the family patterns to resistance phenotypes.
+      </p></div>
+      <div class="box"><h3>Project 2: Secreted virulence proteome</h3><p>
+        Build a catalog of secreted enzymes, secretion-system proteins, pili, and outer-membrane receptors in one species.
+      </p></div>
+      <div class="box"><h3>Project 3: Structure-first curation</h3><p>
+        Start from predicted or experimental structures, cluster folds, and then map families/domains back to them.
+      </p></div>
+      <div class="box"><h3>Project 4: Housekeeping benchmark set</h3><p>
+        Build a reliable family classifier using widespread housekeeping proteins with curated labels before moving to virulence proteins.
+      </p></div>
+    </div>
+    <table>
+      <tr><th>Deliverable</th><th>What it should include</th></tr>
+      <tr><td>Family summary table</td><td>Gene/protein name, family, domains, localization, evidence, structure availability</td></tr>
+      <tr><td>Structure figure</td><td>One representative structure for a family with highlighted active site or channel</td></tr>
+      <tr><td>Comparative heatmap</td><td>Family presence or abundance across isolates</td></tr>
+      <tr><td>Interpretation paragraph</td><td>What structural classes appear enriched and why they matter biologically</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="pitfalls" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">24) Common interpretation mistakes</h2>
+    <div class="tag">troubleshooting</div>
+  </div>
+  <div class="card-body">
+    <table>
+      <tr><th>Mistake</th><th>Why it is risky</th><th>Better approach</th></tr>
+      <tr><td>Calling a family from one short motif</td><td>Many motifs are convergent or low-specificity</td><td>Use domains, full-length alignment, and architecture</td></tr>
+      <tr><td>Assuming every homolog has the same function</td><td>Family members can specialize</td><td>Inspect active-site residues, localization, and context</td></tr>
+      <tr><td>Ignoring localization</td><td>Membrane/surface proteins behave differently from cytosolic enzymes</td><td>Always annotate compartment first</td></tr>
+      <tr><td>Assuming one structure explains all family members</td><td>Loops, oligomers, and insertions vary</td><td>Use representative structures across subfamilies</td></tr>
+      <tr><td>Using sequence identity alone</td><td>Remote homologs can share fold with low identity</td><td>Use profile methods and structure comparison when needed</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="next" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">25) What to do next</h2>
+    <div class="tag">next steps</div>
+  </div>
+  <div class="card-body">
+    <ol>
+      <li>Pick one species or one project context, such as <i>P. aeruginosa</i>.</li>
+      <li>Start with a short list of families you care about: AMR, virulence, transport, regulation, or metabolism.</li>
+      <li>Retrieve curated entries from UniProt.</li>
+      <li>Add domains and structures.</li>
+      <li>Build a per-isolate family matrix.</li>
+      <li>Interpret the families using structure and localization, not just names.</li>
+    </ol>
+    <div class="warn">
+      The best beginner-to-intermediate project is usually not “all bacterial proteins.”
+      It is a focused comparison of 5–20 families tied to one question.
+    </div>
+  </div>
+</section>
+
+  </div>
+</main>
+
+<footer>
+  Built as a standalone teaching page for local browsing or GitHub Pages.
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const items = [...document.querySelectorAll('.searchable')];
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase().trim();
+    for (const item of items) {
+      const txt = item.innerText.toLowerCase();
+      item.style.display = txt.includes(q) ? '' : 'none';
+    }
+  });
+
+  document.getElementById('expandAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = true);
+  });
+  document.getElementById('collapseAll').addEventListener('click', () => {
+    document.querySelectorAll('details').forEach(d => d.open = false);
+  });
+  document.getElementById('copyLink').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('copyLink');
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    } catch (e) {
+      alert('Could not copy the link from this browser.');
+    }
+  });
+
+  function copyCode(btn) {
+    const code = btn.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = old, 1200);
+    });
+  }
+</script>
+</body>
+</html>
