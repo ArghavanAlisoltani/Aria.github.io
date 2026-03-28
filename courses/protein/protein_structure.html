@@ -585,6 +585,182 @@ plt.show()
 <section id="rmsd" class="card searchable">
   <div class="card-header">
     <h2 class="card-title">8) Optimal superposition and RMSD</h2>
+    px solid #ddd;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-family: "Courier New", monospace;
+      overflow-x: auto;
+    }
+    ul {
+      margin-top: 8px;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #b83280;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Optimal Superposition and RMSD</h1>
+
+  <p>
+    <strong>Optimal superposition</strong> and <strong>RMSD</strong> are key concepts in structural biology
+    for comparing two 3D structures, such as two protein conformations.
+  </p>
+
+  <h2>1. What is Optimal Superposition?</h2>
+
+  <p>
+    <strong>Optimal superposition</strong> means taking two structures and moving one of them in space
+    so that it overlaps the other as closely as possible.
+  </p>
+
+  <div class="box">
+    <p><strong>Allowed operations:</strong></p>
+    <ul>
+      <li>Translation (shifting position)</li>
+      <li>Rotation</li>
+    </ul>
+    <p><strong>Not allowed:</strong></p>
+    <ul>
+      <li>Stretching</li>
+      <li>Bending</li>
+      <li>Deforming the structure</li>
+    </ul>
+  </div>
+
+  <p>
+    The purpose is to make corresponding atoms from the two structures come as close together as possible.
+  </p>
+
+  <p>
+    For example, two identical protein structures may appear different simply because one is rotated in 3D space.
+    Optimal superposition removes that positional and rotational difference.
+  </p>
+
+  <h2>2. What is RMSD?</h2>
+
+  <p>
+    <strong>RMSD</strong> stands for <strong>Root-Mean-Square Deviation</strong>.
+  </p>
+
+  <p>
+    After optimal superposition, RMSD measures the average distance between matching atoms in the two structures.
+  </p>
+
+  <div class="formula">
+    RMSD = sqrt[(1/N) × Σ ||x<sub>i</sub> - y<sub>i</sub>||²]
+  </div>
+
+  <p>Where:</p>
+  <ul>
+    <li><strong>N</strong> = number of matched atoms</li>
+    <li><strong>x<sub>i</sub></strong> = coordinates of atom <em>i</em> in structure 1</li>
+    <li><strong>y<sub>i</sub></strong> = coordinates of the corresponding atom <em>i</em> in structure 2</li>
+  </ul>
+
+  <h2>3. Usual Workflow</h2>
+
+  <ol>
+    <li>Choose corresponding atoms between the two structures</li>
+    <li>Apply optimal superposition</li>
+    <li>Calculate RMSD</li>
+  </ol>
+
+  <h2>4. Intuition</h2>
+
+  <ul>
+    <li><span class="highlight">Low RMSD</span> means the structures are very similar</li>
+    <li><span class="highlight">High RMSD</span> means the structures differ more</li>
+  </ul>
+
+  <p>Examples:</p>
+  <ul>
+    <li><strong>RMSD = 0 Å</strong> → perfect match</li>
+    <li><strong>RMSD ≈ 0.5–2 Å</strong> → usually very similar structures</li>
+    <li><strong>Larger RMSD</strong> → may reflect conformational changes, domain movement, or modeling differences</li>
+  </ul>
+
+  <h2>5. Simple Numerical Example</h2>
+
+  <p>
+    Suppose that after superposition, the distances between three matched atoms are:
+  </p>
+
+  <ul>
+    <li>Atom 1: 1 Å</li>
+    <li>Atom 2: 2 Å</li>
+    <li>Atom 3: 2 Å</li>
+  </ul>
+
+  <div class="formula">
+    RMSD = sqrt[(1² + 2² + 2²) / 3]
+         = sqrt[(1 + 4 + 4) / 3]
+         = sqrt(3)
+         ≈ 1.73 Å
+  </div>
+
+  <p>
+    So the average structural deviation is about <strong>1.73 Å</strong>.
+  </p>
+
+  <h2>6. Why "Optimal" Superposition Matters</h2>
+
+  <p>
+    If you calculate distances before aligning the structures properly, RMSD may be artificially large
+    just because the molecules are shifted or rotated differently.
+  </p>
+
+  <div class="box">
+    <p>
+      <strong>Optimal superposition</strong> gives the best possible overlap,
+      and <strong>RMSD</strong> tells you how much difference remains after that best overlap.
+    </p>
+  </div>
+
+  <h2>7. In Protein Structure Analysis</h2>
+
+  <p>RMSD is often calculated using:</p>
+  <ul>
+    <li>All heavy atoms</li>
+    <li>Backbone atoms</li>
+    <li>Cα (alpha carbon) atoms only</li>
+  </ul>
+
+  <p>
+    Using only <strong>Cα atoms</strong> is very common because it provides a clean summary
+    of overall backbone similarity.
+  </p>
+
+  <h2>8. Limitations of RMSD</h2>
+
+  <p>Although RMSD is useful, it has some weaknesses:</p>
+  <ul>
+    <li>It is sensitive to outliers</li>
+    <li>A flexible loop can increase RMSD a lot</li>
+    <li>Large proteins may still have moderate RMSD even when some regions differ strongly</li>
+    <li>It does not directly show <em>where</em> the structural differences occur</li>
+  </ul>
+
+  <p>Because of this, people also use other measures such as:</p>
+  <ul>
+    <li>Per-residue deviation</li>
+    <li>TM-score</li>
+    <li>lDDT</li>
+    <li>Distance matrix comparisons</li>
+    <li>Alignment coverage</li>
+  </ul>
+
+  <h2>9. One-Sentence Summary</h2>
+
+  <div class="box">
+    <p>
+      <strong>Optimal superposition</strong> places two structures in the best possible overlap,
+      and <strong>RMSD</strong> measures how far apart the matched atoms still are after that alignment.
+    </p>
+  </div>
     <div class="tag">comparison</div>
   </div>
   <div class="card-body">
