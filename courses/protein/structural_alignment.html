@@ -324,7 +324,8 @@
   We seek a rotation matrix \(R\) and translation vector \(t\) that minimize the sum of squared distances.
 </p>
 <div class="eq">\[
-\min_{R,t} \sum_{i=1}^{N} \left\|x_i - (R y_i + t)ight\|^2
+\min_{R,t} \sum_{i=1}^{N} \left\|x_i - (R y_i + t)
+ight\|^2
 \quad 	ext{subject to} \quad R^T R = I,\; \det(R)=1
 \]</div>
 <p>
@@ -346,7 +347,8 @@ H = U \Sigma V^T \quad \Rightarrow \quad R = V U^T
   In the SVD/Kabsch formulation, if \(\det(R) < 0\), one singular-vector sign must be flipped to prevent an improper rotation (a reflection).
 </p>
 <div class="eq">\[
-\operatorname{RMSD} = \sqrt{rac{1}{N}\sum_{i=1}^{N} \left\|x_i - (R y_i + t)ight\|^2}
+\operatorname{RMSD} = \sqrt{rac{1}{N}\sum_{i=1}^{N} \left\|x_i - (R y_i + t)
+ight\|^2}
 \]</div>
 <div class="note">
   This is the mathematics of <b>optimal rigid-body superposition</b>. It assumes the matching is already known and that one single rotation is meaningful.
@@ -368,7 +370,8 @@ H = U \Sigma V^T \quad \Rightarrow \quad R = V U^T
   Cα atoms may be preferable to all atoms; low-confidence AlphaFold regions may need down-weighting.
 </p>
 <div class="eq">\[
-\min_{R,t} \sum_{i=1}^{N} w_i \left\|x_i - (R y_i + t)ight\|^2
+\min_{R,t} \sum_{i=1}^{N} w_i \left\|x_i - (R y_i + t)
+ight\|^2
 \quad 	ext{with} \quad w_i \ge 0
 \]</div>
 <p>
@@ -521,7 +524,9 @@ q^* = rg\max_{\|q\|=1} q^T K q
   <tr><td>Z-score (DALI)</td><td>Database search significance</td><td>Method-specific, not directly interchangeable with RMSD</td></tr>
 </table>
 <div class="eq">\[
-\operatorname{TM	ext{-}score} = \max \left[ rac{1}{L_{	ext{target}}} \sum_{i=1}^{L_{	ext{ali}}} rac{1}{1 + \left(rac{d_i}{d_0(L_{	ext{target}})}ight)^2} ight]
+\operatorname{TM	ext{-}score} = \max \left[ rac{1}{L_{	ext{target}}} \sum_{i=1}^{L_{	ext{ali}}} rac{1}{1 + \left(rac{d_i}{d_0(L_{	ext{target}})}
+ight)^2} 
+ight]
 \]</div>
 <p>
   TM-score down-weights large deviations and normalizes by a length-dependent scale, so it is much better than RMSD for comparing global fold similarity across proteins of different sizes.
