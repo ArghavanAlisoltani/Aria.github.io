@@ -669,7 +669,19 @@ plt.show()
     <li><strong>Larger RMSD</strong> → may reflect conformational changes, domain movement, or modeling differences</li>
   </ul>
 
-  <h3>8.5. Simple Numerical Example</h3>
+  <h3>8.5. Formula and Simple Numerical Example</h3>
+
+    <div class="eq">
+  \[
+    \mathrm{RMSD} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\|\mathbf x_i - \mathbf y_i\|^2}
+  \]
+</div>
+<div class="eq">
+  The Kabsch algorithm finds the rotation matrix that minimizes the squared error between matched atoms.
+</div>
+<div class="note">
+  RMSD is intuitive but sensitive to outliers. One flexible loop or hinge motion can inflate it even when the global fold is conserved.
+</div>
 
   <p>
     Suppose that after superposition, the distances between three matched atoms are:
@@ -741,7 +753,7 @@ plt.show()
     <li>Alignment coverage</li>
   </ul>
 
-  <h3>8.9. RMSD Formula and code example</h3>
+  <h3>8.9. Code example</h3>
 
   <div class="box">
     <p>
@@ -756,17 +768,7 @@ plt.show()
   Two structures cannot be compared directly in raw coordinates because they may be shifted or rotated.
   First superpose them optimally. Then compute RMSD.
 </p>
-<div class="eq">
-  \[
-    \mathrm{RMSD} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\|\mathbf x_i - \mathbf y_i\|^2}
-  \]
-</div>
-<div class="eq">
-  The Kabsch algorithm finds the rotation matrix that minimizes the squared error between matched atoms.
-</div>
-<div class="note">
-  RMSD is intuitive but sensitive to outliers. One flexible loop or hinge motion can inflate it even when the global fold is conserved.
-</div>
+
 <details open>
   <summary>Annotated Python: Kabsch alignment and RMSD</summary>
 
