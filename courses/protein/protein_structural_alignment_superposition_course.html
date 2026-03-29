@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Protein Structural Alignment and Superposition — Detailed HTML Course</title>
+  <meta name="description" content="A very detailed standalone HTML course on protein structural alignment and superposition, including method types, algorithms, formulas, real examples, and annotated code." />
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\(','\)'], ['$', '$']], displayMath: [['\[','\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#111a33; --panel2:#0f1730;
+      --text:#e9eefc; --muted:#aab6e8;
+      --accent:#7aa2ff; --accent2:#70ffd1; --warn:#ffd166; --bad:#ff8c8c;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(112,255,209,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1500px; margin:0 auto;}
+    .hero{
+      background:linear-gradient(135deg, rgba(122,162,255,.18), rgba(17,26,51,.0));
+      border:1px solid var(--border); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:18px 18px;
+    }
+    h1{margin:0 0 8px; font-size:clamp(24px, 4vw, 38px);}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.7; font-size:15px; max-width:1320px;}
+    .kicker{color:var(--accent2); font-weight:900; text-transform:uppercase; font-size:12px; margin-top:12px;}
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; justify-content:space-between;}
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{
+      width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background:rgba(255,255,255,.04); color:var(--text); outline:none;
+    }
+    input[type="search"]::placeholder{color:rgba(233,238,252,.55)}
+    .btn{
+      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+      background:rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:800;
+    }
+    .btn:hover{background:rgba(255,255,255,.10)}
+    main{max-width:1500px; margin:0 auto; display:grid; grid-template-columns:320px 1fr; gap:18px; padding:0 18px 26px;}
+    nav{position:sticky; top:14px; align-self:start; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; max-height:calc(100vh - 28px); overflow:auto;}
+    nav h2{margin:2px 0 10px; font-size:18px}
+    .toc{display:grid; gap:8px}
+    .toc a{display:block; padding:9px 10px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid transparent; color:var(--text); font-size:14px;}
+    .toc a:hover{border-color:var(--border); text-decoration:none; background:rgba(255,255,255,.06)}
+    .content{display:grid; gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;}
+    .card-header{display:flex; gap:10px; justify-content:space-between; align-items:center; padding:16px 16px 0;}
+    .card-title{margin:0; font-size:clamp(20px,2.5vw,28px)}
+    .tag{white-space:nowrap; font-size:12px; color:var(--accent2); border:1px solid var(--border); border-radius:999px; padding:6px 10px; background:rgba(112,255,209,.06)}
+    .card-body{padding:14px 16px 18px; line-height:1.8; color:var(--text);}
+    .card-body p{margin:0 0 12px}
+    .card-body ul, .card-body ol{margin:6px 0 12px 18px}
+    .card-body li{margin:4px 0}
+    .grid2{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin:10px 0;}
+    .grid3{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin:10px 0;}
+    .box{background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:14px; padding:12px;}
+    .box h3{margin:0 0 8px; font-size:16px}
+    .note, .warn{padding:12px 14px; border-radius:14px; margin:12px 0; border:1px solid var(--border)}
+    .note{background:rgba(122,162,255,.08)}
+    .warn{background:rgba(255,209,102,.10)}
+    table{width:100%; border-collapse:collapse; margin:12px 0; overflow:hidden; border-radius:14px;}
+    th, td{border:1px solid var(--border); padding:10px 12px; vertical-align:top; text-align:left;}
+    th{background:rgba(255,255,255,.06)}
+    .eq{margin:12px 0; padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.04); border:1px solid var(--border); overflow:auto;}
+    details{margin:12px 0; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.03);}
+    summary{cursor:pointer; padding:12px 14px; font-weight:800; list-style:none;}
+    summary::-webkit-details-marker{display:none}
+    .codeblock{position:relative;}
+    pre{margin:0; padding:0 0 0; overflow:auto; background:#09101f; border-top:1px solid var(--border);}
+    code{display:block; padding:16px; font-family:var(--mono); font-size:13px; line-height:1.65; white-space:pre;}
+    .copy-btn{position:absolute; top:10px; right:10px; z-index:2; border:1px solid var(--border); background:rgba(255,255,255,.08); color:var(--text); border-radius:10px; padding:6px 10px; cursor:pointer; font-weight:700;}
+    .copy-btn:hover{background:rgba(255,255,255,.16)}
+    .footer{max-width:1500px; margin:0 auto 30px; padding:0 18px; color:var(--muted); font-size:14px;}
+    .hidden{display:none !important}
+    @media (max-width: 1150px) {
+      main{grid-template-columns:1fr;}
+      nav{position:relative; top:auto; max-height:none;}
+    }
+    @media (max-width: 800px) {
+      .grid2, .grid3{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div class="kicker">Protein structure analysis course</div>
+      <h1>Protein Structural Alignment and Superposition</h1>
+      <p class="subtitle">
+        A very detailed beginner-to-advanced course on different types of structural alignment and superposition methods,
+        including rigid-body fitting, local and flexible alignment, CE, DALI, TM-align, US-align, FATCAT, scoring formulas,
+        and practical code in NumPy, Biopython, MDAnalysis, PyMOL, and shell pipelines.
+      </p>
+      <p class="subtitle">
+        The central idea of the whole course is simple: <b>alignment is not one problem</b>.
+        It is a family of related problems whose best method depends on whether you care about exact matched atoms,
+        homologous folds, domain motion, active-site geometry, or large-scale database search.
+      </p>
+      <div class="top-actions">
+        <div class="search-wrap">
+          <input id="searchBox" type="search" placeholder="Search for RMSD, Kabsch, TM-score, CE, DALI, FATCAT, PyMOL, MDAnalysis..." />
+          <button class="btn" onclick="clearSearch()">Clear</button>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" onclick="expandAll()">Expand all code</button>
+          <button class="btn" onclick="collapseAll()">Collapse all code</button>
+          <button class="btn" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav>
+      <h2>Course map</h2>
+      <div class="toc">
+        <a href="#overview">0) Course overview</a>
+<a href="#why">1) Why structural alignment exists</a>
+<a href="#terms">2) Vocabulary you must keep separate</a>
+<a href="#taxonomy">3) A practical classification of methods</a>
+<a href="#math">4) Core mathematics of optimal superposition</a>
+<a href="#weighted">5) Weighted, masked, and robust variants</a>
+<a href="#quaternion">6) Kabsch, Horn quaternion, and QCP</a>
+<a href="#numerical">7) Small numerical example</a>
+<a href="#correspondence">8) The residue correspondence problem</a>
+<a href="#atomchoice">9) Which atoms should you fit?</a>
+<a href="#metrics">10) Scores and what they really mean</a>
+<a href="#localglobal">11) Global vs local superposition</a>
+<a href="#flexible">12) Flexible alignment and domain motion</a>
+<a href="#ce">13) CE</a>
+<a href="#cecp">14) CE-CP and circular permutations</a>
+<a href="#dali">15) DALI</a>
+<a href="#tmalign">16) TM-align and US-align</a>
+<a href="#fatcat">17) FATCAT</a>
+<a href="#sw3d">18) Sequence-assisted methods</a>
+<a href="#msa">19) Multiple structure alignment</a>
+<a href="#example1">20) Example: same protein, different conformations</a>
+<a href="#example2">21) Example: remote homologs</a>
+<a href="#example3">22) Example: AlphaFold vs experiment</a>
+<a href="#numpycode">23) Code: Kabsch in NumPy</a>
+<a href="#robustcode">24) Code: weighted fit and trimming</a>
+<a href="#biopython">25) Code: Biopython</a>
+<a href="#mdanalysis">26) Code: MDAnalysis trajectory alignment</a>
+<a href="#biotite">27) Code: Biotite homolog fit</a>
+<a href="#pymol">28) Code: PyMOL commands</a>
+<a href="#batch">29) Code: TM-align / Foldseek / RCSB API</a>
+<a href="#decision">30) Which method should you pick?</a>
+<a href="#pitfalls">31) Common failure modes</a>
+<a href="#workflow">32) A robust end-to-end workflow</a>
+<a href="#references">33) Tools and references</a>
+      </div>
+    </nav>
+    <div class="content">
+      
+<section id="overview" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">0) Course overview</h2>
+    <div class="tag">start here</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  This standalone course is a detailed guide to <b>protein structural alignment</b> and <b>superposition</b>.
+  It follows the same general visual format as your previous HTML course pages: dark theme, searchable sections,
+  sticky course map, formula panels, and collapsible annotated code.
+</p>
+<p>
+  The focus is not only on “how to align two structures,” but on the deeper question:
+  <b>what kind of alignment problem do you actually have?</b>
+  A rigid whole-protein fit, a local active-site fit, a domain-motion comparison, a remote-homology search,
+  and a full MD trajectory alignment are related tasks, but they are not the same task.
+</p>
+<div class="grid3">
+  <div class="box"><h3>What you learn</h3><p>Definitions, method classes, core formulas, algorithm logic, scoring functions, pitfalls, and interpretation.</p></div>
+  <div class="box"><h3>What you code</h3><p>NumPy Kabsch fits, weighted fits, Biopython atom mapping, MDAnalysis trajectory alignment, PyMOL commands, TM-align and Foldseek shells.</p></div>
+  <div class="box"><h3>What you can decide</h3><p>When to use RMSD, TM-score, CE, DALI, FATCAT, sequence-assisted fit, local-fit, or flexible alignment.</p></div>
+</div>
+<div class="note">
+  A low RMSD does <b>not</b> automatically mean “better biological similarity.” It may only mean that a small core fit very tightly.
+  Good interpretation always asks: <b>What atoms were aligned? Over how many residues? With what correspondence rule?</b>
+</div>
+
+  </div>
+</section>
+
+
+<section id="why" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">1) Why structural alignment exists</h2>
+    <div class="tag">concept</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Sequence alignment compares letters. Structural alignment compares <b>3D geometry</b>.
+  This matters because proteins can keep a similar fold even when their amino-acid sequences have diverged beyond easy recognition.
+</p>
+<ul>
+  <li><b>Sequence similarity</b> asks whether residues are evolutionarily or chemically similar.</li>
+  <li><b>Structure similarity</b> asks whether the atoms or residues occupy similar positions in 3D after an optimal fit.</li>
+  <li><b>Superposition</b> is the rigid transformation (rotation + translation) that places one structure into the coordinate frame of another.</li>
+  <li><b>Structural alignment</b> is the broader task of deciding which residues correspond <i>and</i> how to superpose them.</li>
+</ul>
+<div class="eq">\[
+	ext{Structural comparison} = 	ext{Correspondence problem} + 	ext{Superposition problem} + 	ext{Scoring problem}
+\]</div>
+<p>
+  In practice, most hard cases are hard because the <b>correspondence problem</b> is ambiguous: loops are missing, residues are inserted,
+  domains move, chains differ in length, or homologs are remote.
+</p>
+
+  </div>
+</section>
+
+
+<section id="terms" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">2) Vocabulary you must keep separate</h2>
+    <div class="tag">terminology</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Term</th><th>Meaning</th><th>Typical output</th></tr>
+  <tr><td>Superposition / fitting</td><td>Apply one rigid transform to place coordinates together</td><td>Rotation matrix, translation vector, RMSD</td></tr>
+  <tr><td>Structural alignment</td><td>Infer residue-residue equivalences and then superpose</td><td>Alignment, coverage, scores, transform</td></tr>
+  <tr><td>Rigid-body alignment</td><td>Single transform for the entire selected set</td><td>One rotation + one translation</td></tr>
+  <tr><td>Flexible alignment</td><td>Allows hinges / twists / multiple local fits</td><td>Per-domain fits, hinges, improved coverage</td></tr>
+  <tr><td>Global alignment</td><td>Tries to compare full chains or full domains</td><td>Whole-protein score</td></tr>
+  <tr><td>Local alignment</td><td>Finds the best matching substructure or active-site region</td><td>Core residues, motif match</td></tr>
+  <tr><td>Sequence-dependent</td><td>Uses known sequence mapping or sequence alignment</td><td>Fast for close homologs</td></tr>
+  <tr><td>Sequence-independent</td><td>Uses geometry to infer matching residues</td><td>Better for remote homologs</td></tr>
+</table>
+<div class="warn">
+  The phrase <b>“optimal superposition”</b> usually means: given an already matched set of points, find the rigid transform that minimizes RMSD.
+  It does <b>not</b> by itself solve which residues should be paired.
+</div>
+
+  </div>
+</section>
+
+
+<section id="taxonomy" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">3) A practical classification of methods</h2>
+    <div class="tag">taxonomy</div>
+  </div>
+  <div class="card-body">
+    
+<div class="grid2">
+  <div class="box">
+    <h3>Classify by flexibility</h3>
+    <ul>
+      <li><b>Rigid</b>: Kabsch, Horn quaternion, QCP, CE, TM-align (final fit is rigid)</li>
+      <li><b>Flexible</b>: FATCAT-flexible, domain-wise fitting, hinge-aware or multi-body fits</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Classify by correspondence source</h3>
+    <ul>
+      <li><b>Known mapping</b>: same sequence, same residue IDs, active-site residues</li>
+      <li><b>Sequence-assisted</b>: PyMOL <code>align</code>, Smith-Waterman 3D</li>
+      <li><b>Structure-driven</b>: CE, DALI, TM-align, FATCAT, Foldseek search</li>
+    </ul>
+  </div>
+</div>
+<div class="grid2">
+  <div class="box">
+    <h3>Classify by scale</h3>
+    <ul>
+      <li><b>Global</b>: compare whole folds or domains</li>
+      <li><b>Local</b>: align catalytic residues, motifs, interfaces</li>
+      <li><b>Trajectory/framewise</b>: align every MD frame to a reference</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Classify by output goal</h3>
+    <ul>
+      <li><b>Similarity measurement</b>: RMSD, TM-score, GDT-like metrics</li>
+      <li><b>Homology search</b>: DALI, Foldseek</li>
+      <li><b>Visualization</b>: PyMOL / ChimeraX / Mol* superposition</li>
+    </ul>
+  </div>
+</div>
+<p>
+  RCSB’s current pairwise alignment documentation explicitly separates <b>rigid-body</b> from <b>flexible</b> alignment,
+  and lists CE, CE-CP, TM-align, jFATCAT-rigid, jFATCAT-flexible, and Smith-Waterman 3D as different algorithmic choices.
+</p>
+
+  </div>
+</section>
+
+
+<section id="math" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">4) Core mathematics of optimal superposition</h2>
+    <div class="tag">formulas</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Suppose you already have <b>N matched atoms</b> or residues from two structures.
+  Let \(X = \{x_i\}_{i=1}^N\) be the fixed coordinates and \(Y = \{y_i\}_{i=1}^N\) be the mobile coordinates.
+  We seek a rotation matrix \(R\) and translation vector \(t\) that minimize the sum of squared distances.
+</p>
+<div class="eq">\[
+\min_{R,t} \sum_{i=1}^{N} \left\|x_i - (R y_i + t)ight\|^2
+\quad 	ext{subject to} \quad R^T R = I,\; \det(R)=1
+\]</div>
+<p>
+  After centering both point clouds, the translation is handled separately, so the core problem becomes the optimal rotation.
+</p>
+<div class="eq">\[
+ar{x} = rac{1}{N}\sum_i x_i, \qquad ar{y} = rac{1}{N}\sum_i y_i
+\]</div>
+<div class="eq">\[
+	ilde{x}_i = x_i - ar{x}, \qquad 	ilde{y}_i = y_i - ar{y}
+\]</div>
+<div class="eq">\[
+H = \sum_{i=1}^{N} 	ilde{y}_i 	ilde{x}_i^T
+\]</div>
+<div class="eq">\[
+H = U \Sigma V^T \quad \Rightarrow \quad R = V U^T
+\]</div>
+<p>
+  In the SVD/Kabsch formulation, if \(\det(R) < 0\), one singular-vector sign must be flipped to prevent an improper rotation (a reflection).
+</p>
+<div class="eq">\[
+\operatorname{RMSD} = \sqrt{rac{1}{N}\sum_{i=1}^{N} \left\|x_i - (R y_i + t)ight\|^2}
+\]</div>
+<div class="note">
+  This is the mathematics of <b>optimal rigid-body superposition</b>. It assumes the matching is already known and that one single rotation is meaningful.
+</div>
+
+  </div>
+</section>
+
+
+<section id="weighted" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">5) Weighted, masked, and robust variants</h2>
+    <div class="tag">advanced math</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  In real proteins, not all atoms should count equally. Active-site atoms may be more important than floppy termini;
+  Cα atoms may be preferable to all atoms; low-confidence AlphaFold regions may need down-weighting.
+</p>
+<div class="eq">\[
+\min_{R,t} \sum_{i=1}^{N} w_i \left\|x_i - (R y_i + t)ight\|^2
+\quad 	ext{with} \quad w_i \ge 0
+\]</div>
+<p>
+  Common robust strategies are:
+</p>
+<ul>
+  <li><b>Masking</b>: fit only a selected subset, e.g. catalytic residues or Cα atoms.</li>
+  <li><b>Weighting</b>: assign larger \(w_i\) to conserved anchors.</li>
+  <li><b>Iterative trimming</b>: fit, remove outliers, refit.</li>
+  <li><b>Domain-wise fit</b>: fit domains separately when one-body fit is biologically meaningless.</li>
+</ul>
+<div class="warn">
+  Trimming can hide true biology. If a loop genuinely moves upon ligand binding, calling it an “outlier” is a statistical convenience, not a biological explanation.
+</div>
+
+  </div>
+</section>
+
+
+<section id="quaternion" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">6) Kabsch, Horn quaternion, and QCP: what is the difference?</h2>
+    <div class="tag">algorithms</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Method</th><th>Main idea</th><th>Strength</th><th>Typical use</th></tr>
+  <tr><td>Kabsch / SVD</td><td>Compute covariance matrix, solve rotation by SVD</td><td>Simple, standard, transparent</td><td>General pairwise fitting and teaching</td></tr>
+  <tr><td>Horn quaternion</td><td>Write rotation as a quaternion and maximize a quadratic form</td><td>Elegant closed-form rotation</td><td>Fast rigid superposition</td></tr>
+  <tr><td>QCP</td><td>Quaternion characteristic polynomial for rapid RMSD/rotation calculation</td><td>Very fast for repeated fits</td><td>MD trajectories and large-scale frame alignment</td></tr>
+</table>
+<p>
+  These methods solve essentially the <b>same rigid-body objective</b> but with different numerical routes.
+  MDAnalysis currently documents that its alignment module uses the fast <b>QCP</b> algorithm for RMSD fitting and rotation-matrix calculation,
+  while Biopython exposes classical superimposers including SVD-based variants.
+</p>
+<div class="eq">\[
+q^* = rg\max_{\|q\|=1} q^T K q
+\]</div>
+<p>
+  The Horn/QCP family rewrites the rotation search in quaternion coordinates, where \(K\) is a 4×4 symmetric matrix built from cross-covariance terms.
+  The best rotation comes from the dominant eigenvector.
+</p>
+
+  </div>
+</section>
+
+
+<section id="numerical" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">7) Small numerical example you can do by hand</h2>
+    <div class="tag">worked example</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Imagine two triangles representing three matched Cα atoms. Structure B is just structure A after a 90° rotation in the xy-plane and then a translation.
+</p>
+<div class="grid2">
+  <div class="box">
+    <h3>Reference points</h3>
+    <div class="codeblock"><pre><code>(0,0,0)
+(1,0,0)
+(1,1,0)</code></pre></div>
+  </div>
+  <div class="box">
+    <h3>Mobile points</h3>
+    <div class="codeblock"><pre><code>(3,2,0)
+(3,3,0)
+(2,3,0)</code></pre></div>
+  </div>
+</div>
+<p>
+  If you center both sets first, the translation vanishes. The remaining difference is a pure rotation.
+  The optimal rotation maps the x-axis of one set onto the y-axis of the other.
+  After applying the inverse rotation and restoring translation, the RMSD becomes 0.
+</p>
+<div class="note">
+  This tiny example is why centering is so important: it separates “where the object sits” from “how the object is oriented.”
+</div>
+
+  </div>
+</section>
+
+
+<section id="correspondence" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">8) The residue correspondence problem</h2>
+    <div class="tag">critical concept</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Most biological difficulty lies here. Before you can compute a best-fit transform, you need to know which atom in one structure corresponds to which atom in the other.
+</p>
+<table>
+  <tr><th>Situation</th><th>Correspondence strategy</th><th>Risk</th></tr>
+  <tr><td>Same protein, same numbering</td><td>Match identical residue IDs</td><td>Missing residues or alternate locations</td></tr>
+  <tr><td>Close homologs</td><td>Sequence alignment then map Cα atoms</td><td>Gap placement errors inflate RMSD</td></tr>
+  <tr><td>Remote homologs</td><td>Structure-driven alignment (CE, DALI, TM-align)</td><td>Ambiguous local matches</td></tr>
+  <tr><td>Active-site comparison</td><td>Manual motif / catalytic-residue mapping</td><td>Bias if chosen residues force the answer</td></tr>
+  <tr><td>Different states of same protein</td><td>Fit core domain first, inspect moving domain separately</td><td>Whole-protein RMSD can be misleading</td></tr>
+</table>
+<div class="warn">
+  A beautiful low RMSD computed on a bad residue mapping is still a bad alignment.
+</div>
+
+  </div>
+</section>
+
+
+<section id="atomchoice" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">9) Which atoms should you fit?</h2>
+    <div class="tag">practical</div>
+  </div>
+  <div class="card-body">
+    
+<ul>
+  <li><b>Cα-only</b>: the most common default for protein fold comparison. Robust and fast.</li>
+  <li><b>Backbone atoms (N, Cα, C, O)</b>: gives more detail but can be more sensitive to local backbone distortions.</li>
+  <li><b>All heavy atoms</b>: useful for same-protein, same-sequence comparisons when side-chain placement matters.</li>
+  <li><b>Interface atoms</b>: useful for complexes and docking assessment.</li>
+  <li><b>Catalytic residues / motifs</b>: useful for local functional comparison.</li>
+</ul>
+<p>
+  Your atom choice defines the meaning of the fit. A Cα global fit asks “is the fold similar?” while an all-atom active-site fit asks
+  “is the catalytic geometry preserved?” These are different questions.
+</p>
+
+  </div>
+</section>
+
+
+<section id="metrics" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">10) Scores and what they really mean</h2>
+    <div class="tag">metrics</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Metric</th><th>Good for</th><th>Main limitation</th></tr>
+  <tr><td>RMSD</td><td>Same sequence, same fold, same selected atoms</td><td>Length- and outlier-sensitive</td></tr>
+  <tr><td>TM-score</td><td>Global topology similarity with length normalization</td><td>Needs meaningful alignment; harder to interpret locally</td></tr>
+  <tr><td>Aligned length / coverage</td><td>How much of the structure matches</td><td>Can reward loose long alignments</td></tr>
+  <tr><td>GDT-TS / GDT-HA</td><td>Model assessment and tolerance-band thinking</td><td>Less intuitive for local structural biology</td></tr>
+  <tr><td>lRMSD / iRMSD</td><td>Local domains or interfaces</td><td>Selection-dependent</td></tr>
+  <tr><td>Z-score (DALI)</td><td>Database search significance</td><td>Method-specific, not directly interchangeable with RMSD</td></tr>
+</table>
+<div class="eq">\[
+\operatorname{TM	ext{-}score} = \max \left[ rac{1}{L_{	ext{target}}} \sum_{i=1}^{L_{	ext{ali}}} rac{1}{1 + \left(rac{d_i}{d_0(L_{	ext{target}})}ight)^2} ight]
+\]</div>
+<p>
+  TM-score down-weights large deviations and normalizes by a length-dependent scale, so it is much better than RMSD for comparing global fold similarity across proteins of different sizes.
+</p>
+<div class="note">
+  A commonly cited rule of thumb is that <b>TM-score &gt; 0.5</b> often indicates similar overall fold/topology, while lower values are often outside same-fold territory.
+  Treat that as a heuristic, not a law.
+</div>
+
+  </div>
+</section>
+
+
+<section id="localglobal" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">11) Global vs local superposition</h2>
+    <div class="tag">comparison</div>
+  </div>
+  <div class="card-body">
+    
+<div class="grid2">
+  <div class="box">
+    <h3>Global fit</h3>
+    <p>One transform over the whole chosen chain or domain. Best when the protein behaves like one rigid body.</p>
+  </div>
+  <div class="box">
+    <h3>Local fit</h3>
+    <p>Choose a motif, active site, interface, helix bundle, or catalytic core and fit only that region.</p>
+  </div>
+</div>
+<p>
+  Local fit is not a “subcategory of bad global fit.” It is often the <b>right</b> fit.
+  For enzymes, a local active-site superposition may preserve the chemistry better than a whole-chain fit that is dominated by a moving cap domain.
+</p>
+<div class="warn">
+  Always report the selection explicitly: “RMSD = 0.8 Å over 18 Cα atoms from catalytic residues” means something very different from
+  “RMSD = 0.8 Å over 280 residues.”
+</div>
+
+  </div>
+</section>
+
+
+<section id="flexible" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">12) Flexible alignment and domain motion</h2>
+    <div class="tag">important</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Flexible alignment is used when a single rigid transform cannot meaningfully superpose the structures because parts of the proteins move relative to one another.
+</p>
+<ul>
+  <li>Open vs closed enzymes</li>
+  <li>Ligand-bound vs apo conformations</li>
+  <li>Proteins with hinge-bending motions</li>
+  <li>Multi-domain proteins with rigid domains but moving linkers</li>
+</ul>
+<p>
+  RCSB’s documentation explains flexible alignment as allowing relative mobility between domains or subdomains when rigid-body alignment alone does not yield a meaningful result.
+  FATCAT-flexible implements this by introducing <b>twists</b> so different parts can be superposed independently.
+</p>
+<div class="eq">\[
+	ext{Global RMSD} pprox 	ext{intra-domain difference} + 	ext{inter-domain motion contribution}
+\]</div>
+<p>
+  That is why a protein can have a large whole-chain RMSD and still have near-identical domains.
+</p>
+
+  </div>
+</section>
+
+
+<section id="ce" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">13) CE: combinatorial extension</h2>
+    <div class="tag">algorithm deep dive</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  CE is a classic rigid-body structural alignment algorithm. The core idea is to identify <b>aligned fragment pairs</b> (AFPs),
+  score local geometry similarity, and then <b>extend</b> combinations of AFPs into an optimal alignment path.
+</p>
+<ol>
+  <li>Break structures into short fragments.</li>
+  <li>Find fragment pairs with similar local geometry.</li>
+  <li>Combine compatible fragment pairs into a longer path.</li>
+  <li>Choose a final path that gives broad coverage while keeping deviations low.</li>
+  <li>Compute the final rigid superposition.</li>
+</ol>
+<p>
+  The original CE paper describes the method exactly this way: alignment is built by combinatorial extension of paths defined by aligned fragment pairs.
+</p>
+<div class="note">
+  CE is often a very good choice for remote homologs with conserved structural cores, but standard CE assumes the matched residues preserve sequence order.
+</div>
+
+  </div>
+</section>
+
+
+<section id="cecp" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">14) CE-CP and circular permutations</h2>
+    <div class="tag">special case</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Circular permutation means that the same structural parts exist, but the sequence connectivity is rearranged.
+  A domain that is N-to-C in one protein may appear C-to-N in another.
+</p>
+<p>
+  Standard sequence-order-dependent methods can fail here. CE-CP extends CE to handle these cases by allowing the comparison of proteins that have similar 3D shape but different connectivity.
+</p>
+<div class="warn">
+  If your structures look clearly similar by eye but order-dependent methods fail, ask whether circular permutation or domain reordering is involved.
+</div>
+
+  </div>
+</section>
+
+
+<section id="dali" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">15) DALI: distance matrix alignment</h2>
+    <div class="tag">algorithm deep dive</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  DALI compares <b>intra-molecular distance patterns</b> rather than relying only on direct coordinate fitting.
+  In essence, each structure is represented by its residue-residue distance matrix, and similar internal distance patterns imply similar folds.
+</p>
+<div class="eq">\[
+D^{(A)}_{ij} = \|x_i - x_j\|, \qquad D^{(B)}_{kl} = \|y_k - y_l\|
+\]</div>
+<p>
+  Why this is powerful: distance matrices are less tied to absolute orientation, so DALI can detect deep structural similarity even when sequence identity is very low.
+</p>
+<ul>
+  <li>Very sensitive for fold-level similarity search</li>
+  <li>Especially strong in the twilight zone of sequence similarity</li>
+  <li>Often slower than quick prefilter methods</li>
+  <li>Outputs significance-style scores such as DALI Z-scores</li>
+</ul>
+<p>
+  The current DALI server description still explicitly states that DALI is based on <b>distance matrix comparison</b>, and the server returns similar structures,
+  structural alignments, superimposed structures, and all-against-all dendrograms.
+</p>
+
+  </div>
+</section>
+
+
+<section id="tmalign" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">16) TM-align and US-align</h2>
+    <div class="tag">algorithm deep dive</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  TM-align is one of the most widely used pairwise structural alignment tools. It is <b>sequence-independent</b> and tries to maximize a TM-score-oriented objective,
+  not just minimize RMSD. This makes it more sensitive to global topology than RMSD alone.
+</p>
+<ol>
+  <li>Generate candidate correspondences.</li>
+  <li>Compute superpositions.</li>
+  <li>Iteratively refine alignments by dynamic programming.</li>
+  <li>Optimize the final mapping with a TM-score-like objective.</li>
+</ol>
+<p>
+  TM-align’s own documentation notes that it first finds the best equivalent residues based on structure similarity and then reports TM-score.
+  RCSB also describes TM-align as fast and sensitive to global topology.
+</p>
+<p>
+  <b>US-align</b> is the later generalized framework that extends these ideas to proteins, RNAs, DNAs, and complexes.
+</p>
+<div class="note">
+  Use TM-align when you care more about whole-fold similarity than about one tiny core with low RMSD.
+</div>
+
+  </div>
+</section>
+
+
+<section id="fatcat" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">17) FATCAT: flexible alignment with twists</h2>
+    <div class="tag">algorithm deep dive</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  FATCAT is designed for cases where structural similarity exists, but rigid-body superposition alone is too harsh because domains move.
+</p>
+<ul>
+  <li><b>Rigid FATCAT</b>: sequence-order-dependent, one-body style comparison</li>
+  <li><b>Flexible FATCAT</b>: introduces twists/hinges, allowing parts to rotate and translate relative to each other</li>
+</ul>
+<p>
+  The current FATCAT 2.0 description explains that flexible alignment allows translations and rotations between structural elements so the overall RMSD can be reduced,
+  which is especially useful for different functional forms, binding states, or mutation-associated rearrangements.
+</p>
+<div class="warn">
+  Flexible methods can overfit unrelated structures by gluing together small local similarities. Review alignments visually and do not trust a single score blindly.
+</div>
+
+  </div>
+</section>
+
+
+<section id="sw3d" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">18) Sequence-assisted methods: align, Smith-Waterman 3D, and close homologs</h2>
+    <div class="tag">practical alignment</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  When the proteins are close homologs, a sequence-driven or sequence-assisted mapping is often the most stable option.
+</p>
+<ul>
+  <li><b>PyMOL align</b>: sequence alignment followed by structural fit and iterative outlier rejection</li>
+  <li><b>Smith-Waterman 3D</b>: sequence-local alignment then superposition</li>
+  <li><b>Biopython/your own workflow</b>: run a sequence alignment, map residues, then apply Kabsch</li>
+</ul>
+<p>
+  These methods are fast and appropriate when sequence similarity is still informative. They become fragile when gap placement is wrong or homology is too remote.
+</p>
+
+  </div>
+</section>
+
+
+<section id="msa" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">19) Multiple structure alignment</h2>
+    <div class="tag">beyond pairwise</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Pairwise alignment is the starting point, but many structural biology problems require aligning <b>three or more</b> structures together.
+</p>
+<p>
+  Multiple structure alignment tries to infer a common structural core shared across a family, a conformational ensemble, or a set of mutants.
+  This is harder because you want a consensus that is globally coherent, not just a set of unrelated pairwise fits.
+</p>
+<ul>
+  <li>Find conserved structural cores across a family</li>
+  <li>Compare multiple ligand-bound states</li>
+  <li>Build domain-wise consensus coordinates</li>
+  <li>Cluster structures by structural similarity</li>
+</ul>
+<div class="note">
+  In practice, many users start from an all-against-all matrix of TM-scores or RMSDs, cluster structures, and then compute per-cluster multiple alignments.
+</div>
+
+  </div>
+</section>
+
+
+<section id="example1" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">20) Real-life example: same protein, different conformations</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Classic case: an enzyme has an <b>open</b> and a <b>closed</b> state. If you align the entire chain rigidly, a moving lid or domain can dominate the RMSD.
+</p>
+<div class="grid2">
+  <div class="box">
+    <h3>Wrong interpretation</h3>
+    <p>“RMSD is 5 Å, so these structures are very different.”</p>
+  </div>
+  <div class="box">
+    <h3>Better interpretation</h3>
+    <p>“Core domain RMSD is 0.8 Å, lid domain rotates by 18°, and the catalytic residues remain conserved.”</p>
+  </div>
+</div>
+<p>
+  The better workflow is often: <b>fit the core domain first</b>, measure the mobile domain separately, and report the hinge motion.
+</p>
+
+  </div>
+</section>
+
+
+<section id="example2" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">21) Real-life example: remote homologs in the twilight zone</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Two proteins can have low sequence identity but still share a fold and active-site geometry.
+  This is where CE, DALI, TM-align, and CE-based tools are much more informative than a plain sequence alignment.
+</p>
+<p>
+  RCSB’s pairwise alignment documentation uses hemoglobin alpha versus neuroglobin as an illustrative example of pairwise structural alignment metrics,
+  which is exactly the kind of case where topology-level similarity matters more than raw sequence identity.
+</p>
+
+  </div>
+</section>
+
+
+<section id="example3" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">22) Real-life example: AlphaFold model vs experimental structure</h2>
+    <div class="tag">case study</div>
+  </div>
+  <div class="card-body">
+    
+<p>
+  Model-vs-experiment comparison requires extra caution.
+</p>
+<ul>
+  <li>Ignore low-confidence tails if they are not biologically ordered.</li>
+  <li>Check whether unresolved loops exist in the experimental model.</li>
+  <li>Fit well-ordered domains first.</li>
+  <li>Do not penalize an AlphaFold model for matching a region that was absent from the crystal structure.</li>
+</ul>
+<p>
+  This is a good use case for <b>masked</b> or <b>weighted</b> superposition rather than naïve all-atom RMSD.
+</p>
+
+  </div>
+</section>
+
+
+<section id="numpycode" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">23) Annotated code: Kabsch in pure NumPy</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details open>
+  <summary>Pure NumPy Kabsch fit</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+
+# -----------------------------
+# Minimal Kabsch superposition
+# -----------------------------
+# X: fixed coordinates, Y: mobile coordinates
+# Each is shape (N, 3), where rows are matched atoms.
+X = np.array([
+    [0.0, 0.0, 0.0],
+    [1.0, 0.0, 0.0],
+    [1.0, 1.0, 0.0],
+    [0.0, 1.0, 0.0],
+], dtype=float)
+
+# Construct Y by rotating and translating X and adding tiny noise
+theta = np.deg2rad(35.0)
+R_true = np.array([
+    [ np.cos(theta), -np.sin(theta), 0.0],
+    [ np.sin(theta),  np.cos(theta), 0.0],
+    [ 0.0,            0.0,           1.0],
+])
+t_true = np.array([3.5, -2.0, 0.4])
+Y = X @ R_true.T + t_true
+Y += np.array([[0.00, 0.01, 0.00], [0.01, -0.01, 0.00], [0.00, 0.00, 0.00], [-0.01, 0.01, 0.00]])
+
+# 1) Center both point clouds.
+Xc = X - X.mean(axis=0)
+Yc = Y - Y.mean(axis=0)
+
+# 2) Cross-covariance matrix.
+H = Yc.T @ Xc
+
+# 3) Singular value decomposition.
+U, S, Vt = np.linalg.svd(H)
+R = Vt.T @ U.T
+
+# 4) Reflection correction.
+if np.linalg.det(R) &lt; 0:
+    Vt[-1, :] *= -1
+    R = Vt.T @ U.T
+
+# 5) Translation that moves Y onto X.
+t = X.mean(axis=0) - Y.mean(axis=0) @ R.T
+Y_fit = Y @ R.T + t
+
+# 6) RMSD after fitting.
+rmsd = np.sqrt(np.mean(np.sum((X - Y_fit) ** 2, axis=1)))
+
+print(&quot;Recovered rotation:\n&quot;, R)
+print(&quot;Recovered translation:&quot;, t)
+print(&quot;RMSD after fit:&quot;, rmsd)</code></pre>
+  </div>
+</details>
+
+<p>
+  This is the cleanest teaching implementation. It exposes every mathematical step: centering, covariance, SVD, reflection correction, translation recovery, and RMSD calculation.
+</p>
+
+  </div>
+</section>
+
+
+<section id="robustcode" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">24) Annotated code: weighted fit and outlier trimming</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>Weighted and robust alignment</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import numpy as np
+
+# Weighted alignment is useful when some atoms are more trustworthy
+# than others, e.g. catalytic residues &gt; flexible loops.
+def weighted_kabsch(X, Y, w):
+    w = np.asarray(w, dtype=float)
+    w = w / w.sum()
+
+    x_bar = np.sum(X * w[:, None], axis=0)
+    y_bar = np.sum(Y * w[:, None], axis=0)
+    Xc = X - x_bar
+    Yc = Y - y_bar
+
+    # Weighted covariance.
+    H = (Yc * w[:, None]).T @ Xc
+    U, S, Vt = np.linalg.svd(H)
+    R = Vt.T @ U.T
+    if np.linalg.det(R) &lt; 0:
+        Vt[-1, :] *= -1
+        R = Vt.T @ U.T
+    t = x_bar - y_bar @ R.T
+    Y_fit = Y @ R.T + t
+    wrmsd = np.sqrt(np.sum(w * np.sum((X - Y_fit) ** 2, axis=1)))
+    return R, t, Y_fit, wrmsd
+
+X = np.array([
+    [0,0,0], [1,0,0], [2,0,0], [3,0,0], [4,0,0]
+], dtype=float)
+Y = X.copy()
+Y[:,1] = [0.0, 0.0, 0.1, 2.5, 3.0]   # the last two points behave like outliers
+
+# Put high weight on the structurally conserved core.
+w = np.array([4, 4, 4, 1, 1], dtype=float)
+R, t, Y_fit, wrmsd = weighted_kabsch(X, Y, w)
+print(&quot;weighted RMSD:&quot;, wrmsd)
+
+# A simple robust workflow: fit -&gt; compute residuals -&gt; trim outliers -&gt; refit
+resid = np.sqrt(np.sum((X - Y_fit) ** 2, axis=1))
+keep = resid &lt; np.quantile(resid, 0.75)
+R2, t2, Y_fit2, wrmsd2 = weighted_kabsch(X[keep], Y[keep], w[keep])
+print(&quot;after trimming anchors:&quot;, wrmsd2)
+print(&quot;kept anchors:&quot;, np.where(keep)[0])</code></pre>
+  </div>
+</details>
+
+<p>
+  Use this idea when a flexible tail or low-confidence region would otherwise dominate the fit.
+</p>
+
+  </div>
+</section>
+
+
+<section id="biopython" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">25) Annotated code: Biopython structure parsing and superposition</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>Biopython Superimposer workflow</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">from Bio.PDB import MMCIFParser, PPBuilder, Superimposer
+
+# Real workflow idea:
+# 1) Parse two mmCIF files.
+# 2) Choose a chain from each structure.
+# 3) Build residue mapping (here: naive same residue numbers).
+# 4) Extract matched C-alpha atoms.
+# 5) Run superposition and inspect RMSD.
+
+parser = MMCIFParser(QUIET=True)
+ref = parser.get_structure(&quot;ref&quot;, &quot;reference.cif&quot;)
+mov = parser.get_structure(&quot;mov&quot;, &quot;mobile.cif&quot;)
+
+ref_chain = ref[0][&quot;A&quot;]
+mov_chain = mov[0][&quot;A&quot;]
+
+# Build dictionaries keyed by residue number for standard residues.
+def ca_dict(chain):
+    out = {}
+    for res in chain:
+        if res.id[0] == &quot; &quot; and &quot;CA&quot; in res:
+            out[res.id[1]] = res[&quot;CA&quot;]
+    return out
+
+ref_ca = ca_dict(ref_chain)
+mov_ca = ca_dict(mov_chain)
+common_ids = sorted(set(ref_ca) &amp; set(mov_ca))
+
+fixed = [ref_ca[i] for i in common_ids]
+moving = [mov_ca[i] for i in common_ids]
+
+sup = Superimposer()
+sup.set_atoms(fixed, moving)
+print(&quot;Biopython RMSD:&quot;, sup.rms)
+print(&quot;rotation matrix:\n&quot;, sup.rotran[0])
+print(&quot;translation vector:&quot;, sup.rotran[1])
+
+# Apply the transformation to every atom in the mobile structure.
+sup.apply(list(mov.get_atoms()))
+
+# After this, mov coordinates are in the reference frame.
+# You can save them using Bio.PDB.PDBIO or MMCIFIO.</code></pre>
+  </div>
+</details>
+
+<p>
+  Biopython is excellent when you want transparent, scriptable workflows around PDB/mmCIF parsing and matched-atom extraction.
+</p>
+
+  </div>
+</section>
+
+
+<section id="mdanalysis" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">26) Annotated code: aligning an MD trajectory</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>MDAnalysis AlignTraj example</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import MDAnalysis as mda
+from MDAnalysis.analysis import align, rms
+
+# Example: align a trajectory onto a reference using C-alpha atoms.
+# Good for MD where you want to remove rigid-body motion before RMSD or PCA.
+
+u = mda.Universe(&quot;topology.pdb&quot;, &quot;trajectory.dcd&quot;)
+ref = mda.Universe(&quot;reference.pdb&quot;)
+
+selection = &quot;protein and name CA&quot;
+
+# Align the entire trajectory to the reference.
+aligner = align.AlignTraj(
+    u,
+    ref,
+    select=selection,
+    filename=&quot;aligned.dcd&quot;,
+    in_memory=False
+)
+aligner.run()
+
+# Compute RMSD after alignment.
+R = rms.RMSD(u, ref, select=selection)
+R.run()
+
+# Columns are: frame, time(ps), RMSD(Å)
+print(R.results.rmsd[:5])</code></pre>
+  </div>
+</details>
+
+<p>
+  For trajectories, the goal is usually to remove overall translation and rotation before RMSD, PCA, clustering, or distance analyses.
+  MDAnalysis documents that its alignment machinery uses the fast QCP method, which is one reason it is so useful for repeated fits over many frames.
+</p>
+
+  </div>
+</section>
+
+
+<section id="biotite" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">27) Annotated code: homolog superposition with sequence differences</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>Biotite homolog-aware superposition</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import biotite.structure as struc
+import biotite.structure.io.pdbx as pdbx
+
+# Biotite is handy when residue correspondences are not trivial.
+# The function below can align homologous proteins while allowing
+# sequence differences and outlier handling.
+
+ref = pdbx.get_structure(pdbx.PDBxFile.read(&quot;reference.cif&quot;), model=1)
+mov = pdbx.get_structure(pdbx.PDBxFile.read(&quot;mobile.cif&quot;), model=1)
+
+fitted, transform, anchors = struc.superimpose_homologs(ref, mov)
+print(&quot;number of anchors used:&quot;, anchors.sum())
+print(&quot;rotation:\n&quot;, transform.rotation)
+print(&quot;translation:&quot;, transform.translation)</code></pre>
+  </div>
+</details>
+
+<p>
+  This is helpful when the proteins differ in sequence or have moderate insertions/deletions and you want a higher-level convenience function.
+</p>
+
+  </div>
+</section>
+
+
+<section id="pymol" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">28) Annotated code: PyMOL commands and when to use each</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>PyMOL align / super / cealign</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="text"># PyMOL command-line examples
+# ---------------------------
+# align    : sequence-assisted structural alignment + iterative refinement
+# super    : structure-based fitting with outlier rejection, good for homologs
+# cealign  : CE-based alignment, useful in the twilight zone
+
+load ref.pdb, ref
+load mob.pdb, mob
+
+# Same or close homologs
+align mob and name CA, ref and name CA
+
+# Better default for homologous structures with moderate divergence
+super mob and name CA, ref and name CA
+
+# Low sequence identity but still structurally related
+cealign ref, mob
+
+# Local active-site fit: only catalytic residues define the transform
+cealign ref and chain A and resi 57+102+195 and name CA,
+        mob and chain A and resi 57+102+195 and name CA
+
+# Show the result
+hide everything
+show cartoon, ref or mob
+color cyan, ref
+color orange, mob
+zoom (ref or mob)
+
+# Save transformed coordinates
+save mobile_fitted.pdb, mob</code></pre>
+  </div>
+</details>
+
+<table>
+  <tr><th>Command</th><th>Good default for</th><th>Watch out for</th></tr>
+  <tr><td><code>align</code></td><td>Close homologs</td><td>Sequence mapping errors when divergence is high</td></tr>
+  <tr><td><code>super</code></td><td>Moderately diverged homologs</td><td>Still expects genuine homology</td></tr>
+  <tr><td><code>cealign</code></td><td>Remote structural similarity</td><td>Slower; inspect the result visually</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="batch" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">29) Annotated code: TM-align, Foldseek, and batch workflows</h2>
+    <div class="tag">code</div>
+  </div>
+  <div class="card-body">
+    
+<details >
+  <summary>TM-align shell example</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+# Pairwise alignment with TM-align
+# Usage: bash run_tmalign.sh ref.pdb mob.pdb
+REF=&quot;$1&quot;
+MOB=&quot;$2&quot;
+OUT_PREFIX=&quot;$(basename &quot;$MOB&quot; .pdb)__vs__$(basename &quot;$REF&quot; .pdb)&quot;
+
+TMalign &quot;$MOB&quot; &quot;$REF&quot; &gt; &quot;${OUT_PREFIX}.tmalign.txt&quot;
+
+# Useful lines in the output usually include:
+# RMSD of common residues
+# Aligned length
+# TM-score normalized by structure 1 and structure 2
+# Rotation matrix
+
+grep -E &quot;TM-score|RMSD|Aligned length&quot; &quot;${OUT_PREFIX}.tmalign.txt&quot; || true</code></pre>
+  </div>
+</details>
+
+<details >
+  <summary>Foldseek shell example</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="bash">#!/usr/bin/env bash
+set -euo pipefail
+
+# Fast structure search against a local database with Foldseek.
+# 1) Create databases for query and target sets
+# 2) Run search
+# 3) Convert results to tabular format
+
+foldseek createdb queries/ queryDB
+foldseek createdb targets/ targetDB
+foldseek search queryDB targetDB alnDB tmp --threads 8
+foldseek convertalis queryDB targetDB alnDB hits.tsv \
+  --format-output &quot;query,target,evalue,bits,alntmscore,qtmscore,ttmscore,rmsd,prob&quot;
+
+# Good for all-against-all prefiltering before slower, more detailed alignment.</code></pre>
+  </div>
+</details>
+
+<details >
+  <summary>RCSB alignment API example</summary>
+  <div class="codeblock">
+    <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code class="python">import requests
+import json
+
+# RCSB pairwise alignment API example.
+# Useful when you want CE or FATCAT-like alignment from a web-accessible service.
+payload = {
+    &quot;query&quot;: {
+        &quot;structures&quot;: [
+            {&quot;entry_id&quot;: &quot;4HHB&quot;, &quot;assembly_id&quot;: &quot;1&quot;, &quot;chain_id&quot;: &quot;A&quot;},
+            {&quot;entry_id&quot;: &quot;1OJ6&quot;, &quot;assembly_id&quot;: &quot;1&quot;, &quot;chain_id&quot;: &quot;A&quot;}
+        ],
+        &quot;algorithm&quot;: &quot;jCE&quot;
+    }
+}
+
+url = &quot;https://alignment.rcsb.org/alignment&quot;
+r = requests.post(url, json=payload, timeout=60)
+r.raise_for_status()
+print(r.json())
+
+# The exact schema can evolve, so inspect the returned JSON and save it
+# for reproducible workflows.</code></pre>
+  </div>
+</details>
+
+<p>
+  A good large-scale workflow is often:
+  <b>Foldseek for fast prefiltering</b> → <b>TM-align or DALI/FATCAT/CE for detailed follow-up</b> → <b>manual visual validation</b>.
+</p>
+
+  </div>
+</section>
+
+
+<section id="decision" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">30) Which method should you pick?</h2>
+    <div class="tag">decision guide</div>
+  </div>
+  <div class="card-body">
+    
+<table>
+  <tr><th>Your question</th><th>Best starting choice</th><th>Why</th></tr>
+  <tr><td>Same protein, same numbering</td><td>Kabsch / Biopython / PyMOL fit</td><td>You already know the correspondence</td></tr>
+  <tr><td>Close homologs</td><td>PyMOL align or sequence-assisted fit</td><td>Sequence is still reliable enough to define anchors</td></tr>
+  <tr><td>Remote homologs</td><td>CE, DALI, TM-align, cealign</td><td>Geometry should define the match</td></tr>
+  <tr><td>Open vs closed domain motion</td><td>Core-domain fit + FATCAT-flexible</td><td>One rigid transform hides domain movement</td></tr>
+  <tr><td>Large structure database search</td><td>Foldseek first</td><td>Very fast prefiltering</td></tr>
+  <tr><td>Significance-rich fold search</td><td>DALI</td><td>Very sensitive at fold level</td></tr>
+  <tr><td>Trajectory alignment</td><td>MDAnalysis AlignTraj</td><td>Efficient repeated fitting</td></tr>
+  <tr><td>Active-site geometry only</td><td>Local motif fit</td><td>Preserves the chemistry-focused question</td></tr>
+</table>
+
+  </div>
+</section>
+
+
+<section id="pitfalls" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">31) Common failure modes</h2>
+    <div class="tag">pitfalls</div>
+  </div>
+  <div class="card-body">
+    
+<ol>
+  <li><b>Comparing RMSD values from different atom selections</b>.</li>
+  <li><b>Ignoring aligned length</b>: 0.7 Å over 12 atoms is not the same as 0.7 Å over 250 residues.</li>
+  <li><b>Fitting flexible tails</b> that should have been masked.</li>
+  <li><b>Using sequence-based mapping for remote homologs</b>.</li>
+  <li><b>Over-trusting flexible alignments</b> that can patch together unrelated local similarities.</li>
+  <li><b>Ignoring missing residues, alternate locations, insertion codes, and chain mismatches</b>.</li>
+  <li><b>Comparing different biological assemblies</b> when the real question is monomer vs complex.</li>
+  <li><b>Reporting one score only</b> without coverage or visual inspection.</li>
+</ol>
+<div class="warn">
+  The most common interpretive mistake is saying “structure A is more similar to structure B because the RMSD is smaller,” without checking whether the alignment length, residue mapping, and selection are comparable.
+</div>
+
+  </div>
+</section>
+
+
+<section id="workflow" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">32) A robust end-to-end workflow</h2>
+    <div class="tag">workflow</div>
+  </div>
+  <div class="card-body">
+    
+<ol>
+  <li>Define the biological question: same protein state, homolog search, local active-site comparison, domain motion, or trajectory alignment.</li>
+  <li>Choose the appropriate structural objects: monomer, chain, domain, interface, catalytic residues, ensemble frames.</li>
+  <li>Clean coordinates: remove alternate locations if needed, pick one model, standardize chain IDs, handle missing residues.</li>
+  <li>Choose correspondence mode: known mapping, sequence-assisted, or structure-driven.</li>
+  <li>Choose atoms: Cα, backbone, all-heavy, interface, or motif.</li>
+  <li>Run one rigid fit first to understand the baseline.</li>
+  <li>If that fails biologically, try local/domain-wise or flexible alignment.</li>
+  <li>Report at least: method, atom selection, alignment length, score(s), and a sentence of biological interpretation.</li>
+</ol>
+
+  </div>
+</section>
+
+
+<section id="references" class="card searchable">
+  <div class="card-header">
+    <h2 class="card-title">33) Tools and references</h2>
+    <div class="tag">resources</div>
+  </div>
+  <div class="card-body">
+    
+<ul>
+  <li>Biopython <code>Superimposer</code> and related PDB modules</li>
+  <li>MDAnalysis alignment and RMSD documentation</li>
+  <li>RCSB Pairwise Structure Alignment tool and alignment API</li>
+  <li>TM-align / TM-score / US-align resources from the Zhang group ecosystem</li>
+  <li>DALI server and DaliLite</li>
+  <li>FATCAT 2.0 server</li>
+  <li>Foldseek for large-scale structure search</li>
+  <li>PyMOL <code>align</code>, <code>super</code>, and <code>cealign</code> workflows</li>
+</ul>
+<p>
+  For practical work, keep one mental rule: <b>method choice follows biological question</b>.
+  The mathematically optimal fit is not always the biologically informative fit.
+</p>
+
+  </div>
+</section>
+
+    </div>
+  </main>
+
+  <div class="footer">
+    Built as a standalone teaching page for structural bioinformatics study and practical scripting.
+  </div>
+
+  <script>
+    const box = document.getElementById('searchBox');
+    const items = [...document.querySelectorAll('.searchable')];
+    box.addEventListener('input', () => {
+      const q = box.value.trim().toLowerCase();
+      items.forEach(el => {
+        const hit = el.innerText.toLowerCase().includes(q);
+        el.classList.toggle('hidden', q && !hit);
+      });
+    });
+    function clearSearch() {
+      box.value = '';
+      items.forEach(el => el.classList.remove('hidden'));
+      box.focus();
+    }
+    function copyCode(btn) {
+      const code = btn.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const old = btn.innerText;
+        btn.innerText = 'Copied';
+        setTimeout(() => btn.innerText = old, 900);
+      });
+    }
+    function expandAll() {
+      document.querySelectorAll('details').forEach(d => d.open = true);
+    }
+    function collapseAll() {
+      document.querySelectorAll('details').forEach(d => d.open = false);
+    }
+  </script>
+</body>
+</html>
