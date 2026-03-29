@@ -448,6 +448,34 @@ pip install torch fair-esm
   Protein structure is fundamentally geometry in 3D. Distances, angles, and torsions are the building blocks
   behind bond geometry, backbone conformation, residue contacts, and structure comparison.
 </p>
+
+    <h1>Key Dihedral Angles in Protein Structure</h1>
+  
+  <section>
+    <h2>1. The Phi (φ) Angle</h2>
+    <p><strong>Definition:</strong> The angle of rotation around the N-Cα bond.</p>
+    <p><strong>Atoms involved:</strong> C(i-1) — N — Cα — C</p>
+  </section>
+
+  <section>
+    <h2>2. The Psi (ψ) Angle</h2>
+    <p><strong>Definition:</strong> The angle of rotation around the Cα-C bond.</p>
+    <p><strong>Atoms involved:</strong> N — Cα — C — N(i+1)</p>
+  </section>
+
+  <section>
+    <h2>3. The Omega (ω) Angle</h2>
+    <p><strong>Definition:</strong> The angle of rotation around the peptide bond (C-N).</p>
+    <p><strong>Note:</strong> Due to partial double-bond character, this is almost always restricted to 180° (trans) or 0° (cis).</p>
+  </section>
+
+  <section>
+    <h2>Why these matter</h2>
+    <ul>
+      <li><strong>Ramachandran Plot:</strong> A visualization of φ and ψ angles that predicts sterically allowed regions for amino acids.</li>
+      <li><strong>Protein Folding:</strong> The specific combinations of these angles determine secondary structures like Alpha Helices and Beta Sheets.</li>
+    </ul>
+  </section>
 <div class="eq">
   <b>Distance:</b>
   \[
