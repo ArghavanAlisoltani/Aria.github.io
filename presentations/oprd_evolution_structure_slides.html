@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OprD Evolution in the Context of Protein Structure</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121932;
+      --panel-2: #182242;
+      --ink: #eef3ff;
+      --muted: #aebcdf;
+      --accent: #77c3ff;
+      --accent-2: #8ef0c5;
+      --warn: #ffcf70;
+      --danger: #ff8b8b;
+      --good: #8ef0c5;
+      --shadow: 0 18px 42px rgba(0,0,0,.28);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #152147 0%, var(--bg) 48%);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+    body {
+      height: 100vh;
+    }
+    .deck {
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 4.4vh 4.5vw 6.8vh;
+      display: none;
+      grid-template-rows: auto 1fr auto;
+      gap: 2.2vh;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+    }
+    .slide.active { display: grid; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 1rem;
+      letter-spacing: .02em;
+    }
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      padding: .5rem .85rem;
+      box-shadow: var(--shadow);
+    }
+    h1, h2 {
+      margin: 0 0 1rem 0;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    h1 { font-size: clamp(2.5rem, 5.4vw, 5rem); }
+    h2 { font-size: clamp(2rem, 4.5vw, 3.7rem); }
+    h3 {
+      margin: 0 0 .65rem 0;
+      font-size: clamp(1rem, 2vw, 1.45rem);
+      color: var(--accent-2);
+      letter-spacing: .01em;
+    }
+    p, li {
+      font-size: clamp(1rem, 1.65vw, 1.42rem);
+      line-height: 1.48;
+      color: var(--ink);
+    }
+    .lead {
+      font-size: clamp(1.15rem, 1.9vw, 1.68rem);
+      color: #f7fbff;
+      max-width: 70ch;
+    }
+    .muted { color: var(--muted); }
+    .accent { color: var(--accent); }
+    .accent2 { color: var(--accent-2); }
+    .warn { color: var(--warn); }
+    .danger { color: var(--danger); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 2rem;
+      align-items: stretch;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.3rem;
+      box-shadow: var(--shadow);
+    }
+    .big-card {
+      padding: 1.5rem 1.6rem;
+    }
+    ul.tight { margin: .3rem 0 0 1.15rem; }
+    ul.tight li { margin: .45rem 0; }
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .kpi .card { text-align: center; }
+    .kpi .num {
+      display: block;
+      font-size: clamp(1.8rem, 3.6vw, 3rem);
+      color: var(--accent);
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: .35rem;
+    }
+    .small { font-size: .95rem; color: var(--muted); }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,.10);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-right: 1rem;
+    }
+    .bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+    .controls {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      display: flex;
+      gap: .6rem;
+      z-index: 50;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: .9rem 1.1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--ink);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+    }
+    button:hover { background: rgba(255,255,255,.16); }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .7rem;
+      margin-top: 1rem;
+    }
+    .pill {
+      padding: .55rem .8rem;
+      border-radius: 999px;
+      background: rgba(119,195,255,.12);
+      border: 1px solid rgba(119,195,255,.22);
+      color: #dbf0ff;
+      font-size: .98rem;
+    }
+    .subtitle {
+      font-size: clamp(1.2rem, 2vw, 1.85rem);
+      color: var(--muted);
+      max-width: 64ch;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 2rem;
+      align-items: center;
+      height: 100%;
+    }
+    .hero .title-wrap { padding-right: 1rem; }
+    .svg-wrap {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: calc(var(--radius) + 8px);
+      padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .two-col-list {
+      columns: 2;
+      column-gap: 2rem;
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+    .center {
+      display: grid;
+      place-items: center;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      font-size: 1rem;
+    }
+    .table th, .table td {
+      padding: .78rem .8rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      vertical-align: top;
+    }
+    .table th {
+      color: var(--accent-2);
+      background: rgba(255,255,255,.05);
+      font-weight: 700;
+    }
+    .callout {
+      border-left: 4px solid var(--accent);
+      padding: .9rem 1rem;
+      background: rgba(119,195,255,.08);
+      border-radius: 0 18px 18px 0;
+      margin-top: 1rem;
+    }
+    .mini {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .ref-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem 1.2rem;
+      font-size: .97rem;
+    }
+    .ref-list div {
+      padding: .7rem .8rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+    }
+    .notes {
+      position: fixed;
+      left: 1rem;
+      bottom: 1rem;
+      max-width: 36rem;
+      display: none;
+      background: rgba(6,9,20,.92);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 1rem 1.1rem;
+      color: #dfe7ff;
+      z-index: 60;
+      box-shadow: var(--shadow);
+    }
+    .notes.show { display: block; }
+    .notes h4 { margin: 0 0 .4rem 0; }
+    .notes p { font-size: .98rem; line-height: 1.45; color: #dfe7ff; }
+    .tag {
+      display: inline-block;
+      margin-left: .5rem;
+      padding: .18rem .5rem;
+      font-size: .82rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+    }
+    @media (max-width: 980px) {
+      .hero, .grid-2, .grid-3, .kpi, .ref-list { grid-template-columns: 1fr; }
+      .two-col-list { columns: 1; }
+      .slide { overflow-y: auto; }
+      body { overflow: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+
+    <section class="slide active" data-notes="Open by framing OprD as both a nutrient gateway and an antibiotic vulnerability. The structural lens is the core theme of the deck.">
+      <div class="topbar">
+        <div class="label">Protein Structure + Evolution Slide Deck</div>
+        <div>Slide 1 / 10</div>
+      </div>
+      <div class="hero">
+        <div class="title-wrap">
+          <h1>OprD and Its Evolution <span class="accent">in the Context of Protein Structure</span></h1>
+          <p class="subtitle">A slide deck on how a substrate-specific outer-membrane porin in <i>Pseudomonas aeruginosa</i> evolves under competing pressures from nutrient uptake, membrane integrity, and carbapenem exposure.</p>
+          <div class="pill-row">
+            <div class="pill">Outer membrane porin</div>
+            <div class="pill">Imipenem uptake</div>
+            <div class="pill">β-barrel architecture</div>
+            <div class="pill">Structure-guided evolution</div>
+          </div>
+        </div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 620 430" width="100%" height="100%" aria-label="Conceptual OprD diagram">
+            <defs>
+              <linearGradient id="membrane" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#2a3f78"/>
+                <stop offset="100%" stop-color="#16244a"/>
+              </linearGradient>
+            </defs>
+            <rect x="40" y="70" width="540" height="80" rx="18" fill="url(#membrane)" opacity="0.95"/>
+            <rect x="40" y="280" width="540" height="80" rx="18" fill="url(#membrane)" opacity="0.95"/>
+            <text x="50" y="30" fill="#aebcdf" font-size="22">Extracellular space</text>
+            <text x="50" y="394" fill="#aebcdf" font-size="22">Periplasm</text>
+            <path d="M250 95 C220 125, 220 305, 250 335 L370 335 C400 305, 400 125, 370 95 Z" fill="#d9e7ff" opacity="0.12" stroke="#9fd7ff" stroke-width="3"/>
+            <path d="M290 120 C270 150, 270 280, 290 310 L330 310 C350 280, 350 150, 330 120 Z" fill="#09152f" stroke="#8ef0c5" stroke-width="3"/>
+            <path d="M235 104 C210 90, 200 76, 188 58" stroke="#77c3ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M385 104 C410 84, 432 74, 450 60" stroke="#77c3ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M375 186 C430 170, 460 190, 475 220" stroke="#ffcf70" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <text x="126" y="50" fill="#77c3ff" font-size="20">Loop 2</text>
+            <text x="446" y="52" fill="#77c3ff" font-size="20">Loop 3</text>
+            <text x="481" y="246" fill="#ffcf70" font-size="20">Loop 7 insertion</text>
+            <circle cx="235" cy="210" r="10" fill="#8ef0c5"/>
+            <circle cx="265" cy="222" r="10" fill="#8ef0c5"/>
+            <circle cx="300" cy="214" r="10" fill="#8ef0c5"/>
+            <circle cx="333" cy="206" r="10" fill="#8ef0c5"/>
+            <circle cx="365" cy="217" r="10" fill="#8ef0c5"/>
+            <text x="196" y="196" fill="#8ef0c5" font-size="20">Substrate / imipenem path</text>
+            <path d="M150 210 C200 210, 215 210, 225 210" stroke="#8ef0c5" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <polygon points="225,210 210,202 210,218" fill="#8ef0c5"/>
+            <text x="287" y="178" fill="#ff8b8b" font-size="20">Constricted eyelet</text>
+            <circle cx="310" cy="208" r="44" fill="none" stroke="#ff8b8b" stroke-dasharray="7 6" stroke-width="3"/>
+            <text x="204" y="356" fill="#dfe7ff" font-size="22">18-stranded β-barrel, monomeric channel</text>
+          </svg>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="progress"><div class="bar"></div></div>
+        <div>Use ← → or buttons to navigate · Press N for speaker notes</div>
+      </div>
+    </section>
+
+    <section class="slide" data-notes="Stress that OprD is biologically a nutrient transporter first. Carbapenem uptake is clinically important because it exploits that natural route.">
+      <div class="topbar">
+        <div class="label">Why OprD matters</div>
+        <div>Slide 2 / 10</div>
+      </div>
+      <div>
+        <h2>Why OprD is central to resistance biology</h2>
+        <p class="lead">OprD is a <span class="accent">substrate-specific outer membrane porin</span> of <i>P. aeruginosa</i>. Its native role is uptake of <span class="accent2">basic amino acids and related compounds</span>, but that same route is exploited by <span class="warn">imipenem</span> and some other carbapenems.</p>
+        <div class="kpi">
+          <div class="card"><span class="num">OM</span><div>Outer membrane gateway</div><div class="small">selective, not a broad general porin</div></div>
+          <div class="card"><span class="num">Nutrients</span><div>basic amino acids / small peptides</div><div class="small">physiologic substrate class</div></div>
+          <div class="card"><span class="num">Drug</span><div>major route for imipenem entry</div><div class="small">resistance often rises when OprD is lost</div></div>
+          <div class="card"><span class="num">Trade-off</span><div>uptake benefit vs antibiotic exposure</div><div class="small">evolution acts on both</div></div>
+        </div>
+        <div class="callout">
+          <p style="margin:0;"><b>Core evolutionary idea:</b> mutations in <i>oprD</i> are not just “resistance mutations.” They alter a membrane protein whose function, folding, pore chemistry, and expression are all under selection.</p>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Clinical lens: OprD loss often shifts susceptibility most clearly for imipenem</div></div>
+    </section>
+
+    <section class="slide" data-notes="Use this slide to move from generic porin language to architecture. The exact geometry of the eyelet is what makes missense interpretation structure-dependent.">
+      <div class="topbar">
+        <div class="label">Architecture</div>
+        <div>Slide 3 / 10</div>
+      </div>
+      <div>
+        <h2>Structural architecture of OprD</h2>
+        <div class="grid-2">
+          <div class="card big-card">
+            <h3>What the structure looks like</h3>
+            <ul class="tight">
+              <li><b>Monomeric 18-stranded β-barrel</b> spanning the outer membrane.</li>
+              <li>A <b>narrow eyelet / constriction zone</b> determines substrate selectivity.</li>
+              <li><b>Extracellular loops</b> shape access, recognition, and pore chemistry.</li>
+              <li>The <b>internal channel is asymmetric</b>: chemistry matters as much as pore size.</li>
+              <li>Natural substrates and carbapenems overlap only partially in how they engage the pore.</li>
+            </ul>
+          </div>
+          <div class="card big-card center">
+            <svg viewBox="0 0 430 380" width="100%" height="100%" aria-label="Barrel schematic">
+              <ellipse cx="215" cy="70" rx="110" ry="40" fill="#d9e7ff" opacity="0.12" stroke="#9fd7ff" stroke-width="3"/>
+              <ellipse cx="215" cy="310" rx="110" ry="40" fill="#d9e7ff" opacity="0.12" stroke="#9fd7ff" stroke-width="3"/>
+              <g stroke="#d9e7ff" stroke-width="8" stroke-linecap="round">
+                <line x1="122" y1="79" x2="122" y2="300"/>
+                <line x1="145" y1="90" x2="145" y2="289"/>
+                <line x1="168" y1="98" x2="168" y2="281"/>
+                <line x1="191" y1="104" x2="191" y2="275"/>
+                <line x1="214" y1="107" x2="214" y2="272"/>
+                <line x1="237" y1="104" x2="237" y2="275"/>
+                <line x1="260" y1="98" x2="260" y2="281"/>
+                <line x1="283" y1="90" x2="283" y2="289"/>
+                <line x1="306" y1="79" x2="306" y2="300"/>
+                <line x1="105" y1="96" x2="105" y2="283"/>
+                <line x1="325" y1="96" x2="325" y2="283"/>
+              </g>
+              <path d="M149 56 C130 36, 118 26, 108 20" stroke="#77c3ff" stroke-width="5" fill="none"/>
+              <path d="M281 56 C305 31, 328 25, 344 16" stroke="#77c3ff" stroke-width="5" fill="none"/>
+              <path d="M278 167 C322 152, 355 170, 364 205" stroke="#ffcf70" stroke-width="5" fill="none"/>
+              <text x="64" y="20" fill="#77c3ff" font-size="20">L2</text>
+              <text x="350" y="16" fill="#77c3ff" font-size="20">L3</text>
+              <text x="364" y="226" fill="#ffcf70" font-size="20">L7i</text>
+              <ellipse cx="215" cy="185" rx="46" ry="28" fill="none" stroke="#ff8b8b" stroke-width="4" stroke-dasharray="6 5"/>
+              <text x="165" y="147" fill="#ff8b8b" font-size="19">Eyelet</text>
+              <text x="128" y="345" fill="#dfe7ff" font-size="22">β-strands maintain barrel integrity</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Structure determines which mutations are likely to be tolerated, disruptive, or substrate-specific</div></div>
+    </section>
+
+    <section class="slide" data-notes="This is the mechanistic bridge. Explain why loops, eyelet residues, and charge pattern matter more than raw sequence change counts.">
+      <div class="topbar">
+        <div class="label">Mechanism</div>
+        <div>Slide 4 / 10</div>
+      </div>
+      <div>
+        <h2>How OprD’s structure controls function</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>1. Pore geometry</h3>
+            <p>The channel is not a simple open tube. <b>Loop-defined narrowing</b> creates a physically and chemically selective passage.</p>
+          </div>
+          <div class="card">
+            <h3>2. Charge distribution</h3>
+            <p>Residues in the eyelet and nearby loops create <b>electrostatic preferences</b> that favor some molecules and exclude others.</p>
+          </div>
+          <div class="card">
+            <h3>3. Dynamic access</h3>
+            <p>Surface loops likely modulate <b>recognition, dwell time, and steric entry</b>, especially for carbapenems vs natural ligands.</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1.2rem;">
+          <div class="card big-card">
+            <h3>Why loops 2 and 3 keep appearing</h3>
+            <ul class="tight">
+              <li>Experimental work repeatedly implicates <b>L2 and L3</b> in imipenem binding / passage.</li>
+              <li>Mutations here can be subtle: <b>not every missense change destroys folding</b>, but many can alter permeability.</li>
+              <li>This is why <b>structure-aware interpretation</b> is more informative than labeling all missense variants equally.</li>
+            </ul>
+          </div>
+          <div class="card big-card">
+            <h3>Why the C-terminus matters</h3>
+            <ul class="tight">
+              <li>Late truncations can remove terminal β-strands.</li>
+              <li>That can compromise <b>barrel closure, membrane insertion, or overall stability</b>.</li>
+              <li>A mutation may therefore increase resistance by causing <b>porin loss through misfolding</b>, not by changing only local binding chemistry.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Function emerges from pore size + chemistry + fold stability + expression</div></div>
+    </section>
+
+    <section class="slide" data-notes="Here the audience should see evolution as a set of mutation classes, not a single mechanism. Distinguish null alleles from nuanced permeability-tuning mutations.">
+      <div class="topbar">
+        <div class="label">Evolutionary paths</div>
+        <div>Slide 5 / 10</div>
+      </div>
+      <div>
+        <h2>Major evolutionary routes affecting OprD</h2>
+        <table class="table card">
+          <thead>
+            <tr>
+              <th>Mutation class</th>
+              <th>Likely structural consequence</th>
+              <th>Expected phenotype logic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Frameshift / premature stop / large indel</b></td>
+              <td>Truncation, failed barrel assembly, unstable protein, or complete loss</td>
+              <td>Often strongest route to OprD deficiency and clear imipenem effect</td>
+            </tr>
+            <tr>
+              <td><b>Promoter / upstream changes</b></td>
+              <td>Protein sequence may remain intact, but abundance falls</td>
+              <td>Resistance through reduced expression rather than altered pore geometry</td>
+            </tr>
+            <tr>
+              <td><b>Missense in eyelet / loops</b></td>
+              <td>Changes in charge, sterics, substrate recognition, or gating behavior</td>
+              <td>Can shift permeability without complete porin loss</td>
+            </tr>
+            <tr>
+              <td><b>Missense in barrel core</b></td>
+              <td>Destabilized fold, altered strand packing, membrane insertion problems</td>
+              <td>Possible hidden loss-of-function despite conservative-looking sequence change</td>
+            </tr>
+            <tr>
+              <td><b>Lineage-specific intact variants</b></td>
+              <td>Different but folded OprD proteins, sometimes preserving native function</td>
+              <td>Important caution: diversity alone does not imply resistance</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <p style="margin:0;"><b>Key lesson:</b> OprD evolution includes both <span class="danger">binary loss-of-function events</span> and <span class="accent">graded structural tuning</span>. The second category is where protein structure adds the most value.</p>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Sequence diversity must be partitioned into expression, folding, and pore-function mechanisms</div></div>
+    </section>
+
+    <section class="slide" data-notes="This slide reframes resistance evolution as constrained adaptation. Good place to mention purifying constraint on fold plus local positive selection for reduced drug entry.">
+      <div class="topbar">
+        <div class="label">Selection and constraint</div>
+        <div>Slide 6 / 10</div>
+      </div>
+      <div>
+        <h2>How to think about OprD evolution mechanistically</h2>
+        <div class="grid-2">
+          <div class="card big-card">
+            <h3>Competing selective pressures</h3>
+            <ul class="tight">
+              <li><b>Nutrient uptake</b> favors a functional, selective pore.</li>
+              <li><b>Antibiotic exposure</b> favors reduced carbapenem entry.</li>
+              <li><b>Membrane biogenesis / stability</b> constrains which sequence changes remain viable.</li>
+              <li><b>Clone background</b> matters because efflux, β-lactamases, and cell-wall changes can modify the apparent effect of OprD mutations.</li>
+            </ul>
+          </div>
+          <div class="card big-card">
+            <h3>Expected evolutionary signature</h3>
+            <ul class="tight">
+              <li><b>Global purifying constraint</b> on residues needed for fold and native transport.</li>
+              <li><b>Repeated disruptive mutations</b> in drug-exposed settings because complete loss can be adaptive.</li>
+              <li><b>Localized adaptive missense changes</b> in loops / eyelet if they reduce drug passage while preserving enough physiological function.</li>
+              <li><b>Homoplasy may occur</b> if multiple lineages independently converge on similar structural solutions.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="pill-row">
+          <div class="pill">purifying selection on fold</div>
+          <div class="pill">convergent loss-of-function</div>
+          <div class="pill">loop-centered adaptation</div>
+          <div class="pill">background-dependent phenotype</div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Evolution acts on a membrane protein, not on a one-dimensional string of residues</div></div>
+    </section>
+
+    <section class="slide" data-notes="This slide is practical. It explains why tools that classify only obvious null alleles are useful but incomplete for nuanced missense interpretation.">
+      <div class="topbar">
+        <div class="label">Why structure changes interpretation</div>
+        <div>Slide 7 / 10</div>
+      </div>
+      <div>
+        <h2>Why structure-aware analysis is necessary</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Sequence-only pitfall</h3>
+            <p>A missense mutation can look minor in alignment space but still strongly alter <b>pore electrostatics</b>, <b>loop shape</b>, or <b>barrel stability</b>.</p>
+          </div>
+          <div class="card">
+            <h3>Classifier pitfall</h3>
+            <p>Tools that primarily flag <b>truncation, absence, indels, and promoter disruption</b> are excellent for obvious OprD loss, but they do not fully resolve the gray zone of missense variants.</p>
+          </div>
+          <div class="card">
+            <h3>Structural opportunity</h3>
+            <p>Mapping mutations onto the 3D fold lets you ask whether a residue sits in the <b>eyelet</b>, <b>surface loop</b>, <b>β-strand core</b>, or <b>terminal assembly region</b>.</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1.2rem;">
+          <div class="card big-card">
+            <h3>Best interpretation logic</h3>
+            <ol class="tight" style="padding-left:1.2rem;">
+              <li>Classify mutation type first: null, regulatory, missense, indel.</li>
+              <li>Map residue(s) onto structure and topology.</li>
+              <li>Estimate effect on fold stability and pore chemistry.</li>
+              <li>Interpret in the context of carbapenem phenotype and background resistance mechanisms.</li>
+            </ol>
+          </div>
+          <div class="card big-card">
+            <h3>What this helps you separate</h3>
+            <ul class="tight">
+              <li><b>True intact but functionally altered</b> alleles</li>
+              <li><b>Neutral lineage polymorphisms</b></li>
+              <li><b>Folding-disruptive substitutions</b></li>
+              <li><b>Pore-tuning substitutions</b> likely to alter imipenem entry</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Structure is most informative in the missense-rich middle ground</div></div>
+    </section>
+
+    <section class="slide" data-notes="The example here is conceptual but grounded: C-terminal truncation, loop/eyelet missense, promoter downregulation. Keep the point about mechanistic heterogeneity.">
+      <div class="topbar">
+        <div class="label">Example mutation logic</div>
+        <div>Slide 8 / 10</div>
+      </div>
+      <div>
+        <h2>Three common structural outcomes of OprD evolution</h2>
+        <div class="grid-3">
+          <div class="card big-card">
+            <h3 class="danger">A. Porin loss</h3>
+            <p><b>Frameshift / stop-gain / major indel</b></p>
+            <p>Expected outcome: incomplete barrel, failed membrane insertion, absent or unstable OprD.</p>
+            <p class="mini">Often gives the clearest imipenem-associated resistance jump.</p>
+          </div>
+          <div class="card big-card">
+            <h3 class="warn">B. Selectivity shift</h3>
+            <p><b>Missense in loops 2/3 or the eyelet</b></p>
+            <p>Expected outcome: altered steric or electrostatic environment with preserved overall fold.</p>
+            <p class="mini">May differentially affect native substrates and carbapenems.</p>
+          </div>
+          <div class="card big-card">
+            <h3 class="accent">C. Hidden functional loss</h3>
+            <p><b>Missense in β-strand packing or terminal strands</b></p>
+            <p>Expected outcome: subtle destabilization that looks “intact” by sequence but behaves like a defective porin.</p>
+            <p class="mini">Important reason to combine sequence, structure, and phenotype.</p>
+          </div>
+        </div>
+        <div class="svg-wrap" style="margin-top:1.1rem;">
+          <svg viewBox="0 0 960 250" width="100%" height="100%" aria-label="Mutation outcomes schematic">
+            <rect x="38" y="98" width="884" height="56" rx="28" fill="#132246" stroke="#31497f" stroke-width="2"/>
+            <text x="50" y="65" fill="#dfe7ff" font-size="26">Linear OprD topology (conceptual)</text>
+            <text x="75" y="132" fill="#8ef0c5" font-size="21">N-term</text>
+            <text x="840" y="132" fill="#8ef0c5" font-size="21">C-term</text>
+            <circle cx="220" cy="126" r="18" fill="#ffcf70"/>
+            <circle cx="300" cy="126" r="18" fill="#ffcf70"/>
+            <text x="178" y="182" fill="#ffcf70" font-size="22">L2/L3 region</text>
+            <circle cx="485" cy="126" r="22" fill="none" stroke="#ff8b8b" stroke-width="5" stroke-dasharray="6 5"/>
+            <text x="450" y="68" fill="#ff8b8b" font-size="21">Eyelet</text>
+            <line x1="760" y1="98" x2="760" y2="154" stroke="#ff8b8b" stroke-width="6"/>
+            <text x="690" y="184" fill="#ff8b8b" font-size="22">Late stop / truncation</text>
+          </svg>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Different mutations can produce similar resistance phenotypes through different structural routes</div></div>
+    </section>
+
+    <section class="slide" data-notes="This should feel directly useful for the user’s dataset context. It is a practical analysis roadmap centered on WGS + structure + phylogeny.">
+      <div class="topbar">
+        <div class="label">Research workflow</div>
+        <div>Slide 9 / 10</div>
+      </div>
+      <div>
+        <h2>How to study OprD evolution in a genome collection</h2>
+        <div class="grid-2">
+          <div class="card big-card">
+            <h3>Recommended analysis stack</h3>
+            <ol class="tight" style="padding-left:1.2rem;">
+              <li>Extract <i>oprD</i> nucleotide + protein alleles from each isolate.</li>
+              <li>Classify variants into intact, truncation, indel, promoter, and missense groups.</li>
+              <li>Build a core-genome phylogeny and map OprD alleles onto the tree.</li>
+              <li>Test for recurrent changes / homoplasy and lineage enrichment.</li>
+              <li>Map amino-acid changes onto OprD structure (e.g., 3SY7-based coordinates).</li>
+              <li>Stratify residues by topology: loop, eyelet, β-strand core, periplasmic turn, terminal strand.</li>
+              <li>Combine with phenotype to separate <b>likely causal</b> vs <b>background polymorphism</b>.</li>
+            </ol>
+          </div>
+          <div class="card big-card">
+            <h3>High-value figures</h3>
+            <ul class="tight">
+              <li><b>Lollipop-on-structure plot</b> of recurrent residues</li>
+              <li><b>Phylogeny + allele heatmap</b> for convergence</li>
+              <li><b>Topology-resolved mutation density</b> across OprD</li>
+              <li><b>Null vs missense phenotype comparison</b></li>
+              <li><b>3D clustering of resistance-associated residues</b></li>
+              <li><b>dN/dS or site-level constraint</b> split by structural class</li>
+            </ul>
+            <div class="callout">
+              <p style="margin:0;"><b>Best conceptual output:</b> a model showing that OprD evolution is shaped by <span class="accent">where</span> mutations occur in the structure, not just <span class="accent">how many</span> mutations are present.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>Genome-scale work becomes much stronger when residue location is treated as a biological variable</div></div>
+    </section>
+
+    <section class="slide" data-notes="End with synthesis and references. The goal is that the audience remembers the structure-first logic and the practical research implications.">
+      <div class="topbar">
+        <div class="label">Take-home points + references</div>
+        <div>Slide 10 / 10</div>
+      </div>
+      <div>
+        <h2>Take-home message</h2>
+        <p class="lead">OprD evolution is best understood as <span class="accent2">adaptive remodeling of a selective β-barrel channel</span> under simultaneous pressure from nutrient acquisition, protein-fold constraints, and carbapenem exposure. The strongest studies therefore combine <span class="accent">phylogeny</span>, <span class="accent">variant class</span>, <span class="accent">3D structure</span>, and <span class="accent">phenotype</span>.</p>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="card big-card">
+            <h3>Three ideas to remember</h3>
+            <ul class="tight">
+              <li>Null alleles are only part of the story.</li>
+              <li>Missense variants require structural interpretation.</li>
+              <li>Convergent evolution may occur at the level of <b>protein topology</b>, not just exact residue identity.</li>
+            </ul>
+          </div>
+          <div class="card big-card">
+            <h3>Key references used for this deck</h3>
+            <div class="ref-list">
+              <div>Li et al., 2012. <i>Structure and function of OprD protein in P. aeruginosa</i>.</div>
+              <div>Ochs et al., 1999. OprD facilitates uptake of basic amino acids and imipenem.</div>
+              <div>Ochs et al., 2000. Roles of loops 2 and 3 in imipenem passage.</div>
+              <div>Eren et al., 2012. OprD / OccD1 structure and substrate specificity.</div>
+              <div>Biggel et al., 2023. <i>PorinPredict</i> and intact-variant-aware OprD loss screening.</div>
+              <div>Yang et al., 2024. Structural consequence of OprD Trp415* in carbapenem resistance.</div>
+              <div>Wu et al., 2024. Review of influx/efflux and OprD as a key substrate-specific porin.</div>
+              <div>Mammeri et al., 2025. Fitness and virulence trade-offs linked to porin deficiency.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><div class="progress"><div class="bar"></div></div><div>End of deck</div></div>
+    </section>
+
+    <div class="controls">
+      <button id="prevBtn">← Prev</button>
+      <button id="noteBtn">Notes</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+    <div class="notes" id="notesBox"><h4>Speaker notes <span class="tag">press N to toggle</span></h4><p id="notesText"></p></div>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const bars = Array.from(document.querySelectorAll('.bar'));
+    const notesBox = document.getElementById('notesBox');
+    const notesText = document.getElementById('notesText');
+    let idx = 0;
+
+    function render() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+      const pct = ((idx + 1) / slides.length) * 100;
+      bars.forEach((b, i) => { b.style.width = (i === idx ? pct : 0) + '%'; });
+      notesText.textContent = slides[idx].dataset.notes || 'No notes for this slide.';
+    }
+
+    function next() { idx = (idx + 1) % slides.length; render(); }
+    function prev() { idx = (idx - 1 + slides.length) % slides.length; render(); }
+    function toggleNotes() { notesBox.classList.toggle('show'); }
+
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('prevBtn').addEventListener('click', prev);
+    document.getElementById('noteBtn').addEventListener('click', toggleNotes);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') next();
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') prev();
+      if (e.key.toLowerCase() === 'n') toggleNotes();
+    });
+
+    render();
+  </script>
+</body>
+</html>
