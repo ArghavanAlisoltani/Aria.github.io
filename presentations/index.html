@@ -24,14 +24,29 @@
         <a class="home-return" href="../index.html" aria-label="Return to home page">🏠 Return to Home</a>
         <h3><a aria-label="Bioinformatics Domains">💻🧬Microbial Multi-Omics</a></h3>
         
-        <a class="link" href="https://github.com/ArghavanAlisoltani/PA_23SrRNA_diversity_manuscript/presentation/oprd_evolution_structure_slides.html">OprD gene</a>
+        <a class="link" href="https://github.com/ArghavanAlisoltani/PA_23SrRNA_diversity_manuscript/blob/main/presentation/oprd_evolution_structure_slides.html">OprD gene</a>
 
         <iframe src="https://github.com/ArghavanAlisoltani/PA_23SrRNA_diversity_manuscript/presentation/oprd_evolution_structure_slides.html" width="100%" height="500px" style="border:none;"></iframe>
         <a href="https://arghavanalisoltani.github.io/PA_23SrRNA_diversity_manuscript/presentation/oprd_evolution_structure_slides.html">Click here to view the file</a>
        
         <a class="link" href="presentations/oprd_evolution_structure_slides.html">OprD gene 2</a>
 
-           
+        <div id="html-container">Loading...</div>
+
+<script>
+  // Paste your Raw GitHub URL here
+  const rawUrl = 'https://github.com/ArghavanAlisoltani/PA_23SrRNA_diversity_manuscript/blob/main/presentation/oprd_evolution_structure_slides.html';
+
+  fetch(rawUrl)
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('html-container').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Error fetching the HTML:', error);
+      document.getElementById('html-container').innerHTML = 'Failed to load content.';
+    });
+</script>
                 
       <a class="home-return" href="../index.html" aria-label="Return to home page">🏠 Return to Home</a>
     </section>
