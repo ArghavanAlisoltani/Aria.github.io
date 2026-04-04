@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Protein Language Models Course: Beginner to Advanced</title>
+  <meta name="description" content="End-to-end HTML course on protein language models, different PLM families, GPUs, optimization, fine-tuning, parallelization, and bacterial and viral case studies." />
+  <script>
+    window.MathJax = {
+      tex: {inlineMath: [['\(','\)'], ['$', '$']], displayMath: [['\[','\]']]},
+      svg: {fontCache: 'global'}
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  
+  <style>
+    :root{
+      --bg:#08111d; --panel:#101b2e; --panel2:#0d1627;
+      --text:#e9f1ff; --muted:#b1c2e8;
+      --accent:#79a8ff; --accent2:#6ff0cf;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans);
+      background:
+        radial-gradient(1200px 650px at 15% 0%, rgba(121,168,255,.18), transparent 58%),
+        radial-gradient(900px 520px at 92% 10%, rgba(111,240,207,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{padding:28px 18px 18px; max-width:1320px; margin:0 auto;}
+    .hero{background: linear-gradient(135deg, rgba(121,168,255,.18), rgba(17,26,51,.0)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px 18px;}
+    h1{margin:0 0 8px; font-size: clamp(22px, 4vw, 36px); letter-spacing:.2px;}
+    .subtitle{margin:0 0 12px; color:var(--muted); line-height:1.6; font-size:15px; max-width:1200px;}
+    .kicker{color:var(--accent2); font-weight:900; letter-spacing:.35px; text-transform:uppercase; font-size:12px; margin-top:12px;}
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; justify-content:space-between;}
+    .search-wrap{display:flex; gap:10px; align-items:center; flex:1; min-width:260px;}
+    input[type="search"]{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(255,255,255,.04); color:var(--text); outline:none;}
+    input[type="search"]::placeholder{color:rgba(233,241,255,.55)}
+    .btn{padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:800; white-space:nowrap;}
+    .btn:hover{background: rgba(255,255,255,.10)}
+    main{max-width:1320px; margin:0 auto; padding:0 18px 48px; display:grid; grid-template-columns: 340px 1fr; gap:14px;}
+    nav{position:sticky; top:14px; align-self:start; height: calc(100vh - 28px); overflow:auto; border:1px solid var(--border); border-radius:var(--radius); background: rgba(16,27,46,.58); backdrop-filter: blur(10px); box-shadow:var(--shadow); padding:12px;}
+    nav h2{font-size:13px; margin:6px 8px 10px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase;}
+    .toc a{display:block; padding:8px 10px; border-radius:12px; color:var(--text); border:1px solid transparent; font-size:14px; line-height:1.35;}
+    .toc a:hover{background: rgba(255,255,255,.06); border-color: var(--border); text-decoration:none;}
+    .content{display:flex; flex-direction:column; gap:12px;}
+    .card{border:1px solid var(--border); border-radius:var(--radius); background: rgba(16,27,46,.46); backdrop-filter: blur(10px); box-shadow:var(--shadow); overflow:hidden;}
+    .card-header{padding:14px 16px; border-bottom:1px solid var(--border); background: rgba(13,22,39,.60); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .card-title{margin:0; font-size:16px; line-height:1.35}
+    .tag{font-size:12px; color:var(--muted); border:1px solid var(--border); padding:4px 10px; border-radius:999px; background: rgba(255,255,255,.04); white-space:nowrap;}
+    .card-body{padding:14px 16px 16px; line-height:1.68; font-size:14.5px;}
+    .muted{color:var(--muted)}
+    .grid2,.grid3{display:grid; gap:12px; margin-top:10px;}
+    .grid2{grid-template-columns: repeat(2, minmax(0, 1fr));}
+    .grid3{grid-template-columns: repeat(3, minmax(0, 1fr));}
+    .box{border:1px solid var(--border); border-radius:14px; padding:12px; background: rgba(0,0,0,.20);}
+    .box h3{margin:0 0 6px; font-size:14px}
+    .box p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.55}
+    ul, ol{margin:8px 0 0 18px}
+    li{margin:4px 0}
+    code.inline{font-family:var(--mono); font-size:.95em; background: rgba(0,0,0,.25); border:1px solid var(--border); padding:2px 6px; border-radius:10px;}
+    details{border:1px solid var(--border); background: rgba(255,255,255,.03); border-radius:14px; padding:10px 12px; margin:12px 0 0;}
+    summary{cursor:pointer; font-weight:900; color:var(--text); list-style:none; user-select:none;}
+    summary::-webkit-details-marker{display:none}
+    summary:before{content:"▸"; margin-right:8px; color:var(--muted)}
+    details[open] summary:before{content:"▾"}
+    .eq{margin:10px 0 0; padding:10px 12px; border:1px solid var(--border); border-radius:14px; background: rgba(0,0,0,.22);}
+    .codeblock pre{margin:10px 0 0; border-radius:14px; border:1px solid var(--border); background: rgba(0,0,0,.34); overflow:auto; padding: 14px 12px 12px; position: relative;}
+    .codeblock code{font-family: var(--mono); font-size:12.6px; line-height:1.55; white-space: pre; display:block;}
+    .copy-btn{position:absolute; top:10px; right:10px; padding:6px 10px; border-radius:10px; border:1px solid var(--border); background: rgba(255,255,255,.06); color:var(--text); cursor:pointer; font-weight:900; font-size:12px; user-select:none;}
+    .copy-btn:hover{background: rgba(255,255,255,.10)}
+    .note{border-left: 4px solid rgba(121,168,255,.9); padding: 10px 12px; background: rgba(121,168,255,.08); border-radius: 12px; margin-top: 10px;}
+    .ok{border-left: 4px solid rgba(111,240,207,.9); padding: 10px 12px; background: rgba(111,240,207,.08); border-radius: 12px; margin-top: 10px;}
+    .warn{border-left: 4px solid rgba(255,194,102,.95); padding: 10px 12px; background: rgba(255,194,102,.08); border-radius: 12px; margin-top: 10px;}
+    table{width:100%; border-collapse:collapse; overflow:hidden; border:1px solid var(--border); border-radius:14px; background: rgba(0,0,0,.18); margin-top:10px;}
+    th, td{text-align:left; padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top; font-size:13.5px; line-height:1.45;}
+    th{background: rgba(255,255,255,.05); font-weight:900; font-size:13px;}
+    tr:last-child td{border-bottom:none}
+    .small{font-size:12.5px;color:var(--muted)}
+    @media (max-width:1100px){main{grid-template-columns:1fr} nav{position:relative; height:auto} .grid2,.grid3{grid-template-columns:1fr}}
+  </style>
+
+</head>
+<body>
+<header>
+  <div class="hero">
+    <h1>Beginner → Advanced Course: Protein Language Models</h1>
+    <p class="subtitle">A detailed course on <b>protein language models</b>, <b>different PLM families</b>, <b>GPU usage</b>, <b>parallelization</b>, <b>optimization</b>, <b>LoRA / QLoRA</b>, and <b>real bacterial and viral fine-tuning workflows</b>, with formulas, numerical mini-examples, and fully annotated Python code.</p>
+    <div class="kicker">Suggested environment</div>
+    <p class="subtitle">Starter stack: <code class="inline">torch</code>, <code class="inline">transformers</code>, <code class="inline">datasets</code>, <code class="inline">peft</code>, <code class="inline">accelerate</code>, <code class="inline">scikit-learn</code>, <code class="inline">pandas</code>, and <code class="inline">biopython</code>.</p>
+    <div class="top-actions">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Filter topics (e.g., ESM-2, ProtBERT, LoRA, BF16, bacterial AMR, viral host, DDP, FSDP)..." />
+        <button class="btn" id="expandAll">Expand all</button>
+        <button class="btn" id="collapseAll">Collapse all</button>
+      </div>
+      <button class="btn" id="copyLink">Copy page link</button>
+    </div>
+  </div>
+</header>
+<main>
+  <nav>
+    <h2>Course map</h2>
+    <div class="toc"><a href="#symbols">0) Symbols and notation cheat sheet</a>
+<a href="#big-picture">1) What is a protein language model?</a>
+<a href="#why-use">2) Why PLMs matter for bacteria and viruses</a>
+<a href="#families">3) Different types of PLMs</a>
+<a href="#objectives">4) Main learning objectives</a>
+<a href="#attention">5) Transformer attention from first principles</a>
+<a href="#tokenization">6) Tokenization and amino-acid alphabets</a>
+<a href="#pooling">7) Residue embeddings, sequence embeddings, and pooling</a>
+<a href="#data-design">8) Data design for bacteria and viruses</a>
+<a href="#bacterial-case">9) Case study: bacterial AMR protein modeling</a>
+<a href="#viral-case">10) Case study: viral host, lineage, or escape modeling</a>
+<a href="#metrics">11) Metrics that actually matter</a>
+<a href="#environment">12) Environment setup</a>
+<a href="#gpu">13) GPU usage for PLMs</a>
+<a href="#data-format">14) FASTA plus label-table design</a>
+<a href="#read-merge">15) Reading FASTA and merging with labels</a>
+<a href="#splits">16) Homology-aware splitting</a>
+<a href="#baseline">17) Frozen embedding baseline</a>
+<a href="#head-tuning">18) Head-only tuning and linear probing</a>
+<a href="#full-ft">19) Full fine-tuning</a>
+<a href="#lora">20) LoRA and PEFT</a>
+<a href="#qlora">21) QLoRA and quantization</a>
+<a href="#amp">22) Mixed precision, BF16/FP16, and gradient accumulation</a>
+<a href="#checkpointing">23) Activation checkpointing and long proteins</a>
+<a href="#parallelization">24) Parallelization: DDP, FSDP, ZeRO, and Accelerate</a>
+<a href="#multi-protein">25) Modeling several proteins per isolate</a>
+<a href="#custom-loop">26) Fully annotated custom training loop</a>
+<a href="#imbalance">27) Class imbalance and threshold tuning</a>
+<a href="#domain-adaptation">28) Continued pretraining / domain adaptation</a>
+<a href="#interpretability">29) Interpretation and in silico mutagenesis</a>
+<a href="#zero-shot">30) Zero-shot mutation scoring</a>
+<a href="#retrieval">31) Retrieval, clustering, and embedding databases</a>
+<a href="#pipelines">32) Real-world end-to-end pipelines</a>
+<a href="#reproducibility">33) Reproducibility and experiment tracking</a>
+<a href="#failure-modes">34) Common failure modes</a>
+<a href="#benchmark-playbook">35) A sane benchmarking playbook</a>
+<a href="#references">36) References and official docs</a></div>
+  </nav>
+  <div class="content">
+    <section id="symbols" class="card topic" data-keywords="symbols notation attention lora ddp fsdp amp 0) symbols and notation cheat sheet">
+      <div class="card-header">
+        <h2 class="card-title">0) Symbols and notation cheat sheet</h2>
+        <span class="tag">Foundations</span>
+      </div>
+      <div class="card-body">
+<p class="muted">This page is meant to function as a course, a reference, and a practical project template for bacterial and viral protein modeling.</p>
+<div class="grid3">
+  <div class="box"><h3>Sequence symbols</h3><p>Sequence length \(L\), vocabulary \(|V|\), hidden size \(d\), heads \(h\), layers \(N\).</p></div>
+  <div class="box"><h3>Training symbols</h3><p>Loss \(\mathcal{L}\), logits \(z\), labels \(y\), learning rate \(\eta\), gradients \(\nabla\).</p></div>
+  <div class="box"><h3>Scaling symbols</h3><p>Batch size \(B\), tokens/sec, VRAM, micro-batch, gradient accumulation, number of GPUs.</p></div>
+</div>
+<div class="eq">\[
+\text{Effective batch} = B_{per\,GPU} \times N_{GPU} \times G_{accum}
+\]</div>
+<div class="eq">\[
+\text{Throughput} = \frac{\text{tokens processed}}{\text{wall-clock time}}
+\]</div>
+</div>
+    </section>
+    
+    <section id="big-picture" class="card topic" data-keywords="plm what is protein language model esm prott5 protbert 1) what is a protein language model?">
+      <div class="card-header">
+        <h2 class="card-title">1) What is a protein language model?</h2>
+        <span class="tag">Core concept</span>
+      </div>
+      <div class="card-body">
+<p>A <b>protein language model (PLM)</b> is a model trained on amino-acid sequences with an objective borrowed from language modeling, such as masked-token prediction or next-token prediction. After seeing many protein sequences, the model learns contextual representations that often encode useful information about <b>motifs, domains, family structure, mutational constraint, and function</b>.</p>
+<div class="eq">\[
+\text{sequence} = (x_1, x_2, \ldots, x_L), \qquad x_i \in V
+\]</div>
+<div class="eq">\[
+H = [h_1, h_2, \ldots, h_L], \qquad h_i \in \mathbb{R}^d
+\]</div>
+<div class="ok">Four common modes of use are: <b>frozen embeddings</b>, <b>head-only tuning</b>, <b>full fine-tuning</b>, and <b>parameter-efficient fine-tuning</b> such as LoRA.</div>
+</div>
+    </section>
+    
+    <section id="why-use" class="card topic" data-keywords="bacteria viruses amr host lineage escape fitness 2) why plms matter for bacteria and viruses">
+      <div class="card-header">
+        <h2 class="card-title">2) Why PLMs matter for bacteria and viruses</h2>
+        <span class="tag">Applications</span>
+      </div>
+      <div class="card-body">
+<p>In microbial and viral work, labeled data are often limited, noisy, or expensive to generate. PLMs are powerful because they transfer knowledge from massive unlabeled protein corpora into smaller downstream tasks.</p>
+<table>
+  <tr><th>Setting</th><th>Example task</th><th>Label type</th><th>Natural PLM strategy</th></tr>
+  <tr><td>Bacterial AMR protein</td><td>predict resistant vs susceptible</td><td>binary or MIC-derived</td><td>frozen embeddings → classifier, then LoRA</td></tr>
+  <tr><td>Bacterial enzyme family</td><td>subfamily prediction</td><td>multi-class</td><td>encoder PLM + pooled embedding</td></tr>
+  <tr><td>Viral glycoprotein</td><td>host / lineage / tropism</td><td>multi-class</td><td>encoder PLM or causal PLM</td></tr>
+  <tr><td>Mutation effect</td><td>fitness / escape / activity</td><td>regression</td><td>variant scoring or supervised regression head</td></tr>
+</table>
+<div class="note">A very strong baseline is often <b>mean pooled PLM embeddings plus logistic regression or gradient boosting</b>.</div>
+</div>
+    </section>
+    
+    <section id="families" class="card topic" data-keywords="protvec unirep esm protbert prott5 progen msa transformer esm3 3) different types of plms">
+      <div class="card-header">
+        <h2 class="card-title">3) Different types of PLMs</h2>
+        <span class="tag">Model families</span>
+      </div>
+      <div class="card-body">
+<p>Organize the PLM landscape by <b>objective and input type</b> rather than memorizing names.</p>
+<table>
+  <tr><th>Family</th><th>Examples</th><th>Main idea</th><th>Common use</th></tr>
+  <tr><td>Embedding precursors</td><td>ProtVec</td><td>k-mer embedding</td><td>classical ML baseline</td></tr>
+  <tr><td>RNN / mLSTM</td><td>UniRep</td><td>sequential hidden states</td><td>historic transfer-learning baseline</td></tr>
+  <tr><td>Encoder-only MLM</td><td>ProtBERT, ESM-1b, ESM-2, Ankh, ESM C</td><td>masked residue prediction</td><td>embeddings, classification, regression</td></tr>
+  <tr><td>Encoder-decoder</td><td>ProtT5</td><td>sequence-to-sequence transformer</td><td>transfer learning, embeddings</td></tr>
+  <tr><td>Autoregressive</td><td>ProGen, ProGen2</td><td>next-token prediction</td><td>generation and design</td></tr>
+  <tr><td>MSA-based</td><td>MSA Transformer</td><td>use homolog alignments</td><td>evolution-aware tasks</td></tr>
+  <tr><td>Variant-effect focused</td><td>ESM-1v</td><td>mutation scoring priors</td><td>zero-shot variant effect</td></tr>
+  <tr><td>Inverse folding</td><td>ESM-IF1</td><td>sequence from structure</td><td>structure-guided design</td></tr>
+  <tr><td>Multimodal generative</td><td>ESM3</td><td>sequence + structure + function prompting</td><td>advanced design workflows</td></tr>
+</table>
+<div class="warn">Do not choose a model only because it is the largest. For many real tasks, a medium encoder with careful splitting and pooling is the better choice.</div>
+</div>
+    </section>
+    
+    <section id="objectives" class="card topic" data-keywords="mlm causal objective classification regression 4) main learning objectives">
+      <div class="card-header">
+        <h2 class="card-title">4) Main learning objectives</h2>
+        <span class="tag">Theory</span>
+      </div>
+      <div class="card-body">
+<div class="eq">\[
+\mathcal{L}_{MLM} = -\sum_{i\in M} \log p_\theta(x_i \mid x_{\setminus M})
+\]</div>
+<div class="eq">\[
+\mathcal{L}_{AR} = -\sum_{t=1}^L \log p_\theta(x_t \mid x_{<t})
+\]</div>
+<div class="eq">\[
+\mathcal{L}_{cls} = -\sum_{c=1}^{C} y_c \log \hat{y}_c
+\qquad
+\mathcal{L}_{reg} = \frac{1}{N}\sum_i (y_i-\hat{y}_i)^2
+\]</div>
+<p><b>Numerical example:</b> if a masked-site model predicts the correct amino acid with probability 0.70, then the site loss is \(-\log(0.70)=0.357\). If the probability drops to 0.20, the loss becomes \(1.609\).</p>
+</div>
+    </section>
+    
+    <section id="attention" class="card topic" data-keywords="attention q k v formulas 5) transformer attention from first principles">
+      <div class="card-header">
+        <h2 class="card-title">5) Transformer attention from first principles</h2>
+        <span class="tag">Architecture</span>
+      </div>
+      <div class="card-body">
+<div class="eq">\[
+Q = XW_Q,\qquad K = XW_K,\qquad V = XW_V
+\]</div>
+<div class="eq">\[
+\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\]</div>
+<p><b>Mini-example:</b> if a residue query aligns strongly with one context key and weakly with another, the softmax weights more strongly toward the first context position. In proteins, that means one residue representation can emphasize motif-relevant or long-range context.</p>
+<div class="note">Attention is a weighting mechanism, not automatically a mechanistic biological explanation.</div>
+</div>
+    </section>
+    
+    <section id="tokenization" class="card topic" data-keywords="tokenizer alphabets x b z u o special tokens 6) tokenization and amino-acid alphabets">
+      <div class="card-header">
+        <h2 class="card-title">6) Tokenization and amino-acid alphabets</h2>
+        <span class="tag">Data representation</span>
+      </div>
+      <div class="card-body">
+<p>Many protein PLMs tokenize one residue at a time. Some expect residues separated by spaces; others do not. Ambiguous or rare residues must be handled consistently.</p>
+<table>
+  <tr><th>Token type</th><th>Meaning</th><th>Common handling</th></tr>
+  <tr><td>20 canonical amino acids</td><td>standard alphabet</td><td>keep as-is</td></tr>
+  <tr><td>B, Z, X</td><td>ambiguous tokens</td><td>keep or map to X depending on model</td></tr>
+  <tr><td>U, O</td><td>rare residues</td><td>model-dependent</td></tr>
+  <tr><td>CLS, SEP, PAD, MASK</td><td>special tokens</td><td>added by tokenizer</td></tr>
+</table>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># Standardize protein sequences before tokenization
+import re
+
+VALID_AA = set(&quot;ACDEFGHIKLMNPQRSTVWYBXZUO&quot;)
+
+def clean_protein_sequence(seq: str) -&gt; str:
+    seq = re.sub(r&quot;\s+&quot;, &quot;&quot;, seq.upper())
+    seq = seq.replace(&quot;*&quot;, &quot;&quot;).replace(&quot;-&quot;, &quot;&quot;)
+    seq = &quot;&quot;.join(ch if ch in VALID_AA else &quot;X&quot; for ch in seq)
+    return seq
+
+print(clean_protein_sequence(&quot;MKT--IIALSYIFCLVFA??A&quot;))</code></pre></div>
+<div class="warn">Wrong sequence formatting is one of the easiest ways to sabotage a PLM experiment.</div>
+</div>
+    </section>
+    
+    <section id="pooling" class="card topic" data-keywords="mean pooling cls pooling attention pooling 7) residue embeddings, sequence embeddings, and pooling">
+      <div class="card-header">
+        <h2 class="card-title">7) Residue embeddings, sequence embeddings, and pooling</h2>
+        <span class="tag">Representation</span>
+      </div>
+      <div class="card-body">
+<div class="eq">\[
+\mathrm{MeanPool}(H)=\frac{1}{L}\sum_{i=1}^{L} h_i
+\]</div>
+<div class="eq">\[
+\mathrm{AttentionPool}(H)=\sum_i \alpha_i h_i,\qquad
+\alpha_i = \frac{\exp(w^T h_i)}{\sum_j \exp(w^T h_j)}
+\]</div>
+<table>
+  <tr><th>Pooling method</th><th>Pros</th><th>Cons</th></tr>
+  <tr><td>Mean pooling</td><td>simple, strong, stable</td><td>can dilute narrow motif signal</td></tr>
+  <tr><td>CLS token</td><td>convenient</td><td>not always optimal for proteins</td></tr>
+  <tr><td>Max pooling</td><td>captures strong local signals</td><td>can be noisy</td></tr>
+  <tr><td>Learned attention pooling</td><td>often strong when labels are enough</td><td>more parameters and overfitting risk</td></tr>
+</table>
+</div>
+    </section>
+    
+    <section id="data-design" class="card topic" data-keywords="metadata leakage clusters lineages patients isolates 8) data design for bacteria and viruses">
+      <div class="card-header">
+        <h2 class="card-title">8) Data design for bacteria and viruses</h2>
+        <span class="tag">Project design</span>
+      </div>
+      <div class="card-body">
+<ul>
+  <li><b>Split by biological unit, not just rows.</b> For bacteria, isolate cluster or lineage is often better than random row split.</li>
+  <li><b>Avoid homology leakage.</b> Highly similar proteins across train and test produce overoptimistic results.</li>
+  <li><b>Watch metadata leakage.</b> Site, time, or outbreak information may be strongly confounded with labels.</li>
+  <li><b>Track truncation and ambiguity.</b> Sequence quality matters.</li>
+</ul>
+<div class="ok">A good project notebook records: sequence source, label definition, split strategy, homology threshold, and truncation rule.</div>
+</div>
+    </section>
+    
+    <section id="bacterial-case" class="card topic" data-keywords="amr bacteria pseudomonas oprd ampc beta lactamase 9) case study: bacterial amr protein modeling">
+      <div class="card-header">
+        <h2 class="card-title">9) Case study: bacterial AMR protein modeling</h2>
+        <span class="tag">Case study</span>
+      </div>
+      <div class="card-body">
+<p><b>Scenario:</b> use one or more bacterial proteins to predict phenotype such as resistant vs susceptible.</p>
+<table>
+  <tr><th>Input design</th><th>Example</th><th>Label</th><th>Recommended first model</th></tr>
+  <tr><td>one protein per isolate</td><td>OprD or AmpC</td><td>binary or MIC bin</td><td>frozen encoder embeddings</td></tr>
+  <tr><td>several proteins per isolate</td><td>OprD + AmpC + PBP + GyrA</td><td>binary or regression</td><td>concatenated embeddings</td></tr>
+  <tr><td>protein + curated mutations</td><td>sequence plus SNP flags</td><td>binary or regression</td><td>hybrid tabular + PLM model</td></tr>
+</table>
+<div class="note">A practical workflow is: <b>single-protein baseline → multi-protein combination → LoRA on the best candidate</b>.</div>
+</div>
+    </section>
+    
+    <section id="viral-case" class="card topic" data-keywords="virus host lineage spike escape 10) case study: viral host, lineage, or escape modeling">
+      <div class="card-header">
+        <h2 class="card-title">10) Case study: viral host, lineage, or escape modeling</h2>
+        <span class="tag">Case study</span>
+      </div>
+      <div class="card-body">
+<p><b>Scenario:</b> use viral proteins such as spike, HA, capsid, or polymerase to predict host, lineage, tropism, or functional outcomes.</p>
+<ul>
+  <li>Host prediction: avian vs mammalian vs human.</li>
+  <li>Lineage prediction: clade or lineage from a surface protein.</li>
+  <li>Escape or fitness proxy: regression on experimental or curated scores.</li>
+</ul>
+<div class="warn">For viruses, temporal and geographic leakage can be even worse than homology leakage.</div>
+</div>
+    </section>
+    
+    <section id="metrics" class="card topic" data-keywords="auroc auprc mcc f1 regression metrics 11) metrics that actually matter">
+      <div class="card-header">
+        <h2 class="card-title">11) Metrics that actually matter</h2>
+        <span class="tag">Evaluation</span>
+      </div>
+      <div class="card-body">
+<table>
+  <tr><th>Task</th><th>Metrics</th><th>Why</th></tr>
+  <tr><td>Binary classification</td><td>AUROC, AUPRC, MCC, F1</td><td>AUPRC and MCC help with imbalance</td></tr>
+  <tr><td>Multi-class</td><td>macro-F1, weighted-F1, confusion matrix</td><td>prevents large classes from dominating</td></tr>
+  <tr><td>Regression</td><td>RMSE, MAE, Pearson, Spearman</td><td>captures both error and ranking</td></tr>
+  <tr><td>Calibration</td><td>Brier score, reliability plots</td><td>important for decision-making</td></tr>
+</table>
+<div class="eq">\[
+F1 = \frac{2PR}{P+R}
+\qquad
+\mathrm{MCC} = \frac{TP\cdot TN - FP\cdot FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}}
+\]</div>
+<p><b>Mini-example:</b> if TP=40, FP=10, FN=20, TN=130, then precision=0.80, recall=0.667, F1≈0.727 and MCC≈0.65.</p>
+</div>
+    </section>
+    
+    <section id="environment" class="card topic" data-keywords="torch transformers peft accelerate datasets 12) environment setup">
+      <div class="card-header">
+        <h2 class="card-title">12) Environment setup</h2>
+        <span class="tag">Practical setup</span>
+      </div>
+      <div class="card-body">
+<p>Recommended starter stack: <code class="inline">torch</code>, <code class="inline">transformers</code>, <code class="inline">datasets</code>, <code class="inline">peft</code>, <code class="inline">accelerate</code>, <code class="inline">scikit-learn</code>, <code class="inline">pandas</code>, <code class="inline">biopython</code>.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># Suggested starter environment
+# conda create -n plm python=3.11 -y
+# conda activate plm
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+# pip install transformers datasets peft accelerate scikit-learn pandas numpy matplotlib biopython
+# optional: pip install deepspeed bitsandbytes evaluate
+
+import torch
+print(&quot;Torch:&quot;, torch.__version__)
+print(&quot;CUDA available:&quot;, torch.cuda.is_available())
+if torch.cuda.is_available():
+    print(&quot;GPU:&quot;, torch.cuda.get_device_name(0))</code></pre></div>
+</div>
+    </section>
+    
+    <section id="gpu" class="card topic" data-keywords="gpu vram t4 l4 a100 h100 amp bf16 13) gpu usage for plms">
+      <div class="card-header">
+        <h2 class="card-title">13) GPU usage for PLMs</h2>
+        <span class="tag">Hardware</span>
+      </div>
+      <div class="card-body">
+<p>Memory pressure in PLMs comes from model weights, gradients, optimizer state, and activations. Sequence length matters a lot because transformer attention grows quickly with token count.</p>
+<div class="eq">\[
+\text{memory} \approx \text{weights} + \text{optimizer state} + \text{gradients} + \text{activations}
+\]</div>
+<table>
+  <tr><th>Hardware</th><th>Typical use</th></tr>
+  <tr><td>CPU only</td><td>debugging, toy examples, small feature extraction</td></tr>
+  <tr><td>T4 / 16 GB</td><td>small encoder inference and careful LoRA</td></tr>
+  <tr><td>L4 / 24 GB</td><td>moderate PLM inference and tuning</td></tr>
+  <tr><td>A100 / H100</td><td>serious fine-tuning, longer proteins, larger batches</td></tr>
+</table>
+<div class="note">Start with frozen embeddings. Move to LoRA. Use full fine-tuning only when the problem truly needs it.</div>
+</div>
+    </section>
+    
+    <section id="data-format" class="card topic" data-keywords="fasta labels isolate protein long format 14) fasta plus label-table design">
+      <div class="card-header">
+        <h2 class="card-title">14) FASTA plus label-table design</h2>
+        <span class="tag">Data pipeline</span>
+      </div>
+      <div class="card-body">
+<p>Keep the sequence store and the labels table separate but linked by stable IDs.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># labels.csv example
+# isolate_id,protein_id,protein_name,phenotype,cluster_id
+# iso_001,iso_001_oprd,OprD,1,clust_10
+# iso_002,iso_002_oprd,OprD,0,clust_12
+# iso_003,iso_003_oprd,OprD,1,clust_88
+
+# proteins.fasta example headers
+# &gt;iso_001_oprd
+# MTLR...
+# &gt;iso_002_oprd
+# MNKI...</code></pre></div>
+<div class="ok">For multi-protein projects, store data in long format first. You can pivot later.</div>
+</div>
+    </section>
+    
+    <section id="read-merge" class="card topic" data-keywords="biopython seqio pandas merge 15) reading fasta and merging with labels">
+      <div class="card-header">
+        <h2 class="card-title">15) Reading FASTA and merging with labels</h2>
+        <span class="tag">Code</span>
+      </div>
+      <div class="card-body">
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from Bio import SeqIO
+import pandas as pd
+
+records = []
+for rec in SeqIO.parse(&quot;proteins.fasta&quot;, &quot;fasta&quot;):
+    records.append({&quot;protein_id&quot;: rec.id, &quot;sequence&quot;: str(rec.seq)})
+seq_df = pd.DataFrame(records)
+
+label_df = pd.read_csv(&quot;labels.csv&quot;)
+merged = label_df.merge(seq_df, on=&quot;protein_id&quot;, how=&quot;left&quot;)
+merged = merged.dropna(subset=[&quot;sequence&quot;]).copy()
+print(merged.head())
+print(&quot;Rows:&quot;, len(merged))</code></pre></div>
+</div>
+    </section>
+    
+    <section id="splits" class="card topic" data-keywords="cluster splits mmseqs cd-hit group split leakage 16) homology-aware splitting">
+      <div class="card-header">
+        <h2 class="card-title">16) Homology-aware splitting</h2>
+        <span class="tag">Critical practice</span>
+      </div>
+      <div class="card-body">
+<p>Random row splits are rarely enough for proteins.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import pandas as pd
+from sklearn.model_selection import GroupShuffleSplit
+
+merged = pd.read_csv(&quot;merged_labels_sequences.csv&quot;)
+
+# First train/test split by cluster_id.
+gss = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+train_idx, test_idx = next(gss.split(merged, groups=merged[&quot;cluster_id&quot;]))
+train_df = merged.iloc[train_idx].reset_index(drop=True)
+test_df  = merged.iloc[test_idx].reset_index(drop=True)
+
+# Then split train into train/val, again by cluster.
+gss2 = GroupShuffleSplit(n_splits=1, test_size=0.15, random_state=42)
+tr_idx, val_idx = next(gss2.split(train_df, groups=train_df[&quot;cluster_id&quot;]))
+final_train = train_df.iloc[tr_idx].reset_index(drop=True)
+val_df      = train_df.iloc[val_idx].reset_index(drop=True)
+
+print(len(final_train), len(val_df), len(test_df))</code></pre></div>
+<div class="warn">Homology leakage can make test metrics look spectacular while real-world generalization is poor.</div>
+</div>
+    </section>
+    
+    <section id="baseline" class="card topic" data-keywords="frozen embeddings protbert logistic regression 17) frozen embedding baseline">
+      <div class="card-header">
+        <h2 class="card-title">17) Frozen embedding baseline</h2>
+        <span class="tag">Strong baseline</span>
+      </div>
+      <div class="card-body">
+<p>This is one of the most important baselines in the entire PLM workflow.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import torch
+import numpy as np
+import pandas as pd
+from transformers import AutoTokenizer, AutoModel
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+MODEL_NAME = &quot;Rostlab/prot_bert&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, do_lower_case=False)
+model = AutoModel.from_pretrained(MODEL_NAME).to(device)
+model.eval()
+
+def format_for_model(seq: str) -&gt; str:
+    seq = clean_protein_sequence(seq)
+    return &quot; &quot;.join(list(seq))
+
+@torch.no_grad()
+def embed_sequences(seqs, batch_size=8, max_length=1024):
+    all_vecs = []
+    for start in range(0, len(seqs), batch_size):
+        batch = [format_for_model(s) for s in seqs[start:start+batch_size]]
+        toks = tokenizer(batch, return_tensors=&quot;pt&quot;, padding=True, truncation=True, max_length=max_length).to(device)
+        out = model(**toks)
+        hidden = out.last_hidden_state
+        mask = toks[&quot;attention_mask&quot;].unsqueeze(-1)
+        pooled = (hidden * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1)
+        all_vecs.append(pooled.cpu().numpy())
+    return np.vstack(all_vecs)
+
+train_df = pd.read_csv(&quot;train.csv&quot;)
+val_df   = pd.read_csv(&quot;val.csv&quot;)
+X_train = embed_sequences(train_df[&quot;sequence&quot;].tolist())
+X_val   = embed_sequences(val_df[&quot;sequence&quot;].tolist())
+y_train = train_df[&quot;phenotype&quot;].to_numpy()
+y_val   = val_df[&quot;phenotype&quot;].to_numpy()
+
+clf = LogisticRegression(max_iter=5000, class_weight=&quot;balanced&quot;)
+clf.fit(X_train, y_train)
+val_prob = clf.predict_proba(X_val)[:, 1]
+
+print(&quot;AUROC:&quot;, roc_auc_score(y_val, val_prob))
+print(&quot;AUPRC:&quot;, average_precision_score(y_val, val_prob))</code></pre></div>
+<div class="ok">This baseline often tells you whether the protein contains predictive signal before you spend GPU time on full fine-tuning.</div>
+</div>
+    </section>
+    
+    <section id="head-tuning" class="card topic" data-keywords="head tuning linear probing mlp 18) head-only tuning and linear probing">
+      <div class="card-header">
+        <h2 class="card-title">18) Head-only tuning and linear probing</h2>
+        <span class="tag">Transfer learning</span>
+      </div>
+      <div class="card-body">
+<p>A useful middle ground is to keep the PLM frozen and train only a small classifier/regressor on top of pooled embeddings.</p>
+<div class="eq">\[
+\hat{y} = \sigma\big(W\cdot \mathrm{Pool}(H) + b\big)
+\]</div>
+<p>This is stable, memory-light, and often surprisingly competitive.</p>
+</div>
+    </section>
+    
+    <section id="full-ft" class="card topic" data-keywords="full fine tune trainer protein classifier 19) full fine-tuning">
+      <div class="card-header">
+        <h2 class="card-title">19) Full fine-tuning</h2>
+        <span class="tag">Training strategy</span>
+      </div>
+      <div class="card-body">
+<p>Full fine-tuning updates all parameters. It can help when labels are informative and the dataset is large enough, but it is more memory-hungry and easier to overfit.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import numpy as np
+import pandas as pd
+from datasets import Dataset
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, DataCollatorWithPadding, Trainer, TrainingArguments
+from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef, roc_auc_score
+
+MODEL_NAME = &quot;Rostlab/prot_bert&quot;
+num_labels = 2
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, do_lower_case=False)
+
+def prep_text(seq):
+    return &quot; &quot;.join(list(clean_protein_sequence(seq)))
+
+train_df = pd.read_csv(&quot;train.csv&quot;)
+val_df   = pd.read_csv(&quot;val.csv&quot;)
+
+train_ds = Dataset.from_pandas(train_df[[&quot;sequence&quot;, &quot;phenotype&quot;]].rename(columns={&quot;phenotype&quot;: &quot;label&quot;}))
+val_ds   = Dataset.from_pandas(val_df[[&quot;sequence&quot;, &quot;phenotype&quot;]].rename(columns={&quot;phenotype&quot;: &quot;label&quot;}))
+
+def tokenize(batch):
+    texts = [prep_text(s) for s in batch[&quot;sequence&quot;]]
+    return tokenizer(texts, truncation=True, max_length=1024)
+
+train_ds = train_ds.map(tokenize, batched=True)
+val_ds   = val_ds.map(tokenize, batched=True)
+
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=num_labels)
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = logits.argmax(axis=1)
+    out = {
+        &quot;acc&quot;: accuracy_score(labels, preds),
+        &quot;f1&quot;: f1_score(labels, preds),
+        &quot;mcc&quot;: matthews_corrcoef(labels, preds),
+    }
+    if len(np.unique(labels)) == 2:
+        probs = np.exp(logits[:,1]) / np.exp(logits).sum(axis=1)
+        out[&quot;auroc&quot;] = roc_auc_score(labels, probs)
+    return out
+
+args = TrainingArguments(
+    output_dir=&quot;protbert_full_ft&quot;,
+    learning_rate=2e-5,
+    per_device_train_batch_size=2,
+    per_device_eval_batch_size=4,
+    num_train_epochs=5,
+    weight_decay=0.01,
+    eval_strategy=&quot;epoch&quot;,
+    save_strategy=&quot;epoch&quot;,
+    load_best_model_at_end=True,
+    metric_for_best_model=&quot;mcc&quot;,
+    report_to=&quot;none&quot;
+)
+
+trainer = Trainer(
+    model=model,
+    args=args,
+    train_dataset=train_ds,
+    eval_dataset=val_ds,
+    processing_class=tokenizer,
+    data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
+    compute_metrics=compute_metrics,
+)
+
+trainer.train()
+print(trainer.evaluate())</code></pre></div>
+</div>
+    </section>
+    
+    <section id="lora" class="card topic" data-keywords="lora peft low rank adaptation 20) lora and peft">
+      <div class="card-header">
+        <h2 class="card-title">20) LoRA and PEFT</h2>
+        <span class="tag">Optimization</span>
+      </div>
+      <div class="card-body">
+<p>LoRA keeps the base model mostly frozen and learns small low-rank adapter matrices instead.</p>
+<div class="eq">\[
+W' = W + \Delta W,\qquad \Delta W = BA
+\]</div>
+<div class="eq">\[
+A\in\mathbb{R}^{r\times d_{in}},\qquad B\in\mathbb{R}^{d_{out}\times r},\qquad r\ll d
+\]</div>
+<p><b>Numerical intuition:</b> a 1024×1024 layer has about 1.05 million weights. With LoRA rank 8, the added trainable weights are roughly \(1024\times 8 + 8 \times 1024 = 16{,}384\).</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from peft import LoraConfig, get_peft_model, TaskType
+
+MODEL_NAME = &quot;Rostlab/prot_bert&quot;
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, do_lower_case=False)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)
+
+peft_config = LoraConfig(
+    task_type=TaskType.SEQ_CLS,
+    r=8,
+    lora_alpha=16,
+    lora_dropout=0.1,
+    target_modules=[&quot;query&quot;, &quot;key&quot;, &quot;value&quot;]
+)
+model = get_peft_model(model, peft_config)
+model.print_trainable_parameters()</code></pre></div>
+<div class="ok">LoRA is often the first tuning strategy worth trying on medium and large protein transformers.</div>
+</div>
+    </section>
+    
+    <section id="qlora" class="card topic" data-keywords="qlora 4bit 8bit bitsandbytes 21) qlora and quantization">
+      <div class="card-header">
+        <h2 class="card-title">21) QLoRA and quantization</h2>
+        <span class="tag">Advanced optimization</span>
+      </div>
+      <div class="card-body">
+<p>QLoRA combines low-rank adapters with quantized base weights to reduce memory usage. This can allow tuning of larger models on smaller GPUs, depending on architecture and hardware support.</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from transformers import AutoModelForSequenceClassification, BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type=&quot;nf4&quot;,
+    bnb_4bit_compute_dtype=&quot;bfloat16&quot;
+)
+
+model = AutoModelForSequenceClassification.from_pretrained(
+    &quot;Rostlab/prot_bert&quot;,
+    num_labels=2,
+    quantization_config=bnb_config,
+    device_map=&quot;auto&quot;
+)</code></pre></div>
+<div class="warn">Quantization support and stability vary. Always compare against a non-quantized baseline.</div>
+</div>
+    </section>
+    
+    <section id="amp" class="card topic" data-keywords="amp bf16 fp16 grad accumulation 22) mixed precision, bf16/fp16, and gradient accumulation">
+      <div class="card-header">
+        <h2 class="card-title">22) Mixed precision, BF16/FP16, and gradient accumulation</h2>
+        <span class="tag">GPU optimization</span>
+      </div>
+      <div class="card-body">
+<div class="eq">\[
+\text{effective batch} = B_{micro} \times N_{gpu} \times G_{accum}
+\]</div>
+<p><b>Mini-example:</b> if each GPU fits micro-batch 2, you have 4 GPUs, and accumulation 8, then the effective batch is \(2\times 4\times 8 = 64\).</p>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import torch
+from torch import nn
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+scaler = torch.amp.GradScaler(&quot;cuda&quot;) if device == &quot;cuda&quot; else None
+criterion = nn.CrossEntropyLoss()
+grad_accum_steps = 8
+
+model.train()
+optimizer.zero_grad()
+
+for step, batch in enumerate(train_loader):
+    input_ids = batch[&quot;input_ids&quot;].to(device)
+    attention_mask = batch[&quot;attention_mask&quot;].to(device)
+    labels = batch[&quot;labels&quot;].to(device)
+
+    if device == &quot;cuda&quot;:
+        with torch.autocast(device_type=&quot;cuda&quot;, dtype=torch.bfloat16):
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            loss = criterion(outputs.logits, labels) / grad_accum_steps
+        scaler.scale(loss).backward()
+    else:
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        loss = criterion(outputs.logits, labels) / grad_accum_steps
+        loss.backward()
+
+    if (step + 1) % grad_accum_steps == 0:
+        if device == &quot;cuda&quot;:
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            optimizer.step()
+        optimizer.zero_grad()</code></pre></div>
+</div>
+    </section>
+    
+    <section id="checkpointing" class="card topic" data-keywords="activation checkpointing long sequences 23) activation checkpointing and long proteins">
+      <div class="card-header">
+        <h2 class="card-title">23) Activation checkpointing and long proteins</h2>
+        <span class="tag">Memory optimization</span>
+      </div>
+      <div class="card-body">
+<p>Long proteins can be difficult because transformer attention grows quickly with sequence length.</p>
+<div class="eq">\[
+\text{attention cost} \sim O(L^2)
+\]</div>
+<ul>
+  <li>Use activation checkpointing when full activations do not fit.</li>
+  <li>Use domain-aware cropping or sliding windows only if biologically justified.</li>
+  <li>Be cautious with truncation because it can remove the most important motif or domain.</li>
+</ul>
+</div>
+    </section>
+    
+    <section id="parallelization" class="card topic" data-keywords="ddp fsdp zero accelerate multi gpu 24) parallelization: ddp, fsdp, zero, and accelerate">
+      <div class="card-header">
+        <h2 class="card-title">24) Parallelization: DDP, FSDP, ZeRO, and Accelerate</h2>
+        <span class="tag">Scaling</span>
+      </div>
+      <div class="card-body">
+<table>
+  <tr><th>Method</th><th>Best for</th><th>Mental model</th></tr>
+  <tr><td>DDP</td><td>standard multi-GPU training</td><td>each GPU holds a full model copy</td></tr>
+  <tr><td>FSDP</td><td>memory-constrained large models</td><td>model states are sharded across workers</td></tr>
+  <tr><td>DeepSpeed ZeRO</td><td>very large models and offloading</td><td>optimizer/state sharding with multiple stages</td></tr>
+  <tr><td>Accelerate</td><td>easier scaling of existing code</td><td>same PyTorch code across configs</td></tr>
+</table>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code># Example launch for basic DDP
+# torchrun --nproc_per_node=4 train.py</code></pre></div><div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>from accelerate import Accelerator
+
+accelerator = Accelerator()
+model, optimizer, train_loader = accelerator.prepare(model, optimizer, train_loader)
+
+for batch in train_loader:
+    outputs = model(**batch)
+    loss = outputs.loss
+    accelerator.backward(loss)
+    optimizer.step()
+    optimizer.zero_grad()</code></pre></div>
+<div class="note">Scale only when needed. One strong GPU with LoRA and mixed precision is often enough for the first serious experiment.</div>
+</div>
+    </section>
+    
+    <section id="multi-protein" class="card topic" data-keywords="multi protein concat embeddings isolate 25) modeling several proteins per isolate">
+      <div class="card-header">
+        <h2 class="card-title">25) Modeling several proteins per isolate</h2>
+        <span class="tag">Advanced project design</span>
+      </div>
+      <div class="card-body">
+<p>Many bacterial phenotypes depend on more than one protein. A simple and effective strategy is to concatenate per-protein embeddings.</p>
+<div class="eq">\[
+z_{isolate} = [e_1 \| e_2 \| \cdots \| e_k]
+\]</div>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import pandas as pd
+
+emb = pd.read_parquet(&quot;protein_embeddings.parquet&quot;)
+# columns: isolate_id, protein_name, emb_0, emb_1, ...
+
+wide = emb.pivot_table(index=&quot;isolate_id&quot;, columns=&quot;protein_name&quot;)
+wide.columns = [f&quot;{protein}_{feat}&quot; for feat, protein in wide.columns]
+wide = wide.reset_index()
+
+labels = pd.read_csv(&quot;isolate_labels.csv&quot;)
+df = labels.merge(wide, on=&quot;isolate_id&quot;, how=&quot;inner&quot;)
+print(df.shape)</code></pre></div>
+<div class="ok">Always compare single best protein versus biologically motivated combinations.</div>
+</div>
+    </section>
+    
+    <section id="custom-loop" class="card topic" data-keywords="custom pytorch training loop protein classifier 26) fully annotated custom training loop">
+      <div class="card-header">
+        <h2 class="card-title">26) Fully annotated custom training loop</h2>
+        <span class="tag">Code</span>
+      </div>
+      <div class="card-body">
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import torch
+from torch import nn
+from torch.utils.data import Dataset, DataLoader
+from transformers import AutoTokenizer, AutoModel
+
+MODEL_NAME = &quot;Rostlab/prot_bert&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, do_lower_case=False)
+base_model = AutoModel.from_pretrained(MODEL_NAME)
+
+class ProteinClassifier(nn.Module):
+    def __init__(self, encoder, hidden_dim, num_labels=2, dropout=0.2):
+        super().__init__()
+        self.encoder = encoder
+        self.dropout = nn.Dropout(dropout)
+        self.classifier = nn.Linear(hidden_dim, num_labels)
+
+    def forward(self, input_ids, attention_mask):
+        out = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        hidden = out.last_hidden_state  # [B, L, d]
+        mask = attention_mask.unsqueeze(-1)
+        pooled = (hidden * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1)
+        logits = self.classifier(self.dropout(pooled))
+        return logits
+
+class ProteinDataset(Dataset):
+    def __init__(self, df, max_length=1024):
+        self.df = df.reset_index(drop=True)
+        self.max_length = max_length
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df.iloc[idx]
+        seq = &quot; &quot;.join(list(clean_protein_sequence(row[&quot;sequence&quot;])))
+        toks = tokenizer(seq, truncation=True, max_length=self.max_length, return_tensors=&quot;pt&quot;)
+        item = {k: v.squeeze(0) for k, v in toks.items()}
+        item[&quot;labels&quot;] = torch.tensor(int(row[&quot;phenotype&quot;]), dtype=torch.long)
+        return item
+
+def collate_fn(batch):
+    return tokenizer.pad(batch, return_tensors=&quot;pt&quot;)
+
+train_loader = DataLoader(train_ds, batch_size=4, shuffle=True, collate_fn=collate_fn)
+val_loader   = DataLoader(val_ds, batch_size=8, shuffle=False, collate_fn=collate_fn)
+
+hidden_dim = base_model.config.hidden_size
+model = ProteinClassifier(base_model, hidden_dim).to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5, weight_decay=0.01)
+
+for epoch in range(5):
+    model.train()
+    running_loss = 0.0
+    for batch in train_loader:
+        input_ids = batch[&quot;input_ids&quot;].to(device)
+        attention_mask = batch[&quot;attention_mask&quot;].to(device)
+        labels = batch[&quot;labels&quot;].to(device)
+
+        optimizer.zero_grad()
+        logits = model(input_ids=input_ids, attention_mask=attention_mask)
+        loss = criterion(logits, labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for batch in val_loader:
+            input_ids = batch[&quot;input_ids&quot;].to(device)
+            attention_mask = batch[&quot;attention_mask&quot;].to(device)
+            labels = batch[&quot;labels&quot;].to(device)
+            logits = model(input_ids=input_ids, attention_mask=attention_mask)
+            preds = logits.argmax(dim=1)
+            correct += (preds == labels).sum().item()
+            total += labels.size(0)
+
+    print(f&quot;Epoch {epoch+1}: train_loss={running_loss/max(1,len(train_loader)):.4f}, val_acc={correct/max(1,total):.4f}&quot;)</code></pre></div>
+</div>
+    </section>
+    
+    <section id="imbalance" class="card topic" data-keywords="imbalance focal loss threshold 27) class imbalance and threshold tuning">
+      <div class="card-header">
+        <h2 class="card-title">27) Class imbalance and threshold tuning</h2>
+        <span class="tag">Optimization</span>
+      </div>
+      <div class="card-body">
+<div class="eq">\[
+\mathcal{L}_{weighted} = -\sum_i w_{y_i}\log p(y_i\mid x_i)
+\]</div>
+<ul>
+  <li>Use class-weighted loss or balanced sampling.</li>
+  <li>Report MCC and AUPRC, not only accuracy.</li>
+  <li>Tune the decision threshold on validation data rather than assuming 0.5 is optimal.</li>
+</ul>
+</div>
+    </section>
+    
+    <section id="domain-adaptation" class="card topic" data-keywords="continued pretraining mlm domain adaptation 28) continued pretraining / domain adaptation">
+      <div class="card-header">
+        <h2 class="card-title">28) Continued pretraining / domain adaptation</h2>
+        <span class="tag">Advanced topic</span>
+      </div>
+      <div class="card-body">
+<p>If your downstream sequences come from a narrow distribution, such as a single bacterial protein family or viral clade, you can sometimes improve performance by continuing masked-language-model pretraining on unlabeled in-domain sequences before supervised tuning.</p>
+<div class="ok">This is especially useful when you have many unlabeled in-domain sequences but relatively few labels.</div>
+</div>
+    </section>
+    
+    <section id="interpretability" class="card topic" data-keywords="attention saliency integrated gradients mutagenesis 29) interpretation and in silico mutagenesis">
+      <div class="card-header">
+        <h2 class="card-title">29) Interpretation and in silico mutagenesis</h2>
+        <span class="tag">Interpretation</span>
+      </div>
+      <div class="card-body">
+<ul>
+  <li>Attention maps can suggest which residues interact in representation space.</li>
+  <li>Integrated gradients or saliency can highlight influential positions.</li>
+  <li>In silico mutagenesis can rank substitutions by change in model score.</li>
+</ul>
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>AA = list(&quot;ACDEFGHIKLMNPQRSTVWY&quot;)
+
+def single_mutation_scan(seq, model_score):
+    base = model_score(seq)
+    rows = []
+    for i, wt in enumerate(seq):
+        for aa in AA:
+            if aa == wt:
+                continue
+            mutant = seq[:i] + aa + seq[i+1:]
+            score = model_score(mutant)
+            rows.append({
+                &quot;position&quot;: i + 1,
+                &quot;wt&quot;: wt,
+                &quot;mut&quot;: aa,
+                &quot;delta_score&quot;: score - base,
+            })
+    return rows</code></pre></div>
+<div class="note">The strongest interpretation combines model signals with domains, motifs, structure, and known biology.</div>
+</div>
+    </section>
+    
+    <section id="zero-shot" class="card topic" data-keywords="zero shot esm1v variant effect 30) zero-shot mutation scoring">
+      <div class="card-header">
+        <h2 class="card-title">30) Zero-shot mutation scoring</h2>
+        <span class="tag">Advanced topic</span>
+      </div>
+      <div class="card-body">
+<p>Some PLMs can score mutations without supervised labels. These scores are useful as priors for ranking variants, but they are not identical to measured phenotype.</p>
+<div class="warn">Treat zero-shot scores as a biologically informed prior, not as a substitute for carefully labeled data.</div>
+</div>
+    </section>
+    
+    <section id="retrieval" class="card topic" data-keywords="faiss nearest neighbors retrieval embeddings 31) retrieval, clustering, and embedding databases">
+      <div class="card-header">
+        <h2 class="card-title">31) Retrieval, clustering, and embedding databases</h2>
+        <span class="tag">Practical topic</span>
+      </div>
+      <div class="card-body">
+<p>PLMs are also useful as embedding engines for similarity search, cluster discovery, and annotation transfer.</p>
+<ul>
+  <li>Extract one embedding per protein.</li>
+  <li>Index them with a nearest-neighbor engine.</li>
+  <li>Search new bacterial or viral proteins against your curated embedding database.</li>
+</ul>
+</div>
+    </section>
+    
+    <section id="pipelines" class="card topic" data-keywords="pipeline bacteria virus plm 32) real-world end-to-end pipelines">
+      <div class="card-header">
+        <h2 class="card-title">32) Real-world end-to-end pipelines</h2>
+        <span class="tag">Pipeline design</span>
+      </div>
+      <div class="card-body">
+<div class="grid2">
+  <div class="box"><h3>Bacterial pipeline</h3><p>Collect sequences and labels → clean and deduplicate → cluster-aware split → frozen embedding baseline per protein → multi-protein comparison → LoRA on best model → mutation scan and structural interpretation.</p></div>
+  <div class="box"><h3>Viral pipeline</h3><p>Curate sequences and metadata → build time-aware or lineage-aware splits → compare frozen embeddings, head tuning, and LoRA → evaluate calibration and confusion matrix → interpret top positions in domain context.</p></div>
+</div>
+</div>
+    </section>
+    
+    <section id="reproducibility" class="card topic" data-keywords="seed reproducibility config checkpoint 33) reproducibility and experiment tracking">
+      <div class="card-header">
+        <h2 class="card-title">33) Reproducibility and experiment tracking</h2>
+        <span class="tag">Best practices</span>
+      </div>
+      <div class="card-body">
+<div class="codeblock"><pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>import os, random, numpy as np, torch
+
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    os.environ[&quot;PYTHONHASHSEED&quot;] = str(seed)
+
+set_seed(42)</code></pre></div>
+<p>Always record: model name, tokenizer settings, sequence-length cutoff, split strategy, seed, optimizer, precision mode, early stopping rule, and best checkpoint metric.</p>
+</div>
+    </section>
+    
+    <section id="failure-modes" class="card topic" data-keywords="failures leakage truncation label noise 34) common failure modes">
+      <div class="card-header">
+        <h2 class="card-title">34) Common failure modes</h2>
+        <span class="tag">Troubleshooting</span>
+      </div>
+      <div class="card-body">
+<table>
+  <tr><th>Problem</th><th>How it appears</th><th>Fix</th></tr>
+  <tr><td>Homology leakage</td><td>great test score, poor external generalization</td><td>cluster-aware splitting</td></tr>
+  <tr><td>Wrong tokenization</td><td>strange errors or poor performance</td><td>match exact model card format</td></tr>
+  <tr><td>Over-truncation</td><td>unstable or weak results</td><td>preserve domain-carrying positions</td></tr>
+  <tr><td>Label noise</td><td>tuning seems ineffective</td><td>audit labels and QC rules</td></tr>
+  <tr><td>Overfitting</td><td>train improves, validation stalls</td><td>use simpler baseline or stronger regularization</td></tr>
+</table>
+</div>
+    </section>
+    
+    <section id="benchmark-playbook" class="card topic" data-keywords="benchmark playbook 35) a sane benchmarking playbook">
+      <div class="card-header">
+        <h2 class="card-title">35) A sane benchmarking playbook</h2>
+        <span class="tag">Decision guide</span>
+      </div>
+      <div class="card-body">
+<ol>
+  <li>Random or class-frequency baseline</li>
+  <li>k-mer or hand-crafted baseline</li>
+  <li>Frozen embeddings + linear model</li>
+  <li>Frozen embeddings + small MLP</li>
+  <li>Head-only tuning</li>
+  <li>LoRA fine-tuning</li>
+  <li>Full fine-tuning only if justified</li>
+</ol>
+<div class="note">A model should earn its complexity.</div>
+</div>
+    </section>
+    
+    <section id="references" class="card topic" data-keywords="references official docs 36) references and official docs">
+      <div class="card-header">
+        <h2 class="card-title">36) References and official docs</h2>
+        <span class="tag">References</span>
+      </div>
+      <div class="card-body">
+<ul>
+  <li><a href="https://github.com/facebookresearch/esm" target="_blank" rel="noopener">ESM repository: ESM-2, ESMFold, MSA Transformer, ESM-1v, ESM-IF1</a></li>
+  <li><a href="https://github.com/evolutionaryscale/esm" target="_blank" rel="noopener">EvolutionaryScale ESM repository: ESM3 and ESM C</a></li>
+  <li><a href="https://www.evolutionaryscale.ai/blog/esm3-release" target="_blank" rel="noopener">ESM3 release overview</a></li>
+  <li><a href="https://www.evolutionaryscale.ai/blog/esm-cambrian" target="_blank" rel="noopener">ESM C overview</a></li>
+  <li><a href="https://huggingface.co/Rostlab/prot_bert" target="_blank" rel="noopener">ProtBERT model card</a></li>
+  <li><a href="https://huggingface.co/Rostlab/prot_t5_xl_uniref50" target="_blank" rel="noopener">ProtT5 model card</a></li>
+  <li><a href="https://github.com/agemagician/Ankh" target="_blank" rel="noopener">Ankh repository</a></li>
+  <li><a href="https://huggingface.co/docs/transformers/main_classes/trainer" target="_blank" rel="noopener">Transformers Trainer docs</a></li>
+  <li><a href="https://huggingface.co/docs/accelerate/index" target="_blank" rel="noopener">Accelerate docs</a></li>
+  <li><a href="https://huggingface.co/docs/peft/index" target="_blank" rel="noopener">PEFT docs</a></li>
+  <li><a href="https://huggingface.co/docs/peft/package_reference/lora" target="_blank" rel="noopener">LoRA in PEFT</a></li>
+  <li><a href="https://huggingface.co/docs/transformers/quantization/bitsandbytes" target="_blank" rel="noopener">bitsandbytes quantization guide</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/amp.html" target="_blank" rel="noopener">PyTorch AMP docs</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/checkpoint.html" target="_blank" rel="noopener">PyTorch checkpointing</a></li>
+  <li><a href="https://docs.pytorch.org/docs/stable/fsdp.html" target="_blank" rel="noopener">PyTorch FSDP docs</a></li>
+  <li><a href="https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html" target="_blank" rel="noopener">PyTorch DDP tutorial</a></li>
+  <li><a href="https://www.deepspeed.ai/tutorials/zero/" target="_blank" rel="noopener">DeepSpeed ZeRO tutorial</a></li>
+  <li><a href="https://github.com/OATML-Markslab/ProteinGym" target="_blank" rel="noopener">ProteinGym benchmark</a></li>
+  <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11790633/" target="_blank" rel="noopener">2025 review on PLMs for function prediction</a></li>
+  <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12888012/" target="_blank" rel="noopener">2025 review on PLM applications and perspectives</a></li>
+</ul>
+</div>
+    </section>
+    </div>
+</main>
+
+<script>
+function copyCode(btn){
+  const code = btn.parentElement.querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    const old = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = old, 1200);
+  });
+}
+function setAllDetails(openState){
+  document.querySelectorAll('details').forEach(d => d.open = openState);
+}
+document.getElementById('expandAll').addEventListener('click', () => setAllDetails(true));
+document.getElementById('collapseAll').addEventListener('click', () => setAllDetails(false));
+document.getElementById('copyLink').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    const b = document.getElementById('copyLink');
+    const old = b.textContent; b.textContent = 'Link copied';
+    setTimeout(() => b.textContent = old, 1200);
+  } catch (e) {}
+});
+document.getElementById('search').addEventListener('input', function(){
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('.topic').forEach(el => {
+    const hay = (el.innerText + ' ' + (el.dataset.keywords || '')).toLowerCase();
+    el.style.display = (!q || hay.includes(q)) ? '' : 'none';
+  });
+});
+</script>
+
+</body>
+</html>
