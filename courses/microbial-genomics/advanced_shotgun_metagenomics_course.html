@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Advanced Shotgun Metagenomics Analysis: End-to-End Course</title>
+<style>
+:root{--bg:#071427;--bg2:#0b1d35;--panel:#0d223f;--panel2:#0f2748;--text:#e8eefc;--muted:#a9b7d5;--line:#1f3a63;--accent:#7db0ff;--accent2:#8de0c1;--warn:#ffd580;--good:#97f2af;--code:#061224;--chip:#122948;--shadow:0 16px 40px rgba(0,0,0,.28)}*{box-sizing:border-box}html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),#08192d 55%,#0a1830);color:var(--text);font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;scroll-behavior:smooth}a{color:var(--accent)}.wrapper{display:grid;grid-template-columns:320px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;overflow:auto;padding:22px 18px 28px 18px;border-right:1px solid var(--line);background:rgba(4,12,24,.82);backdrop-filter: blur(10px)}.brand{font-size:1.25rem;font-weight:800;line-height:1.2;margin-bottom:8px}.subbrand{color:var(--muted);font-size:.95rem;line-height:1.45;margin-bottom:18px}.search{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--text);outline:none;margin-bottom:14px}.nav-group{margin:14px 0 18px}.nav-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px 4px}.nav a{display:block;padding:9px 12px;border-radius:12px;text-decoration:none;color:var(--text);margin:3px 0;border:1px solid transparent}.nav a:hover{background:rgba(125,176,255,.08);border-color:var(--line)}.main{padding:28px 28px 60px 28px}.hero{background:linear-gradient(135deg,#0b2242,#102b54 55%,#12315e);border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:var(--shadow)}.hero h1{margin:0 0 10px;font-size:2rem;line-height:1.15}.hero p{color:var(--muted);font-size:1.03rem;line-height:1.7;margin:0}.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.badge{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:#dbe7ff;font-size:.92rem}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}.card h3,.card h4{margin-top:0}.section{margin-top:22px;background:linear-gradient(180deg,#091a31,#0b203b);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}.section-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.section-head h2{margin:0;font-size:1.5rem}.tag{background:var(--chip);border:1px solid var(--line);padding:8px 12px;border-radius:999px;color:#dce8ff;font-size:.9rem;white-space:nowrap}.section-body{padding:22px}p{line-height:1.8;color:#dfe8fb}li{line-height:1.8;color:#dfe8fb}ul,ol{padding-left:22px}.muted{color:var(--muted)}.note,.tip,.warn,.formula{border-radius:18px;padding:16px 18px;margin:16px 0;border:1px solid var(--line)}.note{background:rgba(125,176,255,.08)}.tip{background:rgba(141,224,193,.08)}.warn{background:rgba(255,213,128,.09)}.formula{background:#081727;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow:auto}.table-wrap{overflow:auto}table{width:100%;border-collapse:separate;border-spacing:0;margin:14px 0;background:#081727;border:1px solid var(--line);border-radius:18px;overflow:hidden}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#102844}tr:last-child td{border-bottom:none}.codeblock{margin:14px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden}.codehead{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#112949;color:#dbe7ff;font-size:.95rem}.copy-btn{cursor:pointer;background:transparent;color:#dbe7ff;border:1px solid #31527c;border-radius:10px;padding:6px 10px;font-size:.85rem}pre{margin:0;padding:16px 18px;background:var(--code);color:#d9e7ff;overflow:auto;font-size:.92rem;line-height:1.6}details{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin:12px 0}summary{cursor:pointer;font-weight:700}.kpi{font-size:1.35rem;font-weight:800;color:#fff}.small{font-size:.92rem}.footer{margin-top:26px;color:var(--muted);font-size:.92rem}@media (max-width:1100px){.wrapper{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.grid3,.grid2{grid-template-columns:1fr}}mark{background:#274f84;color:#fff;padding:0 .15em;border-radius:.2em}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <aside class="sidebar">
+    <div class="brand">Advanced Shotgun Metagenomics Analysis</div>
+    <div class="subbrand">A practical, end-to-end course from raw FASTQ files to taxonomic profiles, functional interpretation, MAG recovery, statistics, and publication-grade visualization.</div>
+    <input id="searchBox" class="search" type="text" placeholder="Search sections, tools, code, concepts..."/>
+    <div class="nav-group">
+      <div class="nav-title">Navigation</div>
+      <div class="nav" id="navLinks">
+        <a href="#overview">1. What this course teaches</a>
+        <a href="#design">2. Study design and metadata</a>
+        <a href="#tools">3. Best tools by task</a>
+        <a href="#workflow">4. End-to-end workflow map</a>
+        <a href="#environment">5. Reproducible environment</a>
+        <a href="#qc">6. Read QC and host removal</a>
+        <a href="#taxonomy">7. Taxonomic profiling</a>
+        <a href="#assembly">8. Assembly and contig statistics</a>
+        <a href="#binning">9. Binning and MAG recovery</a>
+        <a href="#quality">10. MAG quality, taxonomy, dereplication</a>
+        <a href="#function">11. Functional profiling and annotation</a>
+        <a href="#advanced">12. Advanced modules</a>
+        <a href="#stats">13. Statistics and normalization</a>
+        <a href="#viz">14. Visualization</a>
+        <a href="#python">15. Annotated Python plotting code</a>
+        <a href="#workflowcode">16. Snakemake / HPC templates</a>
+        <a href="#case">17. Real-world project template</a>
+        <a href="#troubleshooting">18. Troubleshooting</a>
+        <a href="#references">19. Suggested references</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="hero">
+      <h1>Advanced Shotgun Metagenomics Analysis: Beginner → Advanced</h1>
+      <p>
+        This page is designed to function as a course, a reference, and a project template for short-read shotgun metagenomics.
+        It emphasizes reproducibility, modern tool choices, assembly-free and assembly-based analysis, genome-resolved metagenomics,
+        and publication-quality visualizations. The code is intentionally verbose and heavily annotated so you can adapt it to a local workstation,
+        HPC cluster, or workflow engine.
+      </p>
+      <div class="badges">
+        <span class="badge">Raw FASTQ → figures</span>
+        <span class="badge">Read-based + assembly-based</span>
+        <span class="badge">MAGs + functions + pathways</span>
+        <span class="badge">Annotated Bash + Python</span>
+        <span class="badge">HPC / workflow-ready</span>
+      </div>
+      <div class="grid3">
+        <div class="card"><div class="kpi">3 analysis layers</div><p class="small muted">Read-level taxonomy, community functional profiling, and contig/MAG-level reconstruction should be treated as complementary, not competing, analyses.</p></div>
+        <div class="card"><div class="kpi">2 main branches</div><p class="small muted">Assembly-free workflows are fast and robust for community summaries. Assembly-based workflows are slower but essential for MAGs, gene neighborhoods, and novel biology.</p></div>
+        <div class="card"><div class="kpi">1 reproducible pipeline</div><p class="small muted">Use explicit metadata, explicit database versions, and a single workflow engine or shell driver so that every figure can be regenerated later.</p></div>
+      </div>
+    </section>
+
+    <section class="section searchable" id="overview"><div class="section-head"><h2>1) What this course teaches</h2><span class="tag">Foundations</span></div><div class="section-body"><p>Shotgun metagenomics asks two broad classes of questions: <strong>who is there</strong> and <strong>what can they do</strong>. Advanced analyses add a third class: <strong>which genomes, genes, pathways, strains, and mobile elements can be reconstructed</strong>.</p><div class="grid3"><div class="card"><h3>Read-based layer</h3><p>Taxonomic composition, approximate abundance, community-wide pathway potential, strain-level marker variation, and quick contamination scans.</p></div><div class="card"><h3>Assembly-based layer</h3><p>Contigs, gene catalogs, differential coverage, co-assembly decisions, and discovery of genes or taxa absent from marker-only databases.</p></div><div class="card"><h3>Genome-resolved layer</h3><p>MAG recovery, completeness/contamination estimation, dereplication, taxonomic placement, metabolism reconstruction, and comparative genomics.</p></div></div><div class="note"><strong>Practical principle:</strong> do not rely on a single tool or a single branch of analysis. A strong publication usually triangulates the answer using at least one read-based and one assembly-based view.</div><div class="formula">Useful notation and formulas
+
+Relative abundance of taxon i:
+    p_i = c_i / Σ c_i
+
+Shannon diversity:
+    H = - Σ p_i log(p_i)
+
+Centered log-ratio (CLR) transformation:
+    clr(x_i) = log(x_i / g(x))
+where g(x) is the geometric mean of the sample vector.
+
+Bray-Curtis dissimilarity between samples A and B:
+    BC = (Σ |A_i - B_i|) / (Σ (A_i + B_i))
+
+Coverage (rough intuition):
+    coverage ≈ (number of bases mapped to contig) / (contig length)</div></div></section>
+
+    <section class="section searchable" id="design"><div class="section-head"><h2>2) Study design and metadata</h2><span class="tag">Critical</span></div><div class="section-body"><p>The biggest metagenomics mistakes are usually upstream of computation: inconsistent extraction, poor controls, shallow sequencing, missing metadata, and weak replication. Before running tools, decide what the experimental unit is, what covariates matter, and whether your biological question requires assembly-free summaries, MAG recovery, or both.</p><ul><li><strong>Minimum metadata table:</strong> sample_id, condition, timepoint, subject/site, extraction batch, sequencing lane, host, library type, read length, insert size, total raw reads.</li><li><strong>Controls:</strong> blanks, extraction controls, spike-ins when possible, mock community if you need method benchmarking.</li><li><strong>Replication:</strong> biological replication beats technical replication for most ecological questions.</li><li><strong>Target depth:</strong> depends heavily on complexity; high-diversity soil often needs much deeper sequencing than low-diversity host-associated samples.</li></ul><div class="warn"><strong>Avoid mixing questions:</strong> “Which genera differ between groups?” and “Which metabolic pathways differ?” and “Can I recover strain-resolved genomes?” can share input data, but they often require different tool settings, databases, and validation logic.</div><div class="codeblock"><div class="codehead"><span>Example metadata TSV</span><button class="copy-btn" data-copy="metadata_tsv">Copy</button></div><pre id="metadata_tsv">sample_id	condition	timepoint	subject	batch	host	read1	read2
+S01	control	T0	mouse01	batchA	mouse	data/raw/S01_R1.fastq.gz	data/raw/S01_R2.fastq.gz
+S02	control	T1	mouse01	batchA	mouse	data/raw/S02_R1.fastq.gz	data/raw/S02_R2.fastq.gz
+S03	treated	T0	mouse02	batchB	mouse	data/raw/S03_R1.fastq.gz	data/raw/S03_R2.fastq.gz
+S04	treated	T1	mouse02	batchB	mouse	data/raw/S04_R1.fastq.gz	data/raw/S04_R2.fastq.gz</pre></div></div></section>
+
+    <section class="section searchable" id="tools"><div class="section-head"><h2>3) Best tools by task</h2><span class="tag">Tool selection</span></div><div class="section-body"><p>There is no universal “best” metagenomics tool. The strongest practice is to choose tools by analysis layer and validate agreement between independent approaches. The table below gives practical defaults for modern short-read shotgun projects.</p><div class="table-wrap"><table><thead><tr><th>Task</th><th>Recommended default</th><th>Why it is useful</th><th>Common alternative</th></tr></thead><tbody><tr><td>Read QC</td><td>fastp</td><td>Fast all-in-one preprocessing, adapter trimming, quality filtering, HTML/JSON reports.</td><td>fastqc + cutadapt + trim_galore</td></tr><tr><td>Aggregate reports</td><td>MultiQC</td><td>Merges per-sample QC and workflow logs into one report.</td><td>Custom notebooks</td></tr><tr><td>Host removal</td><td>Bowtie2 (short reads)</td><td>Reliable mapping-based subtraction when a host reference is available.</td><td>BWA-MEM2, minimap2</td></tr><tr><td>Taxonomic classification</td><td>Kraken2 + Bracken</td><td>Fast broad read-level classification with explicit databases; Bracken improves abundance estimation.</td><td>Kaiju, Centrifuge</td></tr><tr><td>Marker-based profiling</td><td>MetaPhlAn</td><td>Species-level community profiling from clade-specific markers; often more conservative than whole-read classifiers.</td><td>mOTUs, KMCP, Sylph</td></tr><tr><td>Functional profiling</td><td>HUMAnN</td><td>Gene family and pathway abundance/reconstruction from metagenomes or metatranscriptomes.</td><td>FMAP, eggNOG-based custom workflows</td></tr><tr><td>Assembly</td><td>MEGAHIT</td><td>Fast and memory-efficient; strong default for many projects.</td><td>metaSPAdes when you want a heavier, sometimes stronger assembly</td></tr><tr><td>Binning</td><td>MetaBAT2</td><td>Strong practical default using abundance + composition.</td><td>CONCOCT, MaxBin2, SemiBin2</td></tr><tr><td>Consensus bins</td><td>DAS Tool</td><td>Integrates multiple binners to optimize a nonredundant bin set.</td><td>manual comparison</td></tr><tr><td>MAG quality</td><td>CheckM2</td><td>Completeness and contamination estimates for MAGs.</td><td>CheckM</td></tr><tr><td>MAG taxonomy</td><td>GTDB-Tk</td><td>Objective bacterial/archaeal genome taxonomy from GTDB placement and ANI logic.</td><td>ANI to references, CAT/BAT</td></tr><tr><td>Dereplication</td><td>dRep</td><td>Clusters highly similar genomes and picks representatives.</td><td>fastANI-based custom clustering</td></tr><tr><td>MAG annotation</td><td>DRAM</td><td>Rich metabolism-oriented annotation of MAGs and viral contigs.</td><td>Prokka/Bakta + custom KEGG/Pfam workflow</td></tr><tr><td>Interactive taxonomy plots</td><td>Krona / Pavian</td><td>Fast sharing and interactive exploration of classification results.</td><td>Custom Plotly dashboards</td></tr><tr><td>Assembly/bin visualization</td><td>anvi'o</td><td>Integrated interactive visualization for contigs, bins, coverage, functions, and genome-resolved analyses.</td><td>BlobToolKit + notebooks</td></tr></tbody></table></div><details><summary>How to choose between Kraken2 and MetaPhlAn</summary><p>Use <strong>Kraken2</strong> when you want broad read-level assignment, fast screening, custom databases, or contamination checks. Use <strong>MetaPhlAn</strong> when you want conservative marker-based community profiles and better comparability across samples without classifying every read. Many strong studies run both and report agreement at high taxonomic ranks.</p></details><details><summary>How to choose between MEGAHIT and metaSPAdes</summary><p>Use <strong>MEGAHIT</strong> when speed and memory efficiency matter or when you have many samples. Try <strong>metaSPAdes</strong> when you can afford heavier runtime and want to compare whether contig length or gene recovery improves for your specific dataset.</p></details></div></section>
+
+    <section class="section searchable" id="workflow"><div class="section-head"><h2>4) End-to-end workflow map</h2><span class="tag">Big picture</span></div><div class="section-body"><div class="formula">Raw FASTQ
+  ├── Quality control / trimming / report aggregation
+  ├── Host subtraction / contaminant removal
+  ├── Read-based taxonomic profiling
+  ├── Read-based functional profiling
+  ├── Assembly
+  │     ├── Contig QC / stats
+  │     ├── Read mapping back to contigs
+  │     ├── Depth matrix
+  │     ├── Binning
+  │     ├── Consensus / refinement
+  │     ├── MAG quality estimation
+  │     ├── MAG taxonomy
+  │     ├── Dereplication
+  │     └── MAG annotation
+  ├── Statistical modeling and visualization
+  └── Reproducible reports / figures / workflow release</div><div class="tip"><strong>Recommendation:</strong> keep read-level and assembly-level outputs in separate directories and do not overwrite intermediate files. Metagenomics projects often need to revisit an earlier branch with different thresholds.</div></div></section>
+
+    <section class="section searchable" id="environment"><div class="section-head"><h2>5) Reproducible environment</h2><span class="tag">Setup</span></div><div class="section-body"><p>The safest habit is to pin tool versions and database versions. Never publish only commands without recording the database build date.</p><div class="codeblock"><div class="codehead"><span>Conda environment YAML (practical baseline)</span><button class="copy-btn" data-copy="env_yaml">Copy</button></div><pre id="env_yaml">name: shotgun_metagenomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - fastp
+  - bowtie2
+  - samtools
+  - seqkit
+  - kraken2
+  - bracken
+  - metaphlan
+  - humann
+  - megahit
+  - spades
+  - minimap2
+  - bedtools
+  - metabat2
+  - concoct
+  - das_tool
+  - checkm2
+  - drep
+  - gtdbtk
+  - prodigal
+  - diamond
+  - bwa
+  - multiqc
+  - pigz
+  - parallel
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - plotly
+  - jupyterlab</pre></div><div class="codeblock"><div class="codehead"><span>Directory layout</span><button class="copy-btn" data-copy="layout_txt">Copy</button></div><pre id="layout_txt">project/
+├── config/
+│   ├── samples.tsv
+│   ├── paths.yaml
+│   └── groups.tsv
+├── data/
+│   ├── raw/
+│   ├── clean/
+│   └── host_removed/
+├── results/
+│   ├── qc/
+│   ├── taxonomy/
+│   ├── function/
+│   ├── assembly/
+│   ├── mapping/
+│   ├── bins/
+│   ├── mag_qc/
+│   ├── mag_taxonomy/
+│   ├── mag_annotation/
+│   ├── figures/
+│   └── tables/
+├── workflow/
+│   ├── Snakefile
+│   ├── envs/
+│   └── scripts/
+└── notebooks/</pre></div></div></section>
+
+    <section class="section searchable" id="qc"><div class="section-head"><h2>6) Read QC and host removal</h2><span class="tag">Must do</span></div><div class="section-body"><p>QC is not just trimming. You need to inspect read count loss, GC shifts, adapter content, low-complexity content, duplication, and whether host subtraction removes a suspiciously large fraction of reads.</p><div class="grid2"><div class="card"><h3>Typical decisions</h3><ul><li>adapter trimming</li><li>quality filtering</li><li>minimum read length</li><li>poly-G / platform-specific artifacts</li><li>host subtraction</li><li>screening for reagent contaminants</li></ul></div><div class="card"><h3>What to report</h3><ul><li>raw reads and retained reads per sample</li><li>fraction removed as host</li><li>mean read length after trimming</li><li>overall duplication / complexity</li><li>samples excluded and why</li></ul></div></div><div class="codeblock"><div class="codehead"><span>Bash: fastp + host removal + MultiQC</span><button class="copy-btn" data-copy="qc_bash">Copy</button></div><pre id="qc_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+# This script expects:
+#   1) config/samples.tsv with columns sample_id, read1, read2
+#   2) a Bowtie2 index for the host genome at db/host/host_index
+# It writes cleaned FASTQ files, host-removed FASTQ files, and QC reports.
+
+mkdir -p results/qc/fastp results/qc/multiqc data/clean data/host_removed logs
+
+tail -n +2 config/samples.tsv | while IFS=$'\t' read -r sample_id condition timepoint subject batch host read1 read2; do
+  echo "[INFO] Processing ${sample_id}"
+
+  # --- fastp performs adapter trimming, quality filtering, and report generation.
+  fastp \
+    -i "${read1}" \
+    -I "${read2}" \
+    -o "data/clean/${sample_id}_R1.clean.fastq.gz" \
+    -O "data/clean/${sample_id}_R2.clean.fastq.gz" \
+    --detect_adapter_for_pe \
+    --thread 8 \
+    --html "results/qc/fastp/${sample_id}.fastp.html" \
+    --json "results/qc/fastp/${sample_id}.fastp.json" \
+    > "logs/${sample_id}.fastp.log" 2>&1
+
+  # --- Map cleaned reads to the host. Reads that do NOT align are kept.
+  bowtie2 \
+    -x db/host/host_index \
+    -1 "data/clean/${sample_id}_R1.clean.fastq.gz" \
+    -2 "data/clean/${sample_id}_R2.clean.fastq.gz" \
+    --very-sensitive \
+    --threads 8 \
+    --un-conc-gz "data/host_removed/${sample_id}_R%.host_removed.fastq.gz" \
+    -S /dev/null \
+    > "logs/${sample_id}.host_removal.log" 2>&1
+done
+
+# Aggregate all reports
+multiqc results/qc/fastp logs -o results/qc/multiqc</pre></div><details><summary>Numerical mini-example: host removal fraction</summary><p>Suppose sample S01 starts with 40 million read pairs. After fastp, 37 million remain. After host subtraction, 12 million remain. Then:</p><div class="formula">Retention after fastp = 37 / 40 = 92.5%
+Host-free fraction after cleaning = 12 / 37 = 32.4%
+Overall retained fraction from raw = 12 / 40 = 30.0%</div><p>A low host-free fraction is not automatically bad. In gut biopsy or host tissue samples, this may be expected. But for stool or soil, it could signal a sample prep or reference issue.</p></details></div></section>
+
+    <section class="section searchable" id="taxonomy"><div class="section-head"><h2>7) Taxonomic profiling</h2><span class="tag">Read-based</span></div><div class="section-body"><p>Taxonomic profiling answers “which organisms are represented and at what approximate abundance?”. In advanced workflows, it is good practice to run at least two methods with different assumptions.</p><div class="grid2"><div class="card"><h3>Classifier-style</h3><p><strong>Kraken2 + Bracken</strong>: very fast, database-driven, broad classification, useful for screening, contamination checks, and high-throughput projects.</p></div><div class="card"><h3>Marker-style</h3><p><strong>MetaPhlAn</strong>: uses clade-specific markers, often producing conservative and stable abundance estimates across studies.</p></div></div><div class="codeblock"><div class="codehead"><span>Bash: Kraken2 + Bracken</span><button class="copy-btn" data-copy="kraken_bash">Copy</button></div><pre id="kraken_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/taxonomy/kraken2 results/taxonomy/bracken
+
+DB="db/kraken2_standard"
+READ_LEN=150
+
+tail -n +2 config/samples.tsv | while IFS=$'\t' read -r sample_id condition timepoint subject batch host read1 read2; do
+  kraken2 \
+    --db "${DB}" \
+    --paired \
+    --threads 12 \
+    --report "results/taxonomy/kraken2/${sample_id}.kreport.txt" \
+    --output "results/taxonomy/kraken2/${sample_id}.kraken.txt" \
+    "data/host_removed/${sample_id}_R1.host_removed.fastq.gz" \
+    "data/host_removed/${sample_id}_R2.host_removed.fastq.gz"
+
+  # Bracken improves abundance estimation from Kraken classification counts
+  bracken \
+    -d "${DB}" \
+    -i "results/taxonomy/kraken2/${sample_id}.kreport.txt" \
+    -o "results/taxonomy/bracken/${sample_id}.species.bracken.tsv" \
+    -r "${READ_LEN}" \
+    -l S
+done</pre></div><div class="codeblock"><div class="codehead"><span>Bash: MetaPhlAn</span><button class="copy-btn" data-copy="metaphlan_bash">Copy</button></div><pre id="metaphlan_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/taxonomy/metaphlan
+
+tail -n +2 config/samples.tsv | while IFS=$'\t' read -r sample_id condition timepoint subject batch host read1 read2; do
+  metaphlan \
+    data/host_removed/${sample_id}_R1.host_removed.fastq.gz,data/host_removed/${sample_id}_R2.host_removed.fastq.gz \
+    --input_type fastq \
+    --nproc 12 \
+    -o results/taxonomy/metaphlan/${sample_id}.profile.tsv
+done</pre></div><details><summary>When would you add Kaiju?</summary><p>Kaiju classifies reads against protein-level references, which can help in some cases where nucleotide-level classifiers miss distant homology. It is worth trying when your dataset is evolutionarily novel, viral-rich, or when you want a complementary classifier with different biases.</p></details></div></section>
+
+    <section class="section searchable" id="assembly"><div class="section-head"><h2>8) Assembly and contig statistics</h2><span class="tag">Assembly-based</span></div><div class="section-body"><p>Assembly collapses reads into longer sequences and makes gene neighborhoods, mobile elements, and genome reconstruction possible. For large projects, compare at least one speed-oriented and one heavier assembler on a subset before scaling up.</p><div class="codeblock"><div class="codehead"><span>Bash: per-sample assembly with MEGAHIT</span><button class="copy-btn" data-copy="megahit_bash">Copy</button></div><pre id="megahit_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/assembly/megahit
+
+tail -n +2 config/samples.tsv | while IFS=$'\t' read -r sample_id condition timepoint subject batch host read1 read2; do
+  megahit \
+    -1 "data/host_removed/${sample_id}_R1.host_removed.fastq.gz" \
+    -2 "data/host_removed/${sample_id}_R2.host_removed.fastq.gz" \
+    -o "results/assembly/megahit/${sample_id}" \
+    --min-contig-len 1000 \
+    -t 16
+done</pre></div><div class="codeblock"><div class="codehead"><span>Bash: alternative metaSPAdes run</span><button class="copy-btn" data-copy="metaspades_bash">Copy</button></div><pre id="metaspades_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+# metaSPAdes is heavier. Use it for a selected subset first.
+sample_id=S01
+
+metaspades.py \
+  -1 "data/host_removed/${sample_id}_R1.host_removed.fastq.gz" \
+  -2 "data/host_removed/${sample_id}_R2.host_removed.fastq.gz" \
+  -o "results/assembly/metaspades/${sample_id}" \
+  -t 32 \
+  -m 250</pre></div><div class="tip"><strong>Do not overinterpret N50 alone.</strong> In metagenomics, longer contigs are helpful, but you should also check total assembled bases, gene recovery, mapping rate back to contigs, contamination, and downstream bin quality.</div><details><summary>Numerical mini-example: assembly evaluation</summary><div class="formula">Assembly A:
+  total assembled bases = 1.8 Gbp
+  N50 = 5.2 kbp
+  reads mapping back = 84%
+  high-quality MAGs = 34
+
+Assembly B:
+  total assembled bases = 1.6 Gbp
+  N50 = 8.1 kbp
+  reads mapping back = 71%
+  high-quality MAGs = 19
+
+Interpretation:
+  Assembly B has longer contigs, but Assembly A may be better for community recovery.
+  The "best" assembly depends on the biological endpoint.</div></details></div></section>
+
+    <section class="section searchable" id="binning"><div class="section-head"><h2>9) Binning and MAG recovery</h2><span class="tag">Genome-resolved</span></div><div class="section-body"><p>Binning groups contigs likely belonging to the same genome, usually using sequence composition and differential coverage across samples. A strong modern strategy is to run multiple binners and then integrate them.</p><div class="codeblock"><div class="codehead"><span>Bash: map reads back to contigs and compute depth</span><button class="copy-btn" data-copy="depth_bash">Copy</button></div><pre id="depth_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+sample_id=S01
+assembly="results/assembly/megahit/${sample_id}/final.contigs.fa"
+
+mkdir -p results/mapping/${sample_id} results/bins/${sample_id}
+
+# Build index for contigs
+bowtie2-build "${assembly}" "results/mapping/${sample_id}/contigs"
+
+# Map host-removed reads back to assembly
+bowtie2 \
+  -x "results/mapping/${sample_id}/contigs" \
+  -1 "data/host_removed/${sample_id}_R1.host_removed.fastq.gz" \
+  -2 "data/host_removed/${sample_id}_R2.host_removed.fastq.gz" \
+  -p 16 | samtools sort -@ 8 -o "results/mapping/${sample_id}/${sample_id}.bam"
+
+samtools index "results/mapping/${sample_id}/${sample_id}.bam"
+
+# MetaBAT2 depth file
+jgi_summarize_bam_contig_depths \
+  --outputDepth "results/bins/${sample_id}/depth.txt" \
+  "results/mapping/${sample_id}/${sample_id}.bam"</pre></div><div class="codeblock"><div class="codehead"><span>Bash: MetaBAT2, CONCOCT, and DAS Tool</span><button class="copy-btn" data-copy="binning_bash">Copy</button></div><pre id="binning_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+sample_id=S01
+assembly="results/assembly/megahit/${sample_id}/final.contigs.fa"
+depth="results/bins/${sample_id}/depth.txt"
+
+mkdir -p results/bins/${sample_id}/metabat2 \
+         results/bins/${sample_id}/concoct \
+         results/bins/${sample_id}/dastool
+
+# --- MetaBAT2
+metabat2 \
+  -i "${assembly}" \
+  -a "${depth}" \
+  -o "results/bins/${sample_id}/metabat2/bin"
+
+# --- CONCOCT (shown conceptually; in practice prepare coverage table as required)
+# concoct --composition_file contigs_10k.fa --coverage_file coverage_table.tsv -b results/bins/${sample_id}/concoct/
+
+# --- DAS Tool integrates outputs from multiple binners.
+# Provide a comma-separated list of contigs2bin TSV files and labels.
+DAS_Tool \
+  -i results/bins/${sample_id}/metabat2_contigs2bin.tsv,results/bins/${sample_id}/concoct_contigs2bin.tsv \
+  -l metabat2,concoct \
+  -c "${assembly}" \
+  -o "results/bins/${sample_id}/dastool/${sample_id}" \
+  --write_bins 1 \
+  --threads 16</pre></div><div class="note"><strong>Why multiple samples help binning:</strong> differential coverage is informative. If the same genome changes abundance across samples, that pattern helps clustering contigs that belong together.</div></div></section>
+
+    <section class="section searchable" id="quality"><div class="section-head"><h2>10) MAG quality, taxonomy, and dereplication</h2><span class="tag">Quality control</span></div><div class="section-body"><p>Once bins are recovered, estimate completeness and contamination, assign taxonomy, and remove near-duplicate genomes. Otherwise you risk overcounting the same organism many times.</p><div class="codeblock"><div class="codehead"><span>Bash: CheckM2 + GTDB-Tk + dRep</span><button class="copy-btn" data-copy="magqc_bash">Copy</button></div><pre id="magqc_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+BINS_DIR="results/bins/S01/dastool/S01_DASTool_bins"
+mkdir -p results/mag_qc results/mag_taxonomy results/mag_derep
+
+# --- CheckM2 predicts completeness and contamination
+checkm2 predict \
+  --threads 24 \
+  --input "${BINS_DIR}" \
+  --output-directory results/mag_qc
+
+# --- GTDB-Tk classifies bacterial/archaeal genomes
+gtdbtk classify_wf \
+  --genome_dir "${BINS_DIR}" \
+  --out_dir results/mag_taxonomy \
+  --cpus 24
+
+# --- dRep dereplicates similar genomes and selects representatives
+dRep dereplicate results/mag_derep \
+  -g "${BINS_DIR}"/*.fa \
+  -p 24</pre></div><div class="table-wrap"><table><thead><tr><th>Filter</th><th>Common usage</th><th>Interpretation</th></tr></thead><tbody><tr><td>Completeness</td><td>Higher is better</td><td>How much of the expected genome appears recovered.</td></tr><tr><td>Contamination</td><td>Lower is better</td><td>Signal that contigs from multiple organisms may be mixed.</td></tr><tr><td>N50 / contig count</td><td>Context dependent</td><td>Not enough by itself; interpret with completeness and contamination.</td></tr><tr><td>Taxonomy consistency</td><td>Check for outliers</td><td>Mixed phylum-level annotations inside one bin are suspicious.</td></tr><tr><td>Dereplication cluster</td><td>Representative genome</td><td>Prevents inflated genome counts in downstream analysis.</td></tr></tbody></table></div><details><summary>Mini-example: choosing a representative MAG</summary><div class="formula">MAG_A: completeness 93%, contamination 2.1%, N50 32 kb
+MAG_B: completeness 88%, contamination 0.8%, N50 41 kb
+MAG_C: completeness 94%, contamination 7.5%, N50 27 kb
+
+Likely keep A and B for review.
+C is more complete, but contamination is noticeably worse.
+Representative choice depends on the dRep cluster and your quality thresholds.</div></details></div></section>
+
+    <section class="section searchable" id="function"><div class="section-head"><h2>11) Functional profiling and annotation</h2><span class="tag">Functions</span></div><div class="section-body"><p>Function can be profiled in two complementary ways:</p><ol><li><strong>Read-based community function</strong> with HUMAnN for gene families and pathways.</li><li><strong>Genome-level function</strong> by annotating MAGs with DRAM and related tools.</li></ol><div class="codeblock"><div class="codehead"><span>Bash: HUMAnN</span><button class="copy-btn" data-copy="humann_bash">Copy</button></div><pre id="humann_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/function/humann
+
+tail -n +2 config/samples.tsv | while IFS=$'\t' read -r sample_id condition timepoint subject batch host read1 read2; do
+  # HUMAnN can take merged or concatenated paired reads.
+  # Here we concatenate pairs for simplicity.
+  zcat "data/host_removed/${sample_id}_R1.host_removed.fastq.gz" \
+       "data/host_removed/${sample_id}_R2.host_removed.fastq.gz" \
+    | gzip > "results/function/humann/${sample_id}.merged.fastq.gz"
+
+  humann \
+    --input "results/function/humann/${sample_id}.merged.fastq.gz" \
+    --output "results/function/humann/${sample_id}" \
+    --threads 16
+done</pre></div><div class="codeblock"><div class="codehead"><span>Bash: DRAM annotation of MAGs</span><button class="copy-btn" data-copy="dram_bash">Copy</button></div><pre id="dram_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/mag_annotation/dram
+
+# Adjust database paths to your local DRAM setup
+DRAM.py annotate \
+  -i results/mag_derep/dereplicated_genomes/*.fa \
+  -o results/mag_annotation/dram/annotations \
+  --threads 24
+
+DRAM.py distill \
+  -i results/mag_annotation/dram/annotations/annotations.tsv \
+  -o results/mag_annotation/dram/distill</pre></div><div class="tip"><strong>Interpretation rule:</strong> pathway abundance and pathway completeness are not the same thing. Read-based pathway estimates can be abundant even when no single MAG carries the full pathway, because the pathway can be distributed across taxa.</div></div></section>
+
+    <section class="section searchable" id="advanced"><div class="section-head"><h2>12) Advanced modules you may add</h2><span class="tag">Optional depth</span></div><div class="section-body"><div class="grid3"><div class="card"><h3>Strain-level analysis</h3><p>Use marker-based population workflows such as StrainPhlAn for strain-level comparisons when the target taxa are well represented.</p></div><div class="card"><h3>Viral metagenomics</h3><p>Add viral discovery/curation tools, then validate completeness and contamination of viral contigs separately from bacterial MAG logic.</p></div><div class="card"><h3>AMR / virulence</h3><p>Search assembled genes or MAG proteomes against curated resistance and virulence resources, then interpret in taxonomic context.</p></div></div><ul><li><strong>Co-assembly</strong> can help recover low-abundance genomes but may increase chimerism when communities are highly heterogeneous.</li><li><strong>Long-read or hybrid metagenomics</strong> improves contiguity, repeat resolution, plasmids, and viral assemblies when available.</li><li><strong>anvi'o</strong> is especially useful for interactive inspection of coverage patterns, GC, functions, and manual bin refinement.</li><li><strong>BlobToolKit</strong> is useful when decontamination and mixed-origin assembly issues are a major concern.</li></ul></div></section>
+
+    <section class="section searchable" id="stats"><div class="section-head"><h2>13) Statistics and normalization</h2><span class="tag">Interpretation</span></div><div class="section-body"><p>Metagenomics abundance tables are sparse, compositional, and often confounded by library size and host fraction. Raw counts are rarely appropriate for direct comparison.</p><div class="formula">Common abundance representations
+
+Relative abundance:
+    p_i = count_i / total_counts
+
+Reads per kilobase (RPK):
+    RPK = raw_reads_assigned / gene_length_kb
+
+TPM-style scaling:
+    TPM_i = (RPK_i / Σ RPK) × 10^6
+
+CLR transformation:
+    clr(x_i) = log((x_i + pseudo) / g(x + pseudo))</div><ul><li><strong>Relative abundance</strong> is easy to explain but compositional.</li><li><strong>CLR-transformed abundances</strong> are often better for ordination and machine learning.</li><li><strong>Presence/absence</strong> may be more robust when abundance estimation is noisy.</li><li><strong>Differential abundance</strong> should respect compositionality and sparsity; do not use naive t-tests on raw percentages.</li></ul><div class="warn"><strong>Very common error:</strong> interpreting an increase in one taxon as an absolute growth event when the total microbial load or host fraction changed dramatically.</div></div></section>
+
+    <section class="section searchable" id="viz"><div class="section-head"><h2>14) Visualization best practices</h2><span class="tag">Figures</span></div><div class="section-body"><p>Good metagenomics figures should make uncertainty, scale, and aggregation level obvious. Avoid unreadable “everything-on-one-plot” figures.</p><div class="table-wrap"><table><thead><tr><th>Goal</th><th>Recommended plot</th><th>Why</th></tr></thead><tbody><tr><td>QC summary</td><td>MultiQC report + simple bar chart</td><td>Shows attrition and identifies failed samples quickly.</td></tr><tr><td>Community composition</td><td>Stacked bar chart of top taxa</td><td>Readable at phylum/genus/species if limited to major taxa.</td></tr><tr><td>Global beta-diversity</td><td>PCA/PCoA on CLR or distance matrix</td><td>Shows sample clustering and batch effects.</td></tr><tr><td>Feature-by-sample abundance</td><td>Heatmap with clustering</td><td>Best for selected taxa/pathways, not every feature.</td></tr><tr><td>Classifier exploration</td><td>Krona or Pavian</td><td>Interactive exploration of hierarchical taxonomy.</td></tr><tr><td>Bins and coverage</td><td>anvi'o interactive display</td><td>Excellent for contig/bin inspection and refinement.</td></tr><tr><td>MAG quality</td><td>Scatter plot completeness vs contamination</td><td>Fast visual filter for recovered genomes.</td></tr><tr><td>Differential pathways</td><td>Volcano or ranked effect plot</td><td>Shows magnitude and significance together.</td></tr></tbody></table></div><div class="codeblock"><div class="codehead"><span>Bash: Krona chart from Kraken report</span><button class="copy-btn" data-copy="krona_bash">Copy</button></div><pre id="krona_bash">#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p results/taxonomy/krona
+
+# Example assumes you have converted Kraken output into a Krona-compatible input.
+# Tools in the Krona package can ingest taxonomic abundance tables and produce interactive HTML.
+ktImportTaxonomy \
+  results/taxonomy/kraken2/*.kraken.txt \
+  -o results/taxonomy/krona/all_samples.krona.html</pre></div></div></section>
+
+    <section class="section searchable" id="python"><div class="section-head"><h2>15) Fully annotated Python code for downstream tables and plots</h2><span class="tag">Python</span></div><div class="section-body"><p>The example below reads a long-format abundance table, keeps the top taxa, makes a stacked bar chart, performs CLR transformation, runs PCA, and builds a heatmap for selected features.</p><div class="codeblock"><div class="codehead"><span>Python: abundance plots, CLR, PCA, heatmap</span><button class="copy-btn" data-copy="python_plotting">Copy</button></div><pre id="python_plotting">#!/usr/bin/env python3
+"""
+Advanced downstream analysis for shotgun metagenomics abundance tables.
+
+Expected input:
+    abundance_long.tsv
+with columns:
+    sample_id, feature, abundance
+
+Optional metadata file:
+    metadata.tsv
+with columns:
+    sample_id, condition, timepoint, batch
+
+This script:
+    1) pivots long-format abundances to a matrix
+    2) plots top features as stacked bars
+    3) applies CLR transformation with a pseudocount
+    4) runs PCA
+    5) draws a clustered heatmap of the most variable features
+"""
+
+from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+abundance_path = Path("results/tables/abundance_long.tsv")
+metadata_path = Path("config/metadata.tsv")
+outdir = Path("results/figures/python")
+outdir.mkdir(parents=True, exist_ok=True)
+
+ab = pd.read_csv(abundance_path, sep="\t")
+meta = pd.read_csv(metadata_path, sep="\t")
+
+mat = ab.pivot_table(index="sample_id", columns="feature", values="abundance", aggfunc="sum", fill_value=0.0)
+ordered_samples = [s for s in meta["sample_id"] if s in mat.index]
+mat = mat.loc[ordered_samples]
+
+top_n = 15
+top_features = mat.sum(axis=0).sort_values(ascending=False).head(top_n).index
+mat_top = mat[top_features].copy()
+row_sums = mat_top.sum(axis=1).replace(0, np.nan)
+rel = mat_top.div(row_sums, axis=0).fillna(0)
+
+fig, ax = plt.subplots(figsize=(12, 5))
+bottom = np.zeros(rel.shape[0])
+for feature in rel.columns:
+    vals = rel[feature].values
+    ax.bar(rel.index, vals, bottom=bottom, label=feature)
+    bottom += vals
+ax.set_ylabel("Relative abundance")
+ax.set_title("Top taxa / features by relative abundance")
+ax.tick_params(axis="x", rotation=90)
+ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
+fig.tight_layout()
+fig.savefig(outdir / "stacked_bar_top_features.png", dpi=300)
+plt.close(fig)
+
+pseudo = 1e-6
+X = mat.copy() + pseudo
+logX = np.log(X)
+clr = logX.sub(logX.mean(axis=1), axis=0)
+
+X_pca = StandardScaler(with_mean=True, with_std=True).fit_transform(clr.values)
+pca = PCA(n_components=2, random_state=42)
+coords = pca.fit_transform(X_pca)
+pca_df = pd.DataFrame(coords, columns=["PC1", "PC2"], index=clr.index).reset_index()
+pca_df = pca_df.rename(columns={"index": "sample_id"}).merge(meta, on="sample_id", how="left")
+
+fig, ax = plt.subplots(figsize=(7, 5))
+for condition, sub in pca_df.groupby("condition"):
+    ax.scatter(sub["PC1"], sub["PC2"], label=condition, s=60)
+for _, row in pca_df.iterrows():
+    ax.text(row["PC1"], row["PC2"], row["sample_id"], fontsize=8)
+ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}% var)")
+ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}% var)")
+ax.set_title("PCA of CLR-transformed abundances")
+ax.legend(frameon=False)
+fig.tight_layout()
+fig.savefig(outdir / "pca_clr.png", dpi=300)
+plt.close(fig)
+
+feature_var = clr.var(axis=0).sort_values(ascending=False)
+heat_features = feature_var.head(25).index
+heat = clr[heat_features]
+
+fig, ax = plt.subplots(figsize=(12, 6))
+im = ax.imshow(heat.values, aspect="auto", interpolation="nearest")
+ax.set_xticks(range(len(heat.columns)))
+ax.set_xticklabels(heat.columns, rotation=90)
+ax.set_yticks(range(len(heat.index)))
+ax.set_yticklabels(heat.index)
+ax.set_title("Heatmap of most variable CLR features")
+cbar = fig.colorbar(im, ax=ax)
+cbar.set_label("CLR abundance")
+fig.tight_layout()
+fig.savefig(outdir / "heatmap_variable_features.png", dpi=300)
+plt.close(fig)
+
+rel.to_csv(outdir / "relative_abundance_top_features.tsv", sep="\t")
+clr.to_csv(outdir / "clr_matrix.tsv", sep="\t")
+pca_df.to_csv(outdir / "pca_coordinates.tsv", sep="\t", index=False)
+print("[DONE] Figures and tables written to", outdir)</pre></div><div class="codeblock"><div class="codehead"><span>Python: MAG quality scatter plot</span><button class="copy-btn" data-copy="python_magqc">Copy</button></div><pre id="python_magqc">#!/usr/bin/env python3
+"""
+Plot completeness vs contamination for MAGs.
+
+Expected file:
+    results/mag_qc/quality_report.tsv
+with columns:
+    bin_id, completeness, contamination, n50, taxonomy
+"""
+
+from pathlib import Path
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("results/mag_qc/quality_report.tsv", sep="\t")
+
+fig, ax = plt.subplots(figsize=(7, 5))
+ax.scatter(df["completeness"], df["contamination"], s=50)
+for _, row in df.iterrows():
+    if row["completeness"] >= 80 and row["contamination"] <= 5:
+        ax.text(row["completeness"], row["contamination"], row["bin_id"], fontsize=7)
+ax.axvline(50, linestyle="--")
+ax.axvline(90, linestyle="--")
+ax.axhline(5, linestyle="--")
+ax.axhline(10, linestyle="--")
+ax.set_xlabel("Completeness (%)")
+ax.set_ylabel("Contamination (%)")
+ax.set_title("MAG quality overview")
+fig.tight_layout()
+out = Path("results/figures/python")
+out.mkdir(parents=True, exist_ok=True)
+fig.savefig(out / "mag_quality_scatter.png", dpi=300)</pre></div></div></section>
+
+    <section class="section searchable" id="workflowcode"><div class="section-head"><h2>16) Workflow automation, parallelization, and HPC templates</h2><span class="tag">Reproducibility</span></div><div class="section-body"><p>For more than a few samples, do not manage the project manually. Use Snakemake, Nextflow, or a similarly explicit workflow system. Keep all per-sample tasks parallel and all shared resources versioned.</p><div class="codeblock"><div class="codehead"><span>Snakemake skeleton</span><button class="copy-btn" data-copy="snakefile_text">Copy</button></div><pre id="snakefile_text">SAMPLES = [row.split("\t")[0] for row in open("config/samples.tsv").read().strip().splitlines()[1:]]
+
+rule all:
+    input:
+        expand("results/taxonomy/metaphlan/{sample}.profile.tsv", sample=SAMPLES),
+        expand("results/assembly/megahit/{sample}/final.contigs.fa", sample=SAMPLES)
+
+rule fastp:
+    input:
+        r1=lambda wildcards: [l.split("\t")[6] for l in open("config/samples.tsv").read().strip().splitlines()[1:] if l.startswith(wildcards.sample + "\t")][0],
+        r2=lambda wildcards: [l.split("\t")[7] for l in open("config/samples.tsv").read().strip().splitlines()[1:] if l.startswith(wildcards.sample + "\t")][0]
+    output:
+        r1="data/clean/{sample}_R1.clean.fastq.gz",
+        r2="data/clean/{sample}_R2.clean.fastq.gz",
+        html="results/qc/fastp/{sample}.fastp.html",
+        json="results/qc/fastp/{sample}.fastp.json"
+    threads: 8
+    shell:
+        """
+        fastp -i {input.r1} -I {input.r2} -o {output.r1} -O {output.r2} \
+              --detect_adapter_for_pe --thread {threads} \
+              --html {output.html} --json {output.json}
+        """
+
+rule metaphlan:
+    input:
+        r1="data/host_removed/{sample}_R1.host_removed.fastq.gz",
+        r2="data/host_removed/{sample}_R2.host_removed.fastq.gz"
+    output:
+        "results/taxonomy/metaphlan/{sample}.profile.tsv"
+    threads: 12
+    shell:
+        """
+        metaphlan {input.r1},{input.r2} --input_type fastq --nproc {threads} -o {output}
+        """
+
+rule megahit:
+    input:
+        r1="data/host_removed/{sample}_R1.host_removed.fastq.gz",
+        r2="data/host_removed/{sample}_R2.host_removed.fastq.gz"
+    output:
+        "results/assembly/megahit/{sample}/final.contigs.fa"
+    threads: 16
+    shell:
+        """
+        megahit -1 {input.r1} -2 {input.r2} -o results/assembly/megahit/{wildcards.sample} --min-contig-len 1000 -t {threads}
+        """</pre></div><div class="codeblock"><div class="codehead"><span>SLURM sbatch wrapper</span><button class="copy-btn" data-copy="sbatch_text">Copy</button></div><pre id="sbatch_text">#!/usr/bin/env bash
+#SBATCH --job-name=shotgun_meta
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=120G
+#SBATCH --time=48:00:00
+#SBATCH --output=logs/slurm_%j.out
+#SBATCH --error=logs/slurm_%j.err
+
+set -euo pipefail
+source ~/.bashrc
+conda activate shotgun_metagenomics
+
+# Example: run Snakemake on a cluster node
+snakemake --cores 24 --rerun-incomplete --printshellcmds</pre></div><div class="tip"><strong>Parallelization principle:</strong> sample-level parallelism is easy and safe. Database-heavy steps should use local scratch if possible, because shared network filesystems often become the bottleneck.</div></div></section>
+
+    <section class="section searchable" id="case"><div class="section-head"><h2>17) Real-world project template</h2><span class="tag">Blueprint</span></div><div class="section-body"><p>Imagine a study with 48 stool samples collected at two timepoints from control and treated groups. A strong end-to-end plan would look like this:</p><ol><li>Run fastp and aggregate QC with MultiQC.</li><li>Subtract host reads with Bowtie2.</li><li>Generate read-based community profiles with Kraken2+Bracken and MetaPhlAn.</li><li>Run HUMAnN for pathway and gene family profiling.</li><li>Assemble each sample with MEGAHIT; optionally co-assemble within each condition or subject group.</li><li>Map reads back to contigs and compute depth files.</li><li>Run MetaBAT2 plus one additional binner, then integrate bins with DAS Tool.</li><li>Assess bins with CheckM2, classify with GTDB-Tk, dereplicate with dRep.</li><li>Annotate MAGs with DRAM.</li><li>Make publication figures: QC, top taxa, PCA, pathway heatmap, MAG quality scatter, selected metabolism summaries.</li><li>Write a methods supplement with exact database versions and all thresholds.</li></ol><div class="note"><strong>Expected outputs:</strong> one QC report, one taxonomic abundance matrix, one functional pathway matrix, one assembly table, one MAG quality table, one MAG taxonomy table, one annotation table, and a scripts/workflow directory that regenerates all figures.</div></div></section>
+
+    <section class="section searchable" id="troubleshooting"><div class="section-head"><h2>18) Troubleshooting checklist</h2><span class="tag">Practical</span></div><div class="section-body"><ul><li><strong>Almost all reads disappear after host removal:</strong> check that the Bowtie2 index is correct and that you are not accidentally keeping aligned reads instead of unaligned reads.</li><li><strong>Kraken2 classifies too many reads as unclassified:</strong> confirm database contents and read quality; consider a classifier with different assumptions.</li><li><strong>Assembly is weak:</strong> check library complexity, depth, host fraction, and whether some samples should be co-assembled.</li><li><strong>Bins are contaminated:</strong> use multiple binners, inspect coverage patterns, and refine suspicious bins interactively.</li><li><strong>Pathway results disagree with MAG annotations:</strong> remember community function can be distributed across taxa; gene- or pathway-level presence is not always genome-complete in one MAG.</li><li><strong>Ordination shows batch instead of biology:</strong> revisit metadata, extraction batches, and per-sample host fractions.</li></ul><div class="warn"><strong>Most important reporting habit:</strong> write down every database build and threshold at the moment you run the analysis. Reproducing a metagenomics result is often impossible without that information.</div></div></section>
+
+    <section class="section searchable" id="references"><div class="section-head"><h2>19) Suggested references and tool homepages</h2><span class="tag">Further reading</span></div><div class="section-body"><ul><li>fastp</li><li>MultiQC</li><li>Kraken2 / Bracken</li><li>MetaPhlAn / StrainPhlAn</li><li>HUMAnN</li><li>MEGAHIT and metaSPAdes</li><li>MetaBAT2, CONCOCT, DAS Tool</li><li>CheckM2 / CheckM</li><li>GTDB-Tk</li><li>dRep</li><li>DRAM</li><li>Krona, Pavian, anvi'o, BlobToolKit</li><li>nf-core/mag for a best-practice pipeline reference</li></ul><p class="muted">The chat response that accompanies this file summarizes which of these are especially strong defaults according to current official documentation.</p></div></section>
+
+    <div class="footer">Built as a standalone HTML course page with collapsible copyable code blocks, dark theme, and section search. Adapt the shell commands to your database paths, compute environment, and sample design.</div>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(btn => {btn.addEventListener('click', async () => {const id = btn.getAttribute('data-copy');const el = document.getElementById(id);const text = el.innerText;try {await navigator.clipboard.writeText(text);const old = btn.innerText;btn.innerText = 'Copied';setTimeout(() => btn.innerText = old, 1200);} catch (e) {alert('Copy failed. You can still select the code manually.');}});});
+const searchBox = document.getElementById('searchBox');const sections = [...document.querySelectorAll('.searchable')];searchBox.addEventListener('input', () => {const q = searchBox.value.trim().toLowerCase();sections.forEach(sec => {const txt = sec.innerText.toLowerCase();sec.style.display = txt.includes(q) ? '' : 'none';});});
+</script>
+</body>
+</html>
