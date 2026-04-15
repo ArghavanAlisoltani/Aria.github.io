@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Structural Biology Foundations</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#111831;
+      --panel2:#182242;
+      --text:#edf2ff;
+      --muted:#bfd0ff;
+      --accent:#7cc4ff;
+      --accent2:#9cf0d2;
+      --warn:#ffd782;
+      --code:#0b1225;
+      --border:#2b3968;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#08101d,#101a34 35%,#0b1020);
+      color:var(--text);
+    }
+    .deck{
+      width:min(1200px,96vw);
+      margin:20px auto 80px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(8,14,29,0.9);
+      backdrop-filter: blur(8px);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:12px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .topbar h1{font-size:1.2rem;margin:0}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    button{
+      background:var(--panel2);
+      border:1px solid var(--border);
+      color:var(--text);
+      border-radius:12px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    button:hover{border-color:var(--accent)}
+    .slide{
+      display:none;
+      min-height:78vh;
+      border:1px solid var(--border);
+      border-radius:28px;
+      padding:34px;
+      background:linear-gradient(180deg,rgba(17,24,49,.95),rgba(11,16,32,.98));
+      box-shadow:0 18px 60px rgba(0,0,0,.28);
+    }
+    .slide.active{display:block}
+    .eyebrow{
+      color:var(--accent2);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:.82rem;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    h2{font-size:2rem; margin:.1rem 0 1rem}
+    h3{color:var(--accent2); margin-top:1.3rem}
+    p, li{line-height:1.55}
+    .lead{font-size:1.1rem;color:#dfe8ff}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{
+      background:rgba(24,34,66,.65);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:18px;
+    }
+    .mini{font-size:.95rem;color:var(--muted)}
+    ul{padding-left:1.2rem}
+    .code{
+      background:var(--code);
+      border:1px solid #27375f;
+      border-radius:18px;
+      padding:16px;
+      overflow:auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.93rem;
+      line-height:1.5;
+      white-space:pre-wrap;
+    }
+    .note{
+      border-left:4px solid var(--warn);
+      background:rgba(255,215,130,.08);
+      padding:12px 14px;
+      border-radius:10px;
+      color:#fff0cc;
+      margin:12px 0;
+    }
+    .kbd{background:#0b1225;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .footer{margin-top:16px;color:var(--muted);font-size:.92rem}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#0d1835;border:1px solid var(--border);margin:2px 6px 2px 0;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+    th{background:#121e3e}
+    .toc a{color:var(--accent);text-decoration:none}
+    @media (max-width:900px){
+      .grid,.two,.grid-3{grid-template-columns:1fr}
+      .slide{padding:20px}
+      h2{font-size:1.6rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="topbar">
+      <h1>Structural Biology Foundations — HTML Slide Deck</h1>
+      <div class="controls">
+        <span id="counter" class="mini"></span>
+        <button onclick="prevSlide()">◀ Prev</button>
+        <button onclick="nextSlide()">Next ▶</button>
+      </div>
+    </div>
+
+    <section class="slide active">
+      <div class="eyebrow">Slide 1</div>
+      <h2>Structural Biology Foundations</h2>
+      <p class="lead">A beginner-friendly slide deck for learning how to read protein structures, inspect PDB files, find ligands and active sites, and start measuring structural features with Python.</p>
+      <div class="grid">
+        <div class="card">
+          <h3>What you will learn</h3>
+          <ul>
+            <li>Amino acids and side chains</li>
+            <li>Primary, secondary, and tertiary structure</li>
+            <li>Enzymes, active sites, ligands, cofactors, and metal ions</li>
+            <li>Hydrogen bonds, salt bridges, hydrophobic contacts</li>
+            <li>How PDB coordinates, chains, residues, atoms, occupancy, and B-factors work</li>
+            <li>How crystal, cryo-EM, and predicted models differ</li>
+            <li>How to inspect 2–3 PDB structures in PyMOL, Mol*, and Python</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Recommended starter structures</h3>
+          <p><span class="pill">1CRN</span><span class="pill">small protein</span></p>
+          <p><span class="pill">1TIM</span><span class="pill">enzyme fold</span></p>
+          <p><span class="pill">6U4I</span><span class="pill">bacterial enzyme + ligand</span></p>
+          <div class="note">These examples are intentionally simple: one tiny protein, one classic enzyme, and one ligand-bound bacterial enzyme.</div>
+        </div>
+      </div>
+      <div class="footer">Tip: read this deck once like slides, then reopen it and copy the code blocks into a notebook one by one.</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 2</div>
+      <h2>What is a protein structure?</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Core idea</h3>
+          <p>A protein structure is a 3D arrangement of atoms. Every atom has coordinates: <span class="kbd">x</span>, <span class="kbd">y</span>, and <span class="kbd">z</span>. Those coordinates let you measure distances, angles, contacts, and active-site geometry.</p>
+          <ul>
+            <li><b>Residue</b>: one amino acid in the chain</li>
+            <li><b>Atom</b>: individual coordinate point like N, CA, C, O</li>
+            <li><b>Chain</b>: one polypeptide in the structure</li>
+            <li><b>Ligand</b>: a bound small molecule</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Three levels to remember first</h3>
+          <ul>
+            <li><b>Primary structure</b>: amino-acid sequence</li>
+            <li><b>Secondary structure</b>: helices, sheets, loops</li>
+            <li><b>Tertiary structure</b>: full 3D fold of one chain</li>
+          </ul>
+          <p class="mini">Later you will also hear <b>quaternary structure</b>, which means multiple chains assembled together.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 3</div>
+      <h2>Amino acids and side chains</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Nonpolar</h3><p>Gly, Ala, Val, Leu, Ile, Met, Pro, Phe, Trp</p></div>
+        <div class="card"><h3>Polar uncharged</h3><p>Ser, Thr, Asn, Gln, Tyr, Cys</p></div>
+        <div class="card"><h3>Charged</h3><p>Asp, Glu, Lys, Arg, His</p></div>
+      </div>
+      <div class="note">In active sites, the side chain matters more than the residue name alone. Asp/Glu often donate or accept protons through charged oxygen atoms. Lys/Arg often stabilize negative charge. Tyr/Ser/Cys can participate in hydrogen bonding or chemistry.</div>
+      <div class="code"># Python example: simple amino-acid category lookup
+# This is useful when you begin annotating residues around an active site.
+
+AA_GROUPS = {
+    "nonpolar": {"GLY", "ALA", "VAL", "LEU", "ILE", "MET", "PRO", "PHE", "TRP"},
+    "polar": {"SER", "THR", "ASN", "GLN", "TYR", "CYS"},
+    "charged": {"ASP", "GLU", "LYS", "ARG", "HIS"},
+}
+
+def classify_residue(resname: str) -> str:
+    """Return a coarse chemical class for a residue name.
+    We keep the function simple so the logic stays easy to follow.
+    """
+    resname = resname.upper().strip()
+    for group, residues in AA_GROUPS.items():
+        if resname in residues:
+            return group
+    return "other"
+
+for aa in ["ASP", "TYR", "LEU", "HOH"]:
+    print(aa, "->", classify_residue(aa))</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 4</div>
+      <h2>Primary, secondary, tertiary structure</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Primary</h3>
+          <p>The linear amino-acid sequence.</p>
+          <h3>Secondary</h3>
+          <p>Local patterns such as α-helices and β-sheets, stabilized largely by backbone hydrogen bonds.</p>
+          <h3>Tertiary</h3>
+          <p>The complete 3D arrangement of one chain, including packing of helices, sheets, loops, and side chains.</p>
+        </div>
+        <div class="card">
+          <h3>Python example: print sequence from a PDB file</h3>
+          <div class="code"># Requires: pip install biopython
+# This example parses a PDB file and extracts the amino-acid sequence
+# from standard residues in one chain.
+
+from Bio.PDB import PDBParser, PPBuilder
+
+pdb_file = "1tim.pdb"   # replace with your local file
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("protein", pdb_file)
+model = structure[0]     # first model in the file
+chain = model["A"]       # choose chain A
+
+ppb = PPBuilder()
+for i, peptide in enumerate(ppb.build_peptides(chain), start=1):
+    seq = peptide.get_sequence()
+    print(f"Peptide fragment {i}: {seq}")
+
+# Why this matters:
+# primary structure = sequence
+# secondary and tertiary structure are built on top of this sequence.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 5</div>
+      <h2>Enzymes and active sites</h2>
+      <div class="grid">
+        <div class="card">
+          <p>An <b>enzyme</b> is a protein that speeds up a chemical reaction. The <b>active site</b> is the local region where substrate binding and chemistry happen.</p>
+          <ul>
+            <li>Catalytic residues are often conserved</li>
+            <li>Active sites are usually pockets or clefts</li>
+            <li>Ligands often mark the active site in a crystal structure</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What to look for visually</h3>
+          <ul>
+            <li>Bound substrate or inhibitor</li>
+            <li>Nearby charged or polar residues</li>
+            <li>Metal ions or cofactors</li>
+            <li>Clusters of H-bonds around the ligand</li>
+          </ul>
+        </div>
+      </div>
+      <div class="code"># Python example: find residues near a ligand.
+# This helps you identify a likely active site from structure coordinates.
+
+from Bio.PDB import PDBParser, NeighborSearch, Selection
+
+pdb_file = "6u4i.pdb"
+ligand_name = "EQU"  # example ligand in 6U4I; change if needed
+cutoff = 4.0          # angstroms
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("ksi", pdb_file)
+model = structure[0]
+
+# Gather all atoms for neighbor searching
+all_atoms = list(structure.get_atoms())
+ns = NeighborSearch(all_atoms)
+
+# Find ligand atoms
+ligand_atoms = []
+for residue in structure.get_residues():
+    hetflag = residue.id[0]
+    if hetflag.startswith("H_") and residue.get_resname().strip() == ligand_name:
+        ligand_atoms.extend(list(residue.get_atoms()))
+
+print(f"Found {len(ligand_atoms)} ligand atoms")
+
+# Search nearby residues around each ligand atom
+nearby_residues = set()
+for atom in ligand_atoms:
+    for neighbor in ns.search(atom.coord, cutoff, level="R"):
+        if neighbor.get_resname() != ligand_name:
+            nearby_residues.add((neighbor.get_parent().id, neighbor.get_resname(), neighbor.id[1]))
+
+for chain_id, resname, resnum in sorted(nearby_residues):
+    print(chain_id, resname, resnum)
+
+# Interpretation:
+# residues repeatedly close to the ligand are often part of the binding pocket
+# and may include catalytic residues.</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 6</div>
+      <h2>Ligands, cofactors, metal ions</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Ligand</h3><p>A bound small molecule such as inhibitor, substrate, or product analog.</p></div>
+        <div class="card"><h3>Cofactor</h3><p>A non-protein helper like NAD, FAD, heme, PLP, biotin.</p></div>
+        <div class="card"><h3>Metal ion</h3><p>Zn, Mg, Fe, Mn, Ca and others that can stabilize charge or participate directly in catalysis.</p></div>
+      </div>
+      <div class="code"># Python example: list hetero residues, waters, and common ions in a structure.
+# This is one of the first things to do when reading a PDB file.
+
+from Bio.PDB import PDBParser
+
+COMMON_IONS = {"ZN", "MG", "FE", "MN", "CA", "NA", "K", "CU", "CO", "NI"}
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("example", "6u4i.pdb")
+
+ligands = []
+waters = []
+ions = []
+
+for residue in structure.get_residues():
+    hetflag = residue.id[0]  # ' ' for standard residues, 'W' for water, 'H_xxx' for hetero
+    resname = residue.get_resname().strip()
+    chain_id = residue.get_parent().id
+    resnum = residue.id[1]
+
+    if hetflag == "W":
+        waters.append((chain_id, resname, resnum))
+    elif resname in COMMON_IONS:
+        ions.append((chain_id, resname, resnum))
+    elif hetflag.startswith("H_"):
+        ligands.append((chain_id, resname, resnum))
+
+print("Ligands:", ligands[:10])
+print("Waters:", waters[:10], "... total", len(waters))
+print("Ions:", ions)</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 7</div>
+      <h2>Hydrogen bonds, salt bridges, hydrophobic contacts</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Very simple heuristics</h3>
+          <ul>
+            <li><b>Hydrogen bond</b>: donor/acceptor atoms often within about 2.6–3.5 Å</li>
+            <li><b>Salt bridge</b>: opposite charges, often within about 4 Å</li>
+            <li><b>Hydrophobic contact</b>: nonpolar atoms packed together, often 3.5–5 Å</li>
+          </ul>
+          <p class="mini">These are rough educational cutoffs, not full chemical definitions.</p>
+        </div>
+        <div class="card">
+          <div class="code"># Python example: measure distances from a ligand oxygen to nearby atoms.
+# Start simple: distance is the first structural quantity every beginner should trust.
+
+from Bio.PDB import PDBParser
+import numpy as np
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("ksi", "6u4i.pdb")
+
+# Find a target ligand atom, for example the first oxygen atom in ligand EQU
+ligand_atom = None
+for residue in structure.get_residues():
+    if residue.get_resname().strip() == "EQU":
+        for atom in residue:
+            if atom.element == "O":
+                ligand_atom = atom
+                break
+    if ligand_atom:
+        break
+
+if ligand_atom is None:
+    raise ValueError("No ligand oxygen atom found")
+
+print("Target atom:", ligand_atom.get_full_id())
+
+# Compute distances to all protein atoms and report the closest 15
+hits = []
+for atom in structure.get_atoms():
+    parent_residue = atom.get_parent()
+    if parent_residue.get_resname().strip() == "EQU":
+        continue
+    d = np.linalg.norm(atom.coord - ligand_atom.coord)
+    hits.append((d, atom.get_parent().get_parent().id, parent_residue.get_resname(), parent_residue.id[1], atom.name))
+
+for d, chain_id, resname, resnum, atom_name in sorted(hits)[:15]:
+    print(f"{d:5.2f} Å  {chain_id} {resname} {resnum} {atom_name}")
+
+# Interpretation:
+# close N/O atoms may suggest hydrogen bonds
+# close Lys/Asp/Glu/Arg side-chain atoms may suggest electrostatic interactions.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 8</div>
+      <h2>PDB files and what coordinates mean</h2>
+      <div class="card">
+        <p>A PDB file stores atom-level information. Each atom line includes atom name, residue name, chain ID, residue number, 3D coordinates, occupancy, and B-factor.</p>
+        <table>
+          <tr><th>Field</th><th>Meaning</th></tr>
+          <tr><td>x, y, z</td><td>3D coordinates in angstroms</td></tr>
+          <tr><td>occupancy</td><td>how fully that atom is observed in the model</td></tr>
+          <tr><td>B-factor</td><td>atomic displacement / uncertainty / flexibility indicator</td></tr>
+          <tr><td>chain</td><td>which polymer chain the atom belongs to</td></tr>
+          <tr><td>residue number</td><td>position of residue in that chain</td></tr>
+        </table>
+      </div>
+      <div class="code"># Python example: read a few ATOM/HETATM records directly.
+# This shows the raw file format before using a parser.
+
+pdb_file = "6u4i.pdb"
+with open(pdb_file) as handle:
+    shown = 0
+    for line in handle:
+        if line.startswith(("ATOM", "HETATM")):
+            record = line[0:6].strip()
+            atom_name = line[12:16].strip()
+            resname = line[17:20].strip()
+            chain_id = line[21].strip()
+            resnum = line[22:26].strip()
+            x = float(line[30:38])
+            y = float(line[38:46])
+            z = float(line[46:54])
+            occupancy = float(line[54:60])
+            bfactor = float(line[60:66])
+            print(record, atom_name, resname, chain_id, resnum, (x, y, z), occupancy, bfactor)
+            shown += 1
+            if shown == 5:
+                break</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 9</div>
+      <h2>Chains, residues, atoms, occupancy, B-factor</h2>
+      <div class="two">
+        <div class="card">
+          <ul>
+            <li><b>Chain</b>: one molecular entity, usually A, B, C...</li>
+            <li><b>Residue</b>: amino acid or ligand entry</li>
+            <li><b>Atom</b>: coordinate-bearing item inside a residue</li>
+            <li><b>Occupancy</b>: less than 1.0 can mean alternate conformations or partial disorder</li>
+            <li><b>B-factor</b>: higher values often mean more disorder or mobility</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="code"># Python example: summarize chains and average B-factor by residue.
+# This helps you see which parts of a structure are more flexible or uncertain.
+
+from Bio.PDB import PDBParser
+from collections import defaultdict
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("example", "1tim.pdb")
+model = structure[0]
+
+print("Chains in model:", [chain.id for chain in model])
+
+bfactors = defaultdict(list)
+for atom in structure.get_atoms():
+    residue = atom.get_parent()
+    chain = residue.get_parent().id
+    reskey = (chain, residue.get_resname(), residue.id[1])
+    if atom.bfactor is not None:
+        bfactors[reskey].append(atom.bfactor)
+
+for reskey, values in list(bfactors.items())[:10]:
+    avg_b = sum(values) / len(values)
+    print(reskey, f"avg B-factor = {avg_b:.2f}")</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 10</div>
+      <h2>Crystal structure vs cryo-EM vs predicted model</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>X-ray crystal</h3>
+          <p>Often high atomic detail, but requires crystals and may include crystal-packing effects. Hydrogens are often not directly seen.</p>
+        </div>
+        <div class="card">
+          <h3>Cryo-EM</h3>
+          <p>Excellent for larger complexes and flexible assemblies. Resolution can vary across the map.</p>
+        </div>
+        <div class="card">
+          <h3>Predicted model</h3>
+          <p>Fast and powerful for fold prediction, but ligand positions, protonation, waters, and catalytic geometry may need extra caution.</p>
+        </div>
+      </div>
+      <div class="note">For mechanistic studies, an experimental ligand-bound structure is often the best starting point if one exists.</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 11</div>
+      <h2>Open 2–3 structures in PyMOL or Mol*</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Suggested structures</h3>
+          <ul>
+            <li><b>1CRN</b> — tiny protein for orientation</li>
+            <li><b>1TIM</b> — classic enzyme fold</li>
+            <li><b>6U4I</b> — bacterial enzyme with ligand</li>
+          </ul>
+          <h3>In Mol*</h3>
+          <p>Open the RCSB page and launch the 3D view. Turn on labels, show ligand, and inspect nearby residues.</p>
+          <h3>In PyMOL</h3>
+          <p>Use <span class="kbd">fetch 1tim</span>, <span class="kbd">fetch 6u4i</span>, then color chains and highlight ligands.</p>
+        </div>
+        <div class="card">
+          <div class="code"># PyMOL command block you can paste into PyMOL.
+# This is not Python for a notebook; it is PyMOL command language.
+
+fetch 6u4i, async=0
+hide everything
+show cartoon, polymer.protein
+color slate, chain A
+show sticks, organic
+color yellow, organic
+show spheres, resn HOH
+set sphere_scale, 0.18, resn HOH
+select ions, resn ZN+MG+FE+MN+CA+NA+K+CU+CO+NI
+show spheres, ions
+color tv_orange, ions
+zoom organic, 12
+
+# Label residues within 4 Å of the ligand
+select pocket, byres (organic around 4)
+show sticks, pocket
+label pocket and name CA, "%s%s" % (resn, resi)
+
+# Measure one example distance manually by clicking in the GUI,
+# or use the distance command once you know the atoms:</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 12</div>
+      <h2>Identify protein chain, ligand, water, ions</h2>
+      <div class="code"># Fully annotated Python example: summarize the contents of a PDB structure.
+# This is a very practical first script for any beginner.
+
+from Bio.PDB import PDBList, PDBParser
+from collections import Counter
+
+pdb_id = "6u4i"
+filename = f"{pdb_id}.pdb"
+
+# Download the file if you do not already have it locally.
+# Biopython may save with different naming in some versions, so check your folder.
+pdbl = PDBList()
+pdbl.retrieve_pdb_file(pdb_id, pdir=".", file_format="pdb", overwrite=True)
+
+# If the saved file name differs, rename it manually or replace filename below.
+# For simplicity, you can also download the PDB file directly from RCSB.
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure(pdb_id, filename)
+model = structure[0]
+
+chain_ids = [chain.id for chain in model]
+print("Chains:", chain_ids)
+
+summary = Counter()
+for residue in structure.get_residues():
+    hetflag = residue.id[0]
+    if hetflag == " ":
+        summary["protein residues"] += 1
+    elif hetflag == "W":
+        summary["waters"] += 1
+    else:
+        summary[f"hetero:{residue.get_resname().strip()}"] += 1
+
+print("\nStructure summary")
+for key, value in summary.items():
+    print(f"{key:20s} {value}")
+
+# Why this matters:
+# before studying chemistry, always know what molecules are present.</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 13</div>
+      <h2>Locate the active site</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Three beginner strategies</h3>
+          <ol>
+            <li>Use the bound ligand as an anchor</li>
+            <li>Look for conserved polar or charged residues around it</li>
+            <li>Check literature or UniProt annotations after structural inspection</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Rule of thumb</h3>
+          <p>The active site is usually the residue cluster within about 4–6 Å of the bound ligand or catalytic metal/cofactor.</p>
+        </div>
+      </div>
+      <div class="code"># Python example: identify likely active-site residues around ligand atoms.
+# This version reports only standard amino acids and counts how often
+# each residue appears near ligand atoms.
+
+from Bio.PDB import PDBParser, NeighborSearch
+from collections import Counter
+
+STANDARD_AA = {
+    "ALA","ARG","ASN","ASP","CYS","GLN","GLU","GLY","HIS","ILE",
+    "LEU","LYS","MET","PHE","PRO","SER","THR","TRP","TYR","VAL"
+}
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("ksi", "6u4i.pdb")
+ns = NeighborSearch(list(structure.get_atoms()))
+
+ligand_atoms = []
+for residue in structure.get_residues():
+    if residue.get_resname().strip() == "EQU":
+        ligand_atoms.extend(list(residue.get_atoms()))
+
+counts = Counter()
+for atom in ligand_atoms:
+    for residue in ns.search(atom.coord, 5.0, level="R"):
+        resname = residue.get_resname().strip()
+        if resname in STANDARD_AA:
+            chain = residue.get_parent().id
+            resnum = residue.id[1]
+            counts[(chain, resname, resnum)] += 1
+
+print("Likely pocket / active-site residues:\n")
+for key, count in counts.most_common(20):
+    print(key, "contact count", count)</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 14</div>
+      <h2>Measure hydrogen-bond distances</h2>
+      <div class="card">
+        <p>Distance is the easiest first measurement. A short donor–acceptor distance can support the presence of a hydrogen bond, but angle and chemistry also matter.</p>
+      </div>
+      <div class="code"># Python example: measure a specific distance between two named atoms.
+# Replace the residue numbers and atom names with ones from your structure.
+
+from Bio.PDB import PDBParser
+import numpy as np
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("ksi", "6u4i.pdb")
+model = structure[0]
+chain = model["A"]
+
+# Example placeholders:
+# residue 14 TYR atom OH
+# ligand EQU residue number 201 atom O1
+# You must confirm these exact IDs in your file.
+
+atom1 = chain[(" ", 14, " ")]["OH"]
+atom2 = None
+for residue in chain:
+    if residue.get_resname().strip() == "EQU":
+        if "O1" in residue:
+            atom2 = residue["O1"]
+            break
+
+if atom2 is None:
+    raise ValueError("Could not find ligand atom O1; inspect the ligand atom names first.")
+
+distance = np.linalg.norm(atom1.coord - atom2.coord)
+print(f"Distance = {distance:.2f} Å")
+
+# Educational note:
+# This script is intentionally explicit. Beginners should learn to trace exactly
+# which chain, residue, and atom are being measured.</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 15</div>
+      <h2>One useful end-to-end Python mini-workflow</h2>
+      <div class="code"># End-to-end beginner workflow:
+# 1) parse a structure
+# 2) list chains
+# 3) list ligands/waters/ions
+# 4) find residues near a ligand
+# 5) report closest atoms to the ligand
+
+from Bio.PDB import PDBParser, NeighborSearch
+import numpy as np
+
+pdb_file = "6u4i.pdb"
+ligand_name = "EQU"
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("example", pdb_file)
+model = structure[0]
+
+print("Chains:", [c.id for c in model])
+
+# List hetero components
+print("\nHetero components:")
+for residue in structure.get_residues():
+    if residue.id[0] != " ":
+        print(residue.get_parent().id, residue.get_resname(), residue.id)
+
+# Find ligand atoms
+ligand_atoms = []
+for residue in structure.get_residues():
+    if residue.get_resname().strip() == ligand_name:
+        ligand_atoms.extend(list(residue.get_atoms()))
+
+if not ligand_atoms:
+    raise ValueError(f"Ligand {ligand_name} not found")
+
+# Neighbor search for nearby residues
+ns = NeighborSearch(list(structure.get_atoms()))
+near_residues = set()
+for atom in ligand_atoms:
+    for residue in ns.search(atom.coord, 4.0, level="R"):
+        if residue.get_resname().strip() != ligand_name:
+            near_residues.add((residue.get_parent().id, residue.get_resname(), residue.id[1]))
+
+print("\nResidues near ligand:")
+for item in sorted(near_residues):
+    print(item)
+
+# Closest 10 protein atoms to the first ligand atom
+ref = ligand_atoms[0]
+distances = []
+for atom in structure.get_atoms():
+    if atom.get_parent().get_resname().strip() == ligand_name:
+        continue
+    d = np.linalg.norm(atom.coord - ref.coord)
+    residue = atom.get_parent()
+    distances.append((d, residue.get_parent().id, residue.get_resname(), residue.id[1], atom.name))
+
+print("\nClosest atoms to first ligand atom:")
+for row in sorted(distances)[:10]:
+    print(row)</div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 16</div>
+      <h2>Practice exercises</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Exercise 1</h3>
+          <p>Open 1CRN and identify chain A, residues, and one helix.</p>
+        </div>
+        <div class="card">
+          <h3>Exercise 2</h3>
+          <p>Open 1TIM and locate a ligand or loop near the catalytic pocket.</p>
+        </div>
+        <div class="card">
+          <h3>Exercise 3</h3>
+          <p>Open 6U4I and list the ligand, nearby residues, waters, and any ions.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Questions you should be able to answer after this deck</h3>
+        <ul>
+          <li>What is a chain, residue, and atom?</li>
+          <li>What do coordinates represent?</li>
+          <li>How do I tell protein from ligand, water, and ions?</li>
+          <li>How do I locate an active site?</li>
+          <li>What do occupancy and B-factor tell me?</li>
+          <li>How do I measure a distance that might reflect a hydrogen bond?</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="eyebrow">Slide 17</div>
+      <h2>Beyond this deck</h2>
+      <div class="two">
+        <div class="card">
+          <h3>Next structural topics</h3>
+          <ul>
+            <li>Ramachandran plots</li>
+            <li>Backbone torsion angles</li>
+            <li>Secondary-structure assignment</li>
+            <li>Conservation mapping</li>
+            <li>Pocket detection</li>
+            <li>Protein-ligand interaction fingerprints</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Bridge to QM/MM</h3>
+          <ul>
+            <li>Why protonation states matter</li>
+            <li>Why active-site waters matter</li>
+            <li>Why ligand-bound structures are valuable</li>
+            <li>How to choose residues near the reactive center</li>
+            <li>How distance and geometry guide QM-region selection</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer">Once these foundations are comfortable, the next step is a second slide deck on protein preparation, protonation states, and force fields before starting QM/MM.</div>
+    </section>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let idx = 0;
+    function render(){
+      slides.forEach((s,i)=>s.classList.toggle('active', i===idx));
+      document.getElementById('counter').textContent = `Slide ${idx+1} of ${slides.length}`;
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    function nextSlide(){ idx = (idx+1) % slides.length; render(); }
+    function prevSlide(){ idx = (idx-1+slides.length) % slides.length; render(); }
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight' || e.key === 'PageDown') nextSlide();
+      if(e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+    });
+    render();
+  </script>
+</body>
+</html>
