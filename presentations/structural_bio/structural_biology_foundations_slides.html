@@ -199,9 +199,19 @@
 # This is useful when you begin annotating residues around an active site.
 
 AA_GROUPS = {
-    "nonpolar": {"GLY", "ALA", "VAL", "LEU", "ILE", "MET", "PRO", "PHE", "TRP"},
-    "polar": {"SER", "THR", "ASN", "GLN", "TYR", "CYS"},
-    "charged": {"ASP", "GLU", "LYS", "ARG", "HIS"},
+    "nonpolar": {
+        "GLY": "Glycine", "ALA": "Alanine", "VAL": "Valine",
+        "LEU": "Leucine", "ILE": "Isoleucine", "MET": "Methionine",
+        "PRO": "Proline", "PHE": "Phenylalanine", "TRP": "Tryptophan",
+    },
+    "polar": {
+        "SER": "Serine", "THR": "Threonine","ASN": "Asparagine",
+        "GLN": "Glutamine", "TYR": "Tyrosine", "CYS": "Cysteine",
+    },
+    "charged": {
+        "ASP": "Aspartate", "GLU": "Glutamate", "LYS": "Lysine",
+        "ARG": "Arginine", "HIS": "Histidine",
+    },
 }
 
 def classify_residue(resname: str) -> str:
