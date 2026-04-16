@@ -124,7 +124,7 @@
 <body>
   <div class="deck">
     <div class="topbar">
-      <h1>Structural Biology Foundations — HTML Slide Deck</h1>
+      <h1>Structural Biology Foundations </h1>
       <div class="controls">
         <span id="counter" class="mini"></span>
         <button onclick="prevSlide()">◀ Prev</button>
@@ -136,7 +136,7 @@
       <div class="eyebrow">Slide 1</div>
       <h2>Structural Biology Foundations</h2>
       <p class="lead">A beginner-friendly slide deck for learning how to read protein structures, inspect PDB files, find ligands and active sites, and start measuring structural features with Python.</p>
-      <div class="grid">
+      <div class="grid-1">
         <div class="card">
           <h3>What you will learn</h3>
           <ul>
@@ -149,13 +149,7 @@
             <li>How to inspect 2–3 PDB structures in PyMOL, Mol*, and Python</li>
           </ul>
         </div>
-        <div class="card">
-          <h3>Recommended starter structures</h3>
-          <p><span class="pill">1CRN</span><span class="pill">small protein</span></p>
-          <p><span class="pill">1TIM</span><span class="pill">enzyme fold</span></p>
-          <p><span class="pill">6U4I</span><span class="pill">bacterial enzyme + ligand</span></p>
-          <div class="note">These examples are intentionally simple: one tiny protein, one classic enzyme, and one ligand-bound bacterial enzyme.</div>
-        </div>
+        
       </div>
       <div class="footer">Tip: read this deck once like slides, then reopen it and copy the code blocks into a notebook one by one.</div>
     </section>
@@ -190,7 +184,43 @@
       <div class="eyebrow">Slide 3</div>
       <h2>Amino acids and side chains</h2>
       <div class="grid-3">
-        <div class="card"><h3>Nonpolar</h3><p>Gly, Ala, Val, Leu, Ile, Met, Pro, Phe, Trp</p></div>
+        
+        <div class="card"><h3>Nonpolar vs Polar</h3><p>A nonpolar amino acid is one with a side chain 
+        that has no charge and an even distribution of electrons.
+        Instead of being "water-loving" (hydrophilic), they are hydrophobic (water-fearing).
+        A polar amino acid is one that has a "dipole"—meaning its side chain (R-group) has an uneven distribution of electrons.
+        This creates a partial positive charge on one end and a partial negative charge
+        on the other, making them "water-loving" (hydrophilic).</p></div>
+        
+        <div class="card"><h3>Polar uncharged</h3><p>These have side chains that are polar
+        but stay electrically neutral. Asparagine (Asn) & Glutamine (Gln): 
+        These contain an amide group (NH2-C=O). While the oxygen and nitrogen create polarity, 
+        the group does not pick up or lose an H+ ion in the body. 
+        They are "peaceful" polar molecules. </p></div>
+        
+        <div class="card"><h3>Charged</h3><p>These side chains are polar enough to 
+        actually ionize (lose a proton), giving them a full negative charge. 
+        Aspartic Acid (Asp) & Glutamic Acid (Glu): These contain a carboxylic acid group (COOH).
+        At body pH, they lose the H and become Aspartate and Glutamate,
+        carrying a net -1 charge.</p></div>
+      </div>
+      
+    </section>
+
+<section class="slide">
+      <div class="eyebrow">Slide 4</div>
+      <h2>Amino acids and side chains</h2>
+      <div class="grid-3">
+
+        <div class="card"><h3>Nonpolar</h3><p>Gly, Ala, Val, Leu, Ile, Met, Pro, Phe, Trp
+        The side chains of these amino acids are mostly made of carbon and hydrogen (hydrocarbons): 
+        <h4>-Aliphatic (Straight chains): Glycine (the simplest), Alanine, Valine, Leucine, and Isoleucine.<h4>
+        <h4>-Aromatic (Ring structures): Phenylalanine and Tryptophan (these are bulky and "greasy").<h4>
+        <h4>-Sulfur-containing: Methionine.<h4>
+        <h4>-The Weird One: Proline, which loops back and bonds to its own backbone,
+          creating a rigid kink in the protein chain.<h4>
+        
+        </p></div>
         <div class="card"><h3>Polar uncharged</h3><p>Ser, Thr, Asn, Gln, Tyr, Cys</p></div>
         <div class="card"><h3>Charged</h3><p>Asp, Glu, Lys, Arg, His</p></div>
       </div>
@@ -214,6 +244,7 @@ AA_GROUPS = {
     },
 }
 
+
 def classify_residue(resname: str) -> str:
     """Return a coarse chemical class for a residue name.
     We keep the function simple so the logic stays easy to follow.
@@ -227,9 +258,10 @@ def classify_residue(resname: str) -> str:
 for aa in ["ASP", "TYR", "LEU", "HOH"]:
     print(aa, "->", classify_residue(aa))</div>
     </section>
-
+    
+    
     <section class="slide">
-      <div class="eyebrow">Slide 4</div>
+      <div class="eyebrow">Slide 5</div>
       <h2>Primary, secondary, tertiary structure</h2>
       <div class="two">
         <div class="card">
@@ -266,8 +298,172 @@ for i, peptide in enumerate(ppb.build_peptides(chain), start=1):
       </div>
     </section>
 
+ <section class="slide">
+      <div class="eyebrow">Slide 6</div>
+      <h2>Examples of 3D Structures: <i>Pseudomonas aeruginosa</i></h2>
+      
+      <div class="two">
+
+    <div class="card">
+      <h3>1) OprD outer membrane channel</h3>
+      <p><strong>PDB:</strong> 2ODJ, 3SY7</p>
+      <ul>
+        <li><strong>Why start here:</strong> very different from a compact enzyme—useful for learning protein architecture.</li>
+        <li><strong>What to learn:</strong> beta-barrel fold, pore constriction, charged surfaces, channel selectivity.</li>
+        <li><strong>Look for:</strong> the pore interior, charged residues, and how the channel differs from an enzyme active site.</li>
+        <li><strong>Good beginner question:</strong> Where is the narrowest region of the channel and which residues shape it?</li>
+      </ul>
+      <p class="note">
+        OprD is a strong example for understanding that not all biologically important structures are classic enzymes.
+      </p>
+    </div>
+    
+    <div class="card">
+    <div class="figure-box">
+          <div class="figure-inner">
+            <strong style="color: var(--accent);">OprD Pseudomonas aeruginosa</strong><br>
+            <iframe
+          src="OprD_3SY7.html"
+          title="OprD 3SY7 PDB"
+          style="width: 100%; height: 500px; border: none; border-radius: 1px; background: none;">
+        </iframe>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+
+<section class="slide">
+      <div class="eyebrow">Slide 7</div>
+      <h2>Examples of 3D Structures: <i>Pseudomonas aeruginosa</i></h2>
+      
+      <div class="two">
+         <div class="card">
+      <h3>2) LasR ligand-binding domain</h3>
+      <p><strong>PDB:</strong> 2UV0, 3IX3</p>
+      <ul>
+        <li><strong>Why start here:</strong> clear example of a protein bound to a signaling ligand.</li>
+        <li><strong>What to learn:</strong> ligand pocket, hydrogen bonds, hydrophobic packing, protein–ligand recognition.</li>
+        <li><strong>Look for:</strong> the bound autoinducer in the pocket and residues surrounding it.</li>
+        <li><strong>Good beginner question:</strong> Which residues are directly contacting the ligand?</li>
+      </ul>
+      <p class="note">
+        LasR is a quorum-sensing receptor, so it is especially useful for teaching how a small molecule
+        sits inside a biologically important binding site.
+      </p>
+    </div>
+    
+    <div class="card">
+    <div class="figure-box">
+          <div class="figure-inner">
+            <strong style="color: var(--accent);">LasR Pseudomonas aeruginosa</strong><br>
+            <iframe
+          src="LasR_2UV0.html"
+          title="LasR 2UV0 PDB"
+          style="width: 100%; height: 500px; border: none; border-radius: 1px; background: none;">
+        </iframe>
+          </div>
+        </div>
+      </div>
+
+</section>
+
+
+<section class="slide">
+      <div class="eyebrow">Slide 8</div>
+      <h2>Examples of 3D Structures: <i>Pseudomonas aeruginosa</i></h2>
+      
+      <div class="two">
+         
+    <div class="card">
+      <h3>3) FabA enzyme with bound ligand/substrate-like molecules</h3>
+      <p><strong>PDB:</strong> 4B0B, 4FQ9, 4CL6</p>
+      <ul>
+        <li><strong>Why start here:</strong> enzyme active site with bound small molecules.</li>
+        <li><strong>What to learn:</strong> catalytic pocket, side-chain positioning, substrate recognition, enzyme geometry.</li>
+        <li><strong>Look for:</strong> residues lining the active site and how the ligand is oriented.</li>
+        <li><strong>Good beginner question:</strong> Which amino acids appear to stabilize the ligand or reaction center?</li>
+      </ul>
+      <p class="note">
+        FabA structures are excellent stepping stones toward QM/MM because they train you to identify a plausible
+        “reaction neighborhood” around a ligand.
+      </p>
+    </div>
+    
+    <div class="card">
+    <div class="figure-box">
+          <div class="figure-inner">
+            <strong style="color: var(--accent);">FabA Pseudomonas aeruginosa</strong><br>
+            <iframe
+          src="FabA_4B0B.html"
+          title="FabA 4B0B PDB"
+          style="width: 100%; height: 500px; border: none; border-radius: 1px; background: none;">
+        </iframe>
+          </div>
+        </div>
+      </div>
+    
+</section>
+
+
+<section class="slide">
+      <div class="eyebrow">Slide 9</div>
+      <h2>Examples of 3D Structures: <i>Pseudomonas aeruginosa</i></h2>
+      
+      <div class="one">
+
+  <div class="card">
+    <h3>Suggested practice exercise</h3>
+    <p>
+      Compare <strong>LasR</strong> and <strong>FabA</strong>. In LasR, ask how the ligand is recognized by the binding pocket.
+      In FabA, ask which residues are most likely involved in catalysis or substrate positioning.
+      Then compare both to <strong>OprD</strong>, where the main biological question is not catalysis but transport and selectivity.
+    </p>
+  </div>
+
+  <pre><code class="language-python"># Optional beginner Python idea:
+# After loading a PDB with Bio.PDB, find residues within 4.0 Å of a ligand
+# and print their residue name, number, chain, and minimum atom distance.
+
+from Bio.PDB import PDBParser
+
+pdb_file = "example.pdb"
+ligand_name = "HSL"   # replace with actual residue name from the structure
+cutoff = 4.0
+
+parser = PDBParser(QUIET=True)
+structure = parser.get_structure("protein", pdb_file)
+
+ligand_atoms = []
+protein_residues = []
+
+for model in structure:
+    for chain in model:
+        for residue in chain:
+            hetflag = residue.id[0]
+            if residue.resname == ligand_name:
+                ligand_atoms.extend(list(residue.get_atoms()))
+            elif hetflag == " ":
+                protein_residues.append((chain.id, residue))
+
+for chain_id, residue in protein_residues:
+    min_dist = None
+    for atom in residue.get_atoms():
+        for latom in ligand_atoms:
+            d = atom - latom
+            if min_dist is None or d < min_dist:
+                min_dist = d
+    if min_dist is not None and min_dist <= cutoff:
+        print(chain_id, residue.resname, residue.id[1], round(min_dist, 2))</code></pre>
+
+  <p class="footer">
+    Tip: For true beginners, use <strong>LasR → FabA → OprD</strong> in that order.
+  </p>
+</section>
+
     <section class="slide">
-      <div class="eyebrow">Slide 5</div>
+      <div class="eyebrow">Slide 10</div>
       <h2>Enzymes and active sites</h2>
       <div class="grid">
         <div class="card">
