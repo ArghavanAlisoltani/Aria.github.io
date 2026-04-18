@@ -713,7 +713,137 @@ for reskey, values in list(bfactors.items())[:10]:
         </div>
       </div>
     </section>
+              
+<section class="slide" id="Slide RMSD">
+  <h2>RMSD and RMSF</h2>
 
+  <p class="lead">
+    <strong>RMSD</strong> tells us how much a structure changes overall compared with a reference structure.
+    <strong>RMSF</strong> tells us how much each residue fluctuates around its average position during a simulation.
+  </p>
+
+  <div class="grid two-col">
+    <div class="card">
+      <h3>1) What is RMSD?</h3>
+      <p>
+        <strong>Root Mean Square Deviation (RMSD)</strong> measures the average distance between
+        corresponding atoms in two aligned structures.
+      </p>
+
+      <p><strong>Formula:</strong></p>
+      <pre><code>RMSD = sqrt( (1/N) * Σ[i=1 to N] (d_i^2) )</code></pre>
+
+      <ul>
+        <li><strong>N</strong> = number of atoms compared</li>
+        <li><strong>d<sub>i</sub></strong> = distance between atom <em>i</em> in the reference and compared structure</li>
+      </ul>
+
+      <p><strong>Interpretation:</strong></p>
+      <ul>
+        <li>Low RMSD → structure stays similar to the reference</li>
+        <li>High RMSD → structure changed more</li>
+      </ul>
+
+      <p><strong>Numerical example:</strong></p>
+      <p>
+        Suppose after aligning two structures, the distances for 4 atoms are:
+        <br><code>0.5 Å, 1.0 Å, 1.5 Å, 2.0 Å</code>
+      </p>
+
+      <pre><code>RMSD = sqrt((0.5² + 1.0² + 1.5² + 2.0²) / 4)
+     = sqrt((0.25 + 1.00 + 2.25 + 4.00) / 4)
+     = sqrt(7.50 / 4)
+     = sqrt(1.875)
+     = 1.37 Å</code></pre>
+
+      <p class="note">
+        So the compared structure differs from the reference by an average of about <strong>1.37 Å</strong>.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>2) What is RMSF?</h3>
+      <p>
+        <strong>Root Mean Square Fluctuation (RMSF)</strong> measures how much a given atom or residue moves
+        around its average position during a trajectory.
+      </p>
+
+      <p><strong>Formula:</strong></p>
+      <pre><code>RMSF(i) = sqrt( (1/T) * Σ[t=1 to T] (r_i(t) - r̄_i)^2 )</code></pre>
+
+      <ul>
+        <li><strong>T</strong> = number of frames</li>
+        <li><strong>r<sub>i</sub>(t)</strong> = position of residue <em>i</em> at time <em>t</em></li>
+        <li><strong>r̄<sub>i</sub></strong> = average position of residue <em>i</em></li>
+      </ul>
+
+      <p><strong>Interpretation:</strong></p>
+      <ul>
+        <li>Low RMSF → residue is rigid/stable</li>
+        <li>High RMSF → residue is flexible/mobile</li>
+      </ul>
+
+      <p><strong>Numerical example:</strong></p>
+      <p>
+        Suppose one residue fluctuates from its average position by:
+        <br><code>0.2 Å, 0.4 Å, 0.6 Å, 0.8 Å</code>
+      </p>
+
+      <pre><code>RMSF = sqrt((0.2² + 0.4² + 0.6² + 0.8²) / 4)
+     = sqrt((0.04 + 0.16 + 0.36 + 0.64) / 4)
+     = sqrt(1.20 / 4)
+     = sqrt(0.30)
+     = 0.55 Å</code></pre>
+
+      <p class="note">
+        So this residue fluctuates by about <strong>0.55 Å</strong> around its average position.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>3) Key difference</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>What it measures</th>
+          <th>Main use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RMSD</td>
+          <td>Overall structural deviation from a reference</td>
+          <td>Did the protein structure drift or remain stable?</td>
+        </tr>
+        <tr>
+          <td>RMSF</td>
+          <td>Per-residue or per-atom fluctuation over time</td>
+          <td>Which regions are flexible or rigid?</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>4) Simple biological interpretation</h3>
+    <ul>
+      <li>If <strong>RMSD</strong> rises quickly and then plateaus, the system may have relaxed into a stable new conformation.</li>
+      <li>If <strong>RMSF</strong> is high in loops but low in helices or beta-sheets, that usually means loops are more flexible.</li>
+      <li>If active-site residues have low RMSF, the catalytic pocket may be structurally stable.</li>
+      <li>If binding-site loops have high RMSF, that may suggest gate-like motion or ligand-induced flexibility.</li>
+    </ul>
+  </div>
+
+  <p class="footer">
+    Tip: <strong>RMSD = whole structure change</strong>, while <strong>RMSF = local residue motion</strong>.
+  </p>
+</section>
+
+              
+
+              
     <section class="slide">
       <div class="eyebrow">Slide 10</div>
       <h2>Crystal structure vs cryo-EM vs predicted model</h2>
